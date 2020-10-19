@@ -1,42 +1,42 @@
 class EvervaultError(Exception):
 
-  def __init__(self, message=None, context=None):
-    super(EvervaultError, self).__init__(message)
-    self.message = message
-    self.context = context
+    def __init__(self, message=None, context=None):
+        super(EvervaultError, self).__init__(message)
+        self.message = message
+        self.context = context
 
 
 class ArgumentError(ValueError, EvervaultError):
-  pass
+    pass
 
 
 class HttpError(EvervaultError):
-  pass
+    pass
 
 
 class ResourceNotFound(EvervaultError):
-  pass
+    pass
 
 
 class AuthenticationError(EvervaultError):
-  pass
+    pass
 
 
 class ServerError(EvervaultError):
-  pass
+    pass
 
 
 class BadGatewayError(EvervaultError):
-  pass
+    pass
 
 
 class ServiceUnavailableError(EvervaultError):
-  pass
+    pass
 
 
 class BadRequestError(EvervaultError):
-  pass
+    pass
 
 
 class UnexpectedError(EvervaultError):
-  pass
+    pass
