@@ -5,13 +5,14 @@ class Client(object):
 	def __init__(
 		self, 
 		api_key = 'your_teams_api_key', 
+		request_timeout = 30,
 		base_url = 'https://api.evervault.com', 
 		base_run_url = 'https://cage.run'
 	):
 		self.api_key = api_key
 		self.base_url = base_url
 		self.base_run_url = base_run_url
-		self.request = Request(api_key)
+		self.request = Request(api_key, request_timeout)
 
 	@property
 	def _auth(self):

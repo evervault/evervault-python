@@ -4,6 +4,8 @@ def raise_errors_on_failure(resp, body = None):
   if resp.status_code < 400: return
   if resp.status_code == 404:
     raise errors.ResourceNotFound('Resource Not Found')
+  elif resp.status_code ==  400:
+    raise errors.BadRequestError('Bad request')
   elif resp.status_code == 401:
     raise errors.AuthenticationError('Unauthorized')
   elif resp.status_code == 403:
