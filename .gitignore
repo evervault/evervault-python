@@ -1,0 +1,11 @@
+# JetBrains
+.idea/
+
+# VSCode
+.vscode/
+
+# Setup.py
+*.egg-info
+__pycache__/
+build/
+dist/
