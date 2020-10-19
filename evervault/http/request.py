@@ -27,11 +27,11 @@ class Request(object):
 	def _build_headers(self, method, params, version):
 		req_params = {}
 		headers = {
-				'User-Agent': 'evervault-python/' + version,
-				'AcceptEncoding': 'gzip, deflate',
-				'Accept': 'application/json',
-				'Content-Type': 'application/json',
-				'Api-Key': self.api_key
+			'User-Agent': 'evervault-python/' + version,
+			'AcceptEncoding': 'gzip, deflate',
+			'Accept': 'application/json',
+			'Content-Type': 'application/json',
+			'Api-Key': self.api_key
 		}
 		if method in ('POST', 'PUT', 'DELETE'):
 			req_params['data'] = json.dumps(params, cls=json.JSONEncoder)
@@ -49,14 +49,13 @@ class Request(object):
 			verify=certifi.where(), 
 			allow_redirects = False, 
 			**req_params
-			)
+		)
 
 	def _parse_body(self, resp):
 		if resp.content and resp.content.strip():
 			try:
 				decoded_body = resp.content.decode(
-					resp.encoding or resp.apparent_encoding)
+				resp.encoding or resp.apparent_encoding)
 				return json.loads(decoded_body)
 			except ValueError:
 				error_handler.raise_errors_on_failure(resp)
-				
