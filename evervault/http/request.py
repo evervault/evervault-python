@@ -3,7 +3,6 @@ from datetime import datetime
 from .errors import error_handler
 
 import json
-import os
 import requests
 import certifi
 
