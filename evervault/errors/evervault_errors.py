@@ -38,5 +38,12 @@ class BadRequestError(EvervaultError):
     pass
 
 
+class UndefinedDataError(EvervaultError):
+    pass
+
+
+class InvalidPublicKeyError(EvervaultError):
+    pass
+
 class UnexpectedError(EvervaultError):
     pass

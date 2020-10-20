@@ -1,5 +1,5 @@
 from datetime import datetime
-from .errors import error_handler
+from ..errors import error_handler
 
 import json
 import requests
