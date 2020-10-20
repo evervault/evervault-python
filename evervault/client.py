@@ -1,6 +1,6 @@
 from .http.request import Request
 from .crypto.client import Client as CryptoClient
-from .models.cage import Cage
+from .models.cage_list import CageList
 
 
 class Client(object):
@@ -34,7 +34,7 @@ class Client(object):
 
     def cages(self):
         cages = self.get("cages")["cages"]
-        return [*map(lambda cage: Cage(cage["name"], cage["uuid"], self), cages)]
+        return CageList(cages, self).cages
 
     def get(self, path, params={}):
         return self.request.make_request("GET", self.__url(path), params)
