@@ -5,7 +5,7 @@ Python SDK for [Evervault](https://evervault.com)
 
 #### Prerequisites
 
-To get started with the evervault Python SDK, you will need to have created a team on the evervault dashboard.
+To get started with the Evervault Python SDK, you will need to have created a team on the evervault dashboard.
 
 We are currently in invite-only early access. You can apply for early access [here](https://evervault.com).
 
