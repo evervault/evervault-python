@@ -1,5 +1,4 @@
 class EvervaultError(Exception):
-
     def __init__(self, message=None, context=None):
         super(EvervaultError, self).__init__(message)
         self.message = message
@@ -44,6 +43,7 @@ class UndefinedDataError(EvervaultError):
 
 class InvalidPublicKeyError(EvervaultError):
     pass
+
 
 class UnexpectedError(EvervaultError):
     pass
