@@ -32,7 +32,15 @@ class Client(object):
             return self.__encrypt_string(data)
 
     def __encrypt_object(self, data):
-        pass
+        if self.__encryptable_data(data):
+            return self.__encrypt_string(data)
+        elif type(data) == dict:
+            encrypted_data = {}
+            for key, value in data.items():
+                encrypted_data[key] = self.__encrypt_object(value)
+            return encrypted_data
+        else:
+            return data
 
     def __encrypt_string(self, data):
         iv = token_bytes(int(BS / 2))
