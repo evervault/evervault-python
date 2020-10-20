@@ -1,4 +1,5 @@
 from .http.request import Request
+from .crypto.client import Client as CryptoClient
 
 class Client(object):
 
@@ -18,8 +19,9 @@ class Client(object):
     def _auth(self):
         return (self.api_key, '')
 
-    def encrypt(self):
-        pass
+    def encrypt(self, data):
+        client = CryptoClient()
+        return client.encrypt_data(self, data)
 
     def run(self, cage_name, params):
         pass
