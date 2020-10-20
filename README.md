@@ -34,7 +34,7 @@ result = evervault_client.encrypt_and_run(<CAGE-NAME>, { 'hello': 'World!' })
 Encrypt lets you encrypt data for use in any of your evervault cages. You can use it to store encrypted data to be used in a cage at another time.
 
 ```python
-evervault_client.encrypt(data: dict | str);
+evervault_client.encrypt(data = dict | str)
 ```
 
 | Parameter | Type | Description |
