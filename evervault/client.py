@@ -24,13 +24,12 @@ class Client(object):
     def encrypt(self, data):
         return self.crypto_client.encrypt_data(self, data)
 
-    def run(self, cage_name, encrypted_data, cage_run=True):
-        path = cage_name if cage_run else f"cages/{cage_name}"
-        return self.post(path, encrypted_data, cage_run)
+    def run(self, cage_name, encrypted_data):
+        return self.post(cage_name, encrypted_data, True)
 
-    def encrypt_and_run(self, cage_name, data, cage_run=True):
+    def encrypt_and_run(self, cage_name, data):
         encrypted_data = self.encrypt(data)
-        return self.run(cage_name, encrypted_data, cage_run)
+        return self.run(cage_name, encrypted_data)
 
     def cages(self):
         cages = self.get("cages")["cages"]

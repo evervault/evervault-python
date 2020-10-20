@@ -46,25 +46,23 @@ evervault_client.encrypt(data = dict | str)
 Run lets you invoke your evervault cages with a given payload.
 
 ```python
-evervault_client.run(cageName = str, payload = dict, cage_run = bool )
+evervault_client.run(cageName = str, payload = dict)
 ```
 
 | Parameter | Type | Description |
 | --------- | ---- | ----------- |
 | cageName | str | Name of the cage to be run |
 | data | dict | Payload for the cage |
-| cage_run | bool | Whether to use https://cage.run or https://api.evervault.com (defaults to True) |
 
 #### evervault_client.encryptAndRun
 
 Encrypt your data and use it as the payload to invoke the cage.
 
 ```python
-evervault_client.encrypt_and_run(cageName = str, data = dict, cage_run = True)
+evervault_client.encrypt_and_run(cageName = str, data = dict)
 ```
 
 | Parameter | Type | Description |
 | --------- | ---- | ----------- |
 | cageName | str | Name of the cage to be run |
 | data | dict | Data to be encrypted |
-| cage_run | bool | Whether to use https://cage.run or https://api.evervault.com (defaults to True) |
