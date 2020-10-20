@@ -102,8 +102,7 @@ class Client(object):
 
     def __fetch_cage_key(self, fetch):
         if self.cage_key is None:
-            print("Fetching cage key")
-            resp = fetch.get("/cages/key")
+            resp = fetch.get("cages/key")
             self.cage_key = Key(resp["key"]).key
             self.public_key = serialization.load_pem_public_key(
                 self.cage_key.encode("utf8"), backend=default_backend()
