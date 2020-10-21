@@ -5,8 +5,8 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(
-    name="Evervault",
-    version="0.1.1",
+    name="evervault-python",
+    version="0.0.1",
     author="Jonny O'Mahony",
     author_email="jonny@evervault.com",
     url="https://evervault.com",
