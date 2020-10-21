@@ -12,7 +12,7 @@ We are currently in invite-only early access. You can apply for early access [he
 #### Installation
 
 ```sh
-pip install evervault-python
+pip install evervault
 ```
 
 #### Setup
