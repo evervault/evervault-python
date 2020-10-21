@@ -1,7 +1,6 @@
 from .http.request import Request
 from .crypto.client import Client as CryptoClient
 from .models.cage_list import CageList
-import evervault
 
 
 class Client(object):
@@ -12,12 +11,10 @@ class Client(object):
         base_url="https://api.evervault.com/",
         base_run_url="https://cage.run/",
     ):
-        self.api_key = evervault.api_key or api_key
-        self.base_url = evervault.base_url or base_url
-        self.base_run_url = evervault.base_run_url or base_run_url
-        self.request = Request(
-            self.api_key, evervault.request_timeout or request_timeout
-        )
+        self.api_key = api_key
+        self.base_url = base_url
+        self.base_run_url = base_run_url
+        self.request = Request(self.api_key, request_timeout)
         self.crypto_client = CryptoClient()
 
     @property
