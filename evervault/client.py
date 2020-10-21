@@ -6,7 +6,7 @@ from .models.cage_list import CageList
 class Client(object):
     def __init__(
         self,
-        api_key="your_teams_api_key",
+        api_key=None,
         request_timeout=30,
         base_url="https://api.evervault.com/",
         base_run_url="https://cage.run/",
@@ -14,7 +14,7 @@ class Client(object):
         self.api_key = api_key
         self.base_url = base_url
         self.base_run_url = base_run_url
-        self.request = Request(api_key, request_timeout)
+        self.request = Request(self.api_key, request_timeout)
         self.crypto_client = CryptoClient()
 
     @property

@@ -18,13 +18,13 @@ pip install evervault
 #### Setup
 
 ```python
-from evervault.client import Client
+import evervault
 
 # Initialize the client with your team's api key
-evervault_client = Client(<API-KEY>);
+evervault.api_key = <YOUR-API-KEY>
 
 # Encrypt your data and run a cage
-result = evervault_client.encrypt_and_run(<CAGE-NAME>, { 'hello': 'World!' })
+result = evervault.encrypt_and_run(<CAGE-NAME>, { 'hello': 'World!' })
 ```
 
 ## API Reference
@@ -34,7 +34,7 @@ result = evervault_client.encrypt_and_run(<CAGE-NAME>, { 'hello': 'World!' })
 Encrypt lets you encrypt data for use in any of your evervault cages. You can use it to store encrypted data to be used in a cage at another time.
 
 ```python
-evervault_client.encrypt(data = dict | str)
+evervault.encrypt(data = dict | str)
 ```
 
 | Parameter | Type | Description |
@@ -46,7 +46,7 @@ evervault_client.encrypt(data = dict | str)
 Run lets you invoke your evervault cages with a given payload.
 
 ```python
-evervault_client.run(cageName = str, payload = dict)
+evervault.run(cageName = str, payload = dict)
 ```
 
 | Parameter | Type | Description |
@@ -59,7 +59,7 @@ evervault_client.run(cageName = str, payload = dict)
 Encrypt your data and use it as the payload to invoke the cage.
 
 ```python
-evervault_client.encrypt_and_run(cageName = str, data = dict)
+evervault.encrypt_and_run(cageName = str, data = dict)
 ```
 
 | Parameter | Type | Description |
