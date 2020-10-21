@@ -9,6 +9,7 @@ setup(
     url="https://evervault.com",
     license="LICENSE.txt",
     description="Evervault SDK",
+    long_description_content_type="text/markdown",
     long_description=open("README.md").read(),
     packages=find_packages(),
     install_requires=["pytest", "requests", "cryptography", "certifi", "pycryptodome"],
