@@ -1,6 +1,7 @@
 """Package for the evervault SDK"""
 from .client import Client
 from .version import VERSION
+from .errors.evervault_errors import AuthenticationError
 
 __version__ = VERSION
 
@@ -28,8 +29,8 @@ def cages():
 
 
 def __client():
-    if api_key is None:
-        return "Please enter your team's API Key"
+    if not api_key:
+        raise AuthenticationError("Please enter your team's API Key")
     global ev_client
     if not ev_client:
         ev_client = Client(
