@@ -16,5 +16,13 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     packages=find_packages(),
-    install_requires=["pytest", "requests", "cryptography", "certifi", "pycryptodome"],
+    install_requires=[
+        "pytest",
+        "pytest-socket",
+        "requests_mock",
+        "requests",
+        "cryptography",
+        "certifi",
+        "pycryptodome",
+    ],
 )
