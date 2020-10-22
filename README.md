@@ -1,7 +1,15 @@
 # Evervault-Python
-Python SDK for [Evervault](https://evervault.com)
+<p align="center">
+  <img src="res/logo.svg">
+</p>
+
+<p align="center">
+  <a href="https://github.com/evervault/evervault-python/actions?query=workflow%3Aevervault-unit-tests"><img alt="Evervault unit tests status" src="https://github.com/evervault/evervault-python/workflows/evervault-unit-tests/badge.svg"></a>
+</p>
+
 
 ## Getting Started
+Python SDK for [Evervault](https://evervault.com)
 
 #### Prerequisites
 

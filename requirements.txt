@@ -1,0 +1,7 @@
+pytest
+pytest-socket
+requests_mock
+requests
+cryptography
+certifi
+pycryptodome
