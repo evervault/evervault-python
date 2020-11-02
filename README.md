@@ -37,7 +37,7 @@ result = evervault.encrypt_and_run(<CAGE-NAME>, { 'hello': 'World!' })
 
 ## API Reference
 
-#### evervault_client.encrypt
+#### evervault.encrypt
 
 Encrypt lets you encrypt data for use in any of your evervault cages. You can use it to store encrypted data to be used in a cage at another time.
 
@@ -49,7 +49,7 @@ evervault.encrypt(data = dict | str)
 | --------- | ---- | ----------- |
 | data | dict or str | Data to be encrypted |
 
-#### evervault_client.run
+#### evervault.run
 
 Run lets you invoke your evervault cages with a given payload.
 
@@ -62,7 +62,7 @@ evervault.run(cageName = str, payload = dict)
 | cageName | str | Name of the cage to be run |
 | data | dict | Payload for the cage |
 
-#### evervault_client.encryptAndRun
+#### evervault.encryptAndRun
 
 Encrypt your data and use it as the payload to invoke the cage.
 
