@@ -8,8 +8,8 @@ with open("README.md", "r") as fh:
 setup(
     name="evervault",
     version=VERSION,
-    author="Jonny O'Mahony",
-    author_email="jonny@evervault.com",
+    author="Evervault",
+    author_email="hey@evervault.com",
     url="https://evervault.com",
     license="LICENSE.txt",
     description="Evervault SDK",
