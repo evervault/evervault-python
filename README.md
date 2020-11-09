@@ -47,7 +47,7 @@ evervault.encrypt(data = dict | str)
 
 | Parameter | Type | Description |
 | --------- | ---- | ----------- |
-| data | dict or str | Data to be encrypted |
+| data | `dict` or `str` | Data to be encrypted |
 
 ### evervault.run
 
@@ -59,9 +59,9 @@ evervault.run(cageName = str, payload = dict[, options = dict])
 
 | Parameter | Type | Description |
 | --------- | ---- | ----------- |
-| cageName | str | Name of the cage to be run |
-| data | dict | Payload for the cage |
-| options | dict | [Options for the cage run.](#Cage-Run-Options) |
+| cageName | `str` | Name of the cage to be run |
+| data | `dict` | Payload for the cage |
+| options | `dict` | [Options for the cage run.](#Cage-Run-Options) |
 
 #### Cage Run Options
 
@@ -80,6 +80,6 @@ evervault.encrypt_and_run(cageName = str, data = dict[, options = dict])
 
 | Parameter | Type | Description |
 | --------- | ---- | ----------- |
-| cageName | str | Name of the cage to be run |
-| data | dict | Data to be encrypted |
-| options | dict | [Options for the cage run.](#Cage-Run-Options) |
+| cageName | `str` | Name of the cage to be run |
+| data | `dict` | Data to be encrypted |
+| options | `dict` | [Options for the cage run.](#Cage-Run-Options) |
