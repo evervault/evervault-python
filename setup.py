@@ -6,7 +6,7 @@ PKG = "evervault"
 VERSIONFILE = os.path.join(PKG, "version.py")
 version = "unknown"
 try:
-    version_file_text = open(VERSIONFILE, 'rt').read()
+    version_file_text = open(VERSIONFILE, "rt").read()
 except EnvironmentError:
     pass # no version file exists
 else:
