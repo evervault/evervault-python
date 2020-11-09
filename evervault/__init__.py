@@ -1,6 +1,6 @@
 """Package for the evervault SDK"""
 from .client import Client
-from version import VERSION
+from .version import VERSION
 from .errors.evervault_errors import AuthenticationError
 
 __version__ = VERSION
@@ -12,7 +12,7 @@ base_url = "https://api.evervault.com/"
 base_run_url = "https://cage.run/"
 
 
-def run(cage_name, encrypted_data, options = { 'async': False, 'version': None }):
+def run(cage_name, encrypted_data, options = { "async": False, "version": None }):
     return __client().run(cage_name, encrypted_data, options)
 
 
@@ -20,7 +20,7 @@ def encrypt(data):
     return __client().encrypt(data)
 
 
-def encrypt_and_run(cage_name, data, options = { 'async': False, 'version': None }):
+def encrypt_and_run(cage_name, data, options = { "async": False, "version": None }):
     return __client().encrypt_and_run(cage_name, data, options)
 
 

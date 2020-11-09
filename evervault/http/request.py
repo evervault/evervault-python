@@ -33,10 +33,10 @@ class Request(object):
             "Content-Type": "application/json",
             "Api-Key": self.api_key,
         }
-        if 'x-async' in optional_headers:
-            headers['x-async'] = optional_headers['x-async']
-        if 'x-version-id' in optional_headers:
-            headers['x-version-id'] = optional_headers['x-version-id']
+        if "x-async" in optional_headers:
+            headers["x-async"] = optional_headers["x-async"]
+        if "x-version-id" in optional_headers:
+            headers["x-version-id"] = optional_headers["x-version-id"]
         if method in ("POST", "PUT", "DELETE"):
             req_params["data"] = json.dumps(params, cls=json.JSONEncoder)
         elif method == "GET":
