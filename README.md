@@ -75,10 +75,11 @@ evervault.run(cageName = str, payload = dict[, options = dict])
 Encrypt your data and use it as the payload to invoke the cage.
 
 ```python
-evervault.encrypt_and_run(cageName = str, data = dict)
+evervault.encrypt_and_run(cageName = str, data = dict[, options = dict])
 ```
 
 | Parameter | Type | Description |
 | --------- | ---- | ----------- |
 | cageName | str | Name of the cage to be run |
 | data | dict | Data to be encrypted |
+| options | dict | [Options for the cage run.](#Cage-Run-Options) |

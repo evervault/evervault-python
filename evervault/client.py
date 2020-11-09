@@ -24,11 +24,11 @@ class Client(object):
     def encrypt(self, data):
         return self.crypto_client.encrypt_data(self, data)
 
-    def run(self, cage_name, encrypted_data, options):
+    def run(self, cage_name, encrypted_data, options = { "async": False, "version": None }):
         optional_headers = self.__build_cage_run_headers(options)
         return self.post(cage_name, encrypted_data, optional_headers, True)
 
-    def encrypt_and_run(self, cage_name, data, options):
+    def encrypt_and_run(self, cage_name, data, options = { "async": False, "version": None }):
         encrypted_data = self.encrypt(data)
         return self.run(cage_name, encrypted_data, options)
 
