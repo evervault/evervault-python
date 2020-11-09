@@ -12,10 +12,10 @@ class Request(object):
         self.timeout = timeout
         self.api_key = api_key
 
-    def make_request(self, method, url, params=None):
+    def make_request(self, method, url, params=None, optional_headers={}):
         from evervault import __version__
 
-        req_params = self.__build_headers(method, params, __version__)
+        req_params = self.__build_headers(method, params, optional_headers, __version__)
 
         request_object = requests if self.http_session is None else self.http_session
         resp = self.__execute_request(request_object, method, url, req_params)
@@ -24,7 +24,7 @@ class Request(object):
         error_handler.raise_errors_on_failure(resp, parsed_body)
         return parsed_body
 
-    def __build_headers(self, method, params, version):
+    def __build_headers(self, method, params, optional_headers, version):
         req_params = {}
         headers = {
             "User-Agent": "evervault-python/" + version,
@@ -33,6 +33,10 @@ class Request(object):
             "Content-Type": "application/json",
             "Api-Key": self.api_key,
         }
+        if 'x-async' in optional_headers:
+            headers['x-async'] = optional_headers['x-async']
+        if 'x-version-id' in optional_headers:
+            headers['x-version-id'] = optional_headers['x-version-id']
         if method in ("POST", "PUT", "DELETE"):
             req_params["data"] = json.dumps(params, cls=json.JSONEncoder)
         elif method == "GET":

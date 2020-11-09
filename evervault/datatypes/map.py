@@ -9,3 +9,11 @@ def map_header_type(data):
         return "string"
     elif isinstance(data, bool):
         return "boolean"
+
+def ensure_is_integer(data):
+    try:
+        float(data)
+    except TypeError:
+        return False
+    else:
+        return float(data).is_integer()

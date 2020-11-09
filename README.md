@@ -37,7 +37,7 @@ result = evervault.encrypt_and_run(<CAGE-NAME>, { 'hello': 'World!' })
 
 ## API Reference
 
-#### evervault.encrypt
+### evervault.encrypt
 
 Encrypt lets you encrypt data for use in any of your evervault cages. You can use it to store encrypted data to be used in a cage at another time.
 
@@ -49,20 +49,28 @@ evervault.encrypt(data = dict | str)
 | --------- | ---- | ----------- |
 | data | dict or str | Data to be encrypted |
 
-#### evervault.run
+### evervault.run
 
 Run lets you invoke your evervault cages with a given payload.
 
 ```python
-evervault.run(cageName = str, payload = dict)
+evervault.run(cageName = str, payload = dict[, options = dict])
 ```
 
 | Parameter | Type | Description |
 | --------- | ---- | ----------- |
 | cageName | str | Name of the cage to be run |
 | data | dict | Payload for the cage |
+| options | dict | [Options for the cage run.](#Cage-Run-Options) |
 
-#### evervault.encryptAndRun
+#### Cage Run Options
+
+| Option  | Type      | Default   | Description                                                                        |
+| ------- | --------- | --------- | ---------------------------------------------------------------------------------- |
+| async   | `Boolean` | `False` | Run your Cage in async mode. Async Cage runs will be queued for processing.          |
+| version | `Integer` | `None`  | Specify the version of your Cage to run. By default, the latest version will be run. |
+
+### evervault.encryptAndRun
 
 Encrypt your data and use it as the payload to invoke the cage.
 

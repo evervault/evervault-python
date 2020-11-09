@@ -1,6 +1,6 @@
 from setuptools import setup
 from setuptools import find_packages
-from evervault.version import VERSION
+from version import VERSION
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
