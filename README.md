@@ -51,7 +51,7 @@ evervault.encrypt(data = dict | str)
 
 ### evervault.run
 
-Run lets you invoke your evervault cages with a given payload.
+Run lets you invoke your evervault Cages with a given payload.
 
 ```python
 evervault.run(cageName = str, payload = dict[, options = dict])
@@ -59,9 +59,9 @@ evervault.run(cageName = str, payload = dict[, options = dict])
 
 | Parameter | Type | Description |
 | --------- | ---- | ----------- |
-| cageName | `str` | Name of the cage to be run |
-| data | `dict` | Payload for the cage |
-| options | `dict` | [Options for the cage run.](#Cage-Run-Options) |
+| cageName | `str` | Name of the Cage to be run |
+| data | `dict` | Payload for the Cage |
+| options | `dict` | [Options for the Cage run.](#Cage-Run-Options) |
 
 #### Cage Run Options
 
@@ -72,7 +72,7 @@ evervault.run(cageName = str, payload = dict[, options = dict])
 
 ### evervault.encryptAndRun
 
-Encrypt your data and use it as the payload to invoke the cage.
+Encrypt your data and use it as the payload to invoke the Cage.
 
 ```python
 evervault.encrypt_and_run(cageName = str, data = dict[, options = dict])
@@ -80,6 +80,6 @@ evervault.encrypt_and_run(cageName = str, data = dict[, options = dict])
 
 | Parameter | Type | Description |
 | --------- | ---- | ----------- |
-| cageName | `str` | Name of the cage to be run |
+| cageName | `str` | Name of the Cage to be run |
 | data | `dict` | Data to be encrypted |
-| options | `dict` | [Options for the cage run.](#Cage-Run-Options) |
+| options | `dict` | [Options for the Cage run.](#Cage-Run-Options) |
