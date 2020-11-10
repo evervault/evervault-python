@@ -61,7 +61,8 @@ class Client(object):
                 cage_run_headers['x-async'] = 'true'
             options.pop('async', None)
         if 'version' in options:
-            if ensure_is_integer(options['version'])
+            if ensure_is_integer(options['version']):
                 cage_run_headers['x-version-id'] = str(int(float(options['version'])))
             options.pop('version', None)
-        return cage_run_headers.update(options)
+        cage_run_headers.update(options)
+        return cage_run_headers
