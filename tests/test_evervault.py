@@ -42,6 +42,20 @@ class TestEvervault(unittest.TestCase):
         assert request.last_request.json() == {"name": "testing"}
 
     @requests_mock.Mocker()
+    def test_run_with_options(self, m):
+        request = m.post(
+            "https://cage.run/testing-cage",
+            json={"status": "queued"},
+            request_headers={ "Api-Key": "testing", "x-version-id": "2", "x-async": "true" },
+        )
+        resp = self.evervault.run("testing-cage", {"name": "testing"}, {"async": True, "version": 2})
+        assert request.called
+        assert resp["status"] == "queued"
+        assert request.last_request.json() == {"name": "testing"}
+        assert request.last_request.headers["x-async"] == "true"
+        assert request.last_request.headers["x-version-id"] == "2"
+
+    @requests_mock.Mocker()
     def test_encrypt_and_run(self, m):
         self.mock_fetch_cage_key(m)
         request = m.post(
@@ -54,6 +68,20 @@ class TestEvervault(unittest.TestCase):
         assert resp["result"] == "there was an attempt"
         assert request.last_request.json() != {"name": "testing"}
         assert "name" in request.last_request.json()
+
+    @requests_mock.Mocker()
+    def test_encrypt_and_run_with_options(self, m):
+        request = m.post(
+            "https://cage.run/testing-cage",
+            json={"status": "queued"},
+            request_headers={ "Api-Key": "testing", "x-version-id": "2", "x-async": "true" },
+        )
+        resp = self.evervault.encrypt_and_run("testing-cage", {"name": "testing"}, {"async": True, "version": 2})
+        assert request.called
+        assert resp["status"] == "queued"
+        assert request.last_request.json() != {"name": "testing"}
+        assert request.last_request.headers["x-async"] == "true"
+        assert request.last_request.headers["x-version-id"] == "2"
 
     def mock_fetch_cage_key(self, m):
         # Create private key
