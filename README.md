@@ -40,7 +40,7 @@ result = evervault.encrypt_and_run(<CAGE-NAME>, { 'hello': 'World!' })
 
 ## Reference
 
-At present, there are two functions available in the Python SDK: `evervault.encrypt()`, `evervault.run()`, and `evervault.encryptAndRun()`.
+The Evervault Python SDK exposes four functions.
 
 ### evervault.encrypt()
 
@@ -88,6 +88,10 @@ evervault.encrypt_and_run(cageName = str, data = dict[, options = dict])
 | cageName | `str` | Name of the Cage to be run |
 | data | `dict` | Data to be encrypted |
 | options | `dict` | [Options for the Cage run.](#Cage-Run-Options) |
+
+### evervault.cage_list()
+
+TODO
 
 ## Contributing
 
