@@ -1,6 +1,4 @@
-<p>
-  <a href="https://welcome.evervault.com/"><img src="res/logo.svg"></a>
-</p>
+[![Evervault](https://evervault.com/evervault.svg)](https://welcome.evervault.com/)
 
 <p>
   <a href="https://github.com/evervault/evervault-python/actions?query=workflow%3Aevervault-unit-tests"><img alt="Evervault unit tests status" src="https://github.com/evervault/evervault-python/workflows/evervault-unit-tests/badge.svg"></a>
