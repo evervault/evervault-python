@@ -89,9 +89,9 @@ evervault.encrypt_and_run(cageName = str, data = dict[, options = dict])
 | data | `dict` | Data to be encrypted |
 | options | `dict` | [Options for the Cage run.](#Cage-Run-Options) |
 
-### evervault.cage_list()
+### evervault.cages()
 
-TODO
+Return a `dict` of your team's Cage objects in `dict` format, with `cage-name` as keys.
 
 ## Contributing
 
