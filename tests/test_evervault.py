@@ -159,9 +159,7 @@ class TestEvervault(unittest.TestCase):
                 info=None,
                 backend=default_backend()
             ).derive(shared_secret)
-        print(len(derived_key))
-        print(len(encrypted_data))
-        print(len(keyIv))
+        
         aesgcm = AESGCM(derived_key)
         decrypted_data = aesgcm.decrypt(
             keyIv,
