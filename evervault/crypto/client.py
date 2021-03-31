@@ -60,9 +60,9 @@ class Client(object):
         
         return self.__format(
             header_type,
-            b64encode(iv).decode("utf8"),
-            b64encode(self.generated_ecdh_key).decode("utf8"),
-            b64encode(encrypted_buffer).decode("utf8"),
+            b64encode(iv).decode("utf"),
+            b64encode(self.generated_ecdh_key).decode("utf"),
+            b64encode(encrypted_buffer).decode("utf"),
         )
 
     def __format(self, header, iv, public_key, encrypted_payload):

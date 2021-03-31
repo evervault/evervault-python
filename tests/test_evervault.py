@@ -2,11 +2,17 @@ import unittest
 import pytest
 import evervault
 import requests_mock
+import base64
+from evervault.crypto.key import Key
 from unittest.mock import patch, MagicMock
 from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import ec
+from cryptography.hazmat.primitives.kdf.hkdf import HKDF
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+from cryptography.hazmat.primitives.asymmetric.ec import EllipticCurvePublicKey
 
 class TestEvervault(unittest.TestCase):
     def setUp(self):
@@ -25,9 +31,11 @@ class TestEvervault(unittest.TestCase):
 
     @requests_mock.Mocker()
     def test_encrypt_strings(self, m):
-        self.mock_fetch_cage_key(m)
+        public_key, private_key = self.build_keys()
+        self.mock_fetch_cage_key(m, public_key)
         encrypted_data = self.evervault.encrypt("name")
         print(encrypted_data)
+        self.decrypt_with_key(private_key, encrypted_data)
         assert encrypted_data != "name"
 
     # @requests_mock.Mocker()
@@ -84,7 +92,7 @@ class TestEvervault(unittest.TestCase):
     #     assert request.last_request.headers["x-async"] == "true"
     #     assert request.last_request.headers["x-version-id"] == "2"
 
-    def mock_fetch_cage_key(self, m):
+    def mock_fetch_cage_key(self, m, ecdh_public_key):
         # Create private key
         private_key = rsa.generate_private_key(
             public_exponent=65537, key_size=2048, backend=default_backend()
@@ -105,6 +113,70 @@ class TestEvervault(unittest.TestCase):
                     encoding=serialization.Encoding.PEM,
                     format=serialization.PublicFormat.SubjectPublicKeyInfo,
                 ).decode("utf8"),
-                "ecdhKey": "A9MV0dzNHzIMtmw0r6ZlKMJ0cnTVK5qlBKqdSPqZ8O7h"
+                "ecdhKey": ecdh_public_key.decode("utf8")
             },
         )
+    
+    def build_keys(self):
+        ecdh_private_key = ec.generate_private_key(
+            ec.SECP256K1()
+        )
+
+        public_key = ecdh_private_key.public_key()
+        key = public_key.public_bytes(
+            encoding=serialization.Encoding.X962,
+            format=serialization.PublicFormat.CompressedPoint
+        )
+        pk = ecdh_private_key.private_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PrivateFormat.PKCS8,
+            encryption_algorithm=serialization.NoEncryption()
+        )
+        
+        return (base64.b64encode(key), pk)
+
+    def decrypt_with_key(self, private_key, data):
+        split_data = data.split(":")
+        keyIv = self.get_iv(split_data)
+        incoming_public_key = self.get_public_key(split_data)
+        encrypted_data = self.get_encrypted_data(split_data)
+        incoming_public_key = EllipticCurvePublicKey.from_encoded_point(ec.SECP256K1(), self.get_public_key(split_data))
+        
+        private_key = serialization.load_pem_private_key(
+            private_key,
+            password=None
+        )
+
+        shared_secret = private_key.exchange(
+            ec.ECDH(),
+            incoming_public_key
+        )
+
+        derived_key = HKDF(
+                algorithm=hashes.SHA256(),
+                length=32,
+                salt=None,
+                info=None,
+                backend=default_backend()
+            ).derive(shared_secret)
+        print(len(derived_key))
+        print(len(encrypted_data))
+        print(len(keyIv))
+        aesgcm = AESGCM(derived_key)
+        decrypted_data = aesgcm.decrypt(
+            keyIv,
+            encrypted_data,
+            None
+        )
+        print(decrypted_data)
+
+    def get_iv(self, data):
+        return base64.b64decode(data[1])
+
+    def get_public_key(self, data):
+        return base64.b64decode(data[2])
+
+    def get_encrypted_data(self, data):
+        b64_string = data[3]
+        b64_string += "=" * ((4 - len(b64_string) % 4) % 4)
+        return base64.b64decode(b64_string)

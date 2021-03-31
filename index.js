@@ -2,7 +2,7 @@ const crypto = require('crypto');
 
 const datatypes = ['string', 'number', 'bignumber', 'boolean'];
 
-function decrypt(payload="ev:Gujfs5yEBBkbjLgM:Al5SNFIycUnC/QaDi+sIb8FT33DisDs99OaRbTIMghN8:4mgSWVSyqkrHM6nG8TNNbNwHno8:$") {
+function decrypt(payload="ev:FsZZjYZgG4uvAUBY:AmGiQTj8tOB/pXxHn3J+PLX1HpGaYcgymJkcGCUsNp8U:CrqvlV4gi9ZYfv0liuED1E+X9GtD:$") {
   const sections = payload.split(':');
   const typ = {
     datatype: datatypes.includes(sections[1]) ? sections[1] : 'string',
@@ -18,7 +18,7 @@ function decrypt(payload="ev:Gujfs5yEBBkbjLgM:Al5SNFIycUnC/QaDi+sIb8FT33DisDs99O
   const decipherer = crypto.createDecipheriv(
     'aes-256-gcm',
     derivedSecret,
-    typ.keyIv
+    Buffer.from(typ.keyIv, 'base64')
   );
   decipherer.setAuthTag(authTag);
   let decryptedData = decipherer.update(
