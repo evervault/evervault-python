@@ -1,9 +1,9 @@
 import unittest
-import evervault
 import requests_mock
 import base64
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import ec
+import evervault
 
 class TestEvervault(unittest.TestCase):
     def setUp(self):
@@ -15,21 +15,21 @@ class TestEvervault(unittest.TestCase):
         self.evervault = None
 
     @requests_mock.Mocker()
-    def test_encrypt_dicts(self, m):
-        self.mock_fetch_cage_key(m)
+    def test_encrypt_dicts(self, mock_request):
+        self.mock_fetch_cage_key(mock_request)
         encrypted_data = self.evervault.encrypt({"name": "testing"})
         assert encrypted_data != {"name": "testing"}
         assert "name" in encrypted_data
 
     @requests_mock.Mocker()
-    def test_encrypt_strings(self, m):
-        self.mock_fetch_cage_key(m)
+    def test_encrypt_strings(self, mock_request):
+        self.mock_fetch_cage_key(mock_request)
         encrypted_data = self.evervault.encrypt("name")
         assert encrypted_data != "name"
 
     @requests_mock.Mocker()
-    def test_run(self, m):
-        request = m.post(
+    def test_run(self, mock_request):
+        request = mock_request.post(
             "https://cage.run/testing-cage",
             json={"result": "there was an attempt"},
             request_headers={"Api-Key": "testing"},
@@ -40,8 +40,8 @@ class TestEvervault(unittest.TestCase):
         assert request.last_request.json() == {"name": "testing"}
 
     @requests_mock.Mocker()
-    def test_run_with_options(self, m):
-        request = m.post(
+    def test_run_with_options(self, mock_request):
+        request = mock_request.post(
             "https://cage.run/testing-cage",
             json={"status": "queued"},
             request_headers={ "Api-Key": "testing", "x-version-id": "2", "x-async": "true" },
@@ -54,9 +54,9 @@ class TestEvervault(unittest.TestCase):
         assert request.last_request.headers["x-version-id"] == "2"
 
     @requests_mock.Mocker()
-    def test_encrypt_and_run(self, m):
-        self.mock_fetch_cage_key(m)
-        request = m.post(
+    def test_encrypt_and_run(self, mock_request):
+        self.mock_fetch_cage_key(mock_request)
+        request = mock_request.post(
             "https://cage.run/testing-cage",
             json={"result": "there was an attempt"},
             request_headers={"Api-Key": "testing"},
@@ -68,8 +68,8 @@ class TestEvervault(unittest.TestCase):
         assert "name" in request.last_request.json()
 
     @requests_mock.Mocker()
-    def test_encrypt_and_run_with_options(self, m):
-        request = m.post(
+    def test_encrypt_and_run_with_options(self, mock_request):
+        request = mock_request.post(
             "https://cage.run/testing-cage",
             json={"status": "queued"},
             request_headers={ "Api-Key": "testing", "x-version-id": "2", "x-async": "true" },
@@ -81,8 +81,8 @@ class TestEvervault(unittest.TestCase):
         assert request.last_request.headers["x-async"] == "true"
         assert request.last_request.headers["x-version-id"] == "2"
 
-    def mock_fetch_cage_key(self, m):
-        m.get(
+    def mock_fetch_cage_key(self, mock_request):
+        mock_request.get(
             "https://api.evervault.com/cages/key",
             json={
                 "ecdhKey": self.public_key.decode("utf8")
