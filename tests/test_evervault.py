@@ -1,37 +1,35 @@
 import unittest
-import pytest
-import evervault
 import requests_mock
-from unittest.mock import patch, MagicMock
-from cryptography.hazmat.primitives.asymmetric import rsa
-from cryptography.hazmat.backends import default_backend
+import base64
 from cryptography.hazmat.primitives import serialization
-
+from cryptography.hazmat.primitives.asymmetric import ec
+import evervault
 
 class TestEvervault(unittest.TestCase):
     def setUp(self):
         self.evervault = evervault
         self.evervault.api_key = "testing"
+        self.public_key = self.build_keys()
 
     def tearDown(self):
         self.evervault = None
 
     @requests_mock.Mocker()
-    def test_encrypt_dicts(self, m):
-        self.mock_fetch_cage_key(m)
+    def test_encrypt_dicts(self, mock_request):
+        self.mock_fetch_cage_key(mock_request)
         encrypted_data = self.evervault.encrypt({"name": "testing"})
         assert encrypted_data != {"name": "testing"}
         assert "name" in encrypted_data
 
     @requests_mock.Mocker()
-    def test_encrypt_strings(self, m):
-        self.mock_fetch_cage_key(m)
+    def test_encrypt_strings(self, mock_request):
+        self.mock_fetch_cage_key(mock_request)
         encrypted_data = self.evervault.encrypt("name")
         assert encrypted_data != "name"
 
     @requests_mock.Mocker()
-    def test_run(self, m):
-        request = m.post(
+    def test_run(self, mock_request):
+        request = mock_request.post(
             "https://cage.run/testing-cage",
             json={"result": "there was an attempt"},
             request_headers={"Api-Key": "testing"},
@@ -42,8 +40,8 @@ class TestEvervault(unittest.TestCase):
         assert request.last_request.json() == {"name": "testing"}
 
     @requests_mock.Mocker()
-    def test_run_with_options(self, m):
-        request = m.post(
+    def test_run_with_options(self, mock_request):
+        request = mock_request.post(
             "https://cage.run/testing-cage",
             json={"status": "queued"},
             request_headers={ "Api-Key": "testing", "x-version-id": "2", "x-async": "true" },
@@ -56,9 +54,9 @@ class TestEvervault(unittest.TestCase):
         assert request.last_request.headers["x-version-id"] == "2"
 
     @requests_mock.Mocker()
-    def test_encrypt_and_run(self, m):
-        self.mock_fetch_cage_key(m)
-        request = m.post(
+    def test_encrypt_and_run(self, mock_request):
+        self.mock_fetch_cage_key(mock_request)
+        request = mock_request.post(
             "https://cage.run/testing-cage",
             json={"result": "there was an attempt"},
             request_headers={"Api-Key": "testing"},
@@ -70,8 +68,8 @@ class TestEvervault(unittest.TestCase):
         assert "name" in request.last_request.json()
 
     @requests_mock.Mocker()
-    def test_encrypt_and_run_with_options(self, m):
-        request = m.post(
+    def test_encrypt_and_run_with_options(self, mock_request):
+        request = mock_request.post(
             "https://cage.run/testing-cage",
             json={"status": "queued"},
             request_headers={ "Api-Key": "testing", "x-version-id": "2", "x-async": "true" },
@@ -83,21 +81,23 @@ class TestEvervault(unittest.TestCase):
         assert request.last_request.headers["x-async"] == "true"
         assert request.last_request.headers["x-version-id"] == "2"
 
-    def mock_fetch_cage_key(self, m):
-        # Create private key
-        private_key = rsa.generate_private_key(
-            public_exponent=65537, key_size=2048, backend=default_backend()
-        )
-
-        # Create public key
-        public_key = private_key.public_key()
-
-        m.get(
+    def mock_fetch_cage_key(self, mock_request):
+        mock_request.get(
             "https://api.evervault.com/cages/key",
             json={
-                "key": public_key.public_bytes(
-                    encoding=serialization.Encoding.PEM,
-                    format=serialization.PublicFormat.SubjectPublicKeyInfo,
-                ).decode("utf8")
+                "ecdhKey": self.public_key.decode("utf8")
             },
         )
+    
+    def build_keys(self):
+        ecdh_private_key = ec.generate_private_key(
+            ec.SECP256K1()
+        )
+
+        public_key = ecdh_private_key.public_key()
+        key = public_key.public_bytes(
+            encoding=serialization.Encoding.X962,
+            format=serialization.PublicFormat.CompressedPoint
+        )
+        
+        return (base64.b64encode(key))
