@@ -1,21 +1,10 @@
-from .key import Key
 from ..errors.evervault_errors import UndefinedDataError, InvalidPublicKeyError, MissingTeamEcdhKey
 from ..datatypes.map import map_header_type
-from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives import serialization
-from Crypto.Cipher import AES
-from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives.asymmetric import ec
-from cryptography.hazmat.primitives.kdf.hkdf import HKDF
-from cryptography.hazmat.primitives.asymmetric.ec import EllipticCurvePublicKey, EllipticCurve
+from cryptography.hazmat.primitives.asymmetric.ec import EllipticCurvePublicKey
 from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
-from cryptography.hazmat.primitives.ciphers import Cipher, modes, algorithms
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from secrets import token_bytes
-from base64 import b64encode
-import json
-import uuid
 import base64
 
 BS = 32
@@ -60,34 +49,17 @@ class Client(object):
         
         return self.__format(
             header_type,
-            b64encode(iv).decode("utf"),
-            b64encode(self.generated_ecdh_key).decode("utf"),
-            b64encode(encrypted_bytes).decode("utf"),
+            base64.b64encode(iv).decode("utf"),
+            base64.b64encode(self.generated_ecdh_key).decode("utf"),
+            base64.b64encode(encrypted_bytes).decode("utf"),
         )
 
     def __format(self, header, iv, public_key, encrypted_payload):
         prefix = ":{header}" if header != "string" else ""
         return f"ev{prefix}:{self.__base_64_remove_padding(iv)}:{self.__base_64_remove_padding(public_key)}:{self.__base_64_remove_padding(encrypted_payload)}:$"
 
-    def __base_64_to_base_64_url(self, base_64_string):
-        return base_64_string.replace("+", "-").replace("/", "_")
-
-    def __utf8_to_base_64_url(self, data):
-        b64_string = b64encode(data.encode("utf8")).decode("utf8")
-        return self.__base_64_to_base_64_url(b64_string)
-
     def __base_64_remove_padding(self, data):
         return data.rstrip("=")
-
-    def __public_encrypt(self, root_key):
-        return self.public_key.encrypt(
-            root_key,
-            padding.OAEP(
-                mgf=padding.MGF1(algorithm=hashes.SHA1()),
-                algorithm=hashes.SHA1(),
-                label=None,
-            ),
-        )
 
     def __encryptable_data(self, data):
         return data is not None and (

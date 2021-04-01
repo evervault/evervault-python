@@ -1,18 +1,9 @@
 import unittest
-import pytest
 import evervault
 import requests_mock
 import base64
-from evervault.crypto.key import Key
-from unittest.mock import patch, MagicMock
-from cryptography.hazmat.primitives.asymmetric import rsa
-from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import ec
-from cryptography.hazmat.primitives.kdf.hkdf import HKDF
-from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives.ciphers.aead import AESGCM
-from cryptography.hazmat.primitives.asymmetric.ec import EllipticCurvePublicKey
 
 class TestEvervault(unittest.TestCase):
     def setUp(self):
@@ -110,14 +101,3 @@ class TestEvervault(unittest.TestCase):
         )
         
         return (base64.b64encode(key))
-
-    def get_iv(self, data):
-        return base64.b64decode(data[1])
-
-    def get_public_key(self, data):
-        return base64.b64decode(data[2])
-
-    def get_encrypted_data(self, data):
-        b64_string = data[3]
-        b64_string += "=" * ((4 - len(b64_string) % 4) % 4)
-        return base64.b64decode(b64_string)
