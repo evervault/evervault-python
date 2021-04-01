@@ -18,102 +18,83 @@ class TestEvervault(unittest.TestCase):
     def setUp(self):
         self.evervault = evervault
         self.evervault.api_key = "testing"
+        self.public_key = self.build_keys()
 
     def tearDown(self):
         self.evervault = None
 
-    # @requests_mock.Mocker()
-    # def test_encrypt_dicts(self, m):
-    #     self.mock_fetch_cage_key(m)
-    #     encrypted_data = self.evervault.encrypt({"name": "testing"})
-    #     assert encrypted_data != {"name": "testing"}
-    #     assert "name" in encrypted_data
+    @requests_mock.Mocker()
+    def test_encrypt_dicts(self, m):
+        self.mock_fetch_cage_key(m)
+        encrypted_data = self.evervault.encrypt({"name": "testing"})
+        assert encrypted_data != {"name": "testing"}
+        assert "name" in encrypted_data
 
     @requests_mock.Mocker()
     def test_encrypt_strings(self, m):
-        public_key, private_key = self.build_keys()
-        self.mock_fetch_cage_key(m, public_key)
+        self.mock_fetch_cage_key(m)
         encrypted_data = self.evervault.encrypt("name")
-        print(encrypted_data)
-        self.decrypt_with_key(private_key, encrypted_data)
         assert encrypted_data != "name"
 
-    # @requests_mock.Mocker()
-    # def test_run(self, m):
-    #     request = m.post(
-    #         "https://cage.run/testing-cage",
-    #         json={"result": "there was an attempt"},
-    #         request_headers={"Api-Key": "testing"},
-    #     )
-    #     resp = self.evervault.run("testing-cage", {"name": "testing"})
-    #     assert request.called
-    #     assert resp["result"] == "there was an attempt"
-    #     assert request.last_request.json() == {"name": "testing"}
-
-    # @requests_mock.Mocker()
-    # def test_run_with_options(self, m):
-    #     request = m.post(
-    #         "https://cage.run/testing-cage",
-    #         json={"status": "queued"},
-    #         request_headers={ "Api-Key": "testing", "x-version-id": "2", "x-async": "true" },
-    #     )
-    #     resp = self.evervault.run("testing-cage", {"name": "testing"}, {"async": True, "version": 2})
-    #     assert request.called
-    #     assert resp["status"] == "queued"
-    #     assert request.last_request.json() == {"name": "testing"}
-    #     assert request.last_request.headers["x-async"] == "true"
-    #     assert request.last_request.headers["x-version-id"] == "2"
-
-    # @requests_mock.Mocker()
-    # def test_encrypt_and_run(self, m):
-    #     self.mock_fetch_cage_key(m)
-    #     request = m.post(
-    #         "https://cage.run/testing-cage",
-    #         json={"result": "there was an attempt"},
-    #         request_headers={"Api-Key": "testing"},
-    #     )
-    #     resp = self.evervault.encrypt_and_run("testing-cage", {"name": "testing"})
-    #     assert request.called
-    #     assert resp["result"] == "there was an attempt"
-    #     assert request.last_request.json() != {"name": "testing"}
-    #     assert "name" in request.last_request.json()
-
-    # @requests_mock.Mocker()
-    # def test_encrypt_and_run_with_options(self, m):
-    #     request = m.post(
-    #         "https://cage.run/testing-cage",
-    #         json={"status": "queued"},
-    #         request_headers={ "Api-Key": "testing", "x-version-id": "2", "x-async": "true" },
-    #     )
-    #     resp = self.evervault.encrypt_and_run("testing-cage", {"name": "testing"}, {"async": True, "version": 2})
-    #     assert request.called
-    #     assert resp["status"] == "queued"
-    #     assert request.last_request.json() != {"name": "testing"}
-    #     assert request.last_request.headers["x-async"] == "true"
-    #     assert request.last_request.headers["x-version-id"] == "2"
-
-    def mock_fetch_cage_key(self, m, ecdh_public_key):
-        # Create private key
-        private_key = rsa.generate_private_key(
-            public_exponent=65537, key_size=2048, backend=default_backend()
+    @requests_mock.Mocker()
+    def test_run(self, m):
+        request = m.post(
+            "https://cage.run/testing-cage",
+            json={"result": "there was an attempt"},
+            request_headers={"Api-Key": "testing"},
         )
+        resp = self.evervault.run("testing-cage", {"name": "testing"})
+        assert request.called
+        assert resp["result"] == "there was an attempt"
+        assert request.last_request.json() == {"name": "testing"}
 
-        ecdh_key = ec.generate_private_key(
-            ec.SECP256K1()
+    @requests_mock.Mocker()
+    def test_run_with_options(self, m):
+        request = m.post(
+            "https://cage.run/testing-cage",
+            json={"status": "queued"},
+            request_headers={ "Api-Key": "testing", "x-version-id": "2", "x-async": "true" },
         )
-        
-        # Create public key
-        public_key = private_key.public_key()
-        public_ecdh_key = ecdh_key.public_key()
- 
+        resp = self.evervault.run("testing-cage", {"name": "testing"}, {"async": True, "version": 2})
+        assert request.called
+        assert resp["status"] == "queued"
+        assert request.last_request.json() == {"name": "testing"}
+        assert request.last_request.headers["x-async"] == "true"
+        assert request.last_request.headers["x-version-id"] == "2"
+
+    @requests_mock.Mocker()
+    def test_encrypt_and_run(self, m):
+        self.mock_fetch_cage_key(m)
+        request = m.post(
+            "https://cage.run/testing-cage",
+            json={"result": "there was an attempt"},
+            request_headers={"Api-Key": "testing"},
+        )
+        resp = self.evervault.encrypt_and_run("testing-cage", {"name": "testing"})
+        assert request.called
+        assert resp["result"] == "there was an attempt"
+        assert request.last_request.json() != {"name": "testing"}
+        assert "name" in request.last_request.json()
+
+    @requests_mock.Mocker()
+    def test_encrypt_and_run_with_options(self, m):
+        request = m.post(
+            "https://cage.run/testing-cage",
+            json={"status": "queued"},
+            request_headers={ "Api-Key": "testing", "x-version-id": "2", "x-async": "true" },
+        )
+        resp = self.evervault.encrypt_and_run("testing-cage", {"name": "testing"}, {"async": True, "version": 2})
+        assert request.called
+        assert resp["status"] == "queued"
+        assert request.last_request.json() != {"name": "testing"}
+        assert request.last_request.headers["x-async"] == "true"
+        assert request.last_request.headers["x-version-id"] == "2"
+
+    def mock_fetch_cage_key(self, m):
         m.get(
             "https://api.evervault.com/cages/key",
             json={
-                "key": public_key.public_bytes(
-                    encoding=serialization.Encoding.PEM,
-                    format=serialization.PublicFormat.SubjectPublicKeyInfo,
-                ).decode("utf8"),
-                "ecdhKey": ecdh_public_key.decode("utf8")
+                "ecdhKey": self.public_key.decode("utf8")
             },
         )
     
@@ -127,46 +108,8 @@ class TestEvervault(unittest.TestCase):
             encoding=serialization.Encoding.X962,
             format=serialization.PublicFormat.CompressedPoint
         )
-        pk = ecdh_private_key.private_bytes(
-            encoding=serialization.Encoding.PEM,
-            format=serialization.PrivateFormat.PKCS8,
-            encryption_algorithm=serialization.NoEncryption()
-        )
         
-        return (base64.b64encode(key), pk)
-
-    def decrypt_with_key(self, private_key, data):
-        split_data = data.split(":")
-        keyIv = self.get_iv(split_data)
-        incoming_public_key = self.get_public_key(split_data)
-        encrypted_data = self.get_encrypted_data(split_data)
-        incoming_public_key = EllipticCurvePublicKey.from_encoded_point(ec.SECP256K1(), self.get_public_key(split_data))
-        
-        private_key = serialization.load_pem_private_key(
-            private_key,
-            password=None
-        )
-
-        shared_secret = private_key.exchange(
-            ec.ECDH(),
-            incoming_public_key
-        )
-
-        derived_key = HKDF(
-                algorithm=hashes.SHA256(),
-                length=32,
-                salt=None,
-                info=None,
-                backend=default_backend()
-            ).derive(shared_secret)
-        
-        aesgcm = AESGCM(derived_key)
-        decrypted_data = aesgcm.decrypt(
-            keyIv,
-            encrypted_data,
-            None
-        )
-        print(decrypted_data)
+        return (base64.b64encode(key))
 
     def get_iv(self, data):
         return base64.b64decode(data[1])
