@@ -1,109 +1,128 @@
-from .key import Key
-from ..errors.evervault_errors import UndefinedDataError, InvalidPublicKeyError
+from ..errors.evervault_errors import UndefinedDataError, InvalidPublicKeyError, MissingTeamEcdhKey, UnknownEncryptType
 from ..datatypes.map import map_header_type
-from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives import serialization
-from Crypto.Cipher import AES
-from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives.asymmetric import padding
+from cryptography.hazmat.primitives.asymmetric import ec
+from cryptography.hazmat.primitives.asymmetric.ec import EllipticCurvePublicKey
+from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
+from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from secrets import token_bytes
-from base64 import b64encode
-import json
-import uuid
+import base64
 
 BS = 32
 
 
 class Client(object):
     def __init__(self):
-        self.cage_key = None
         self.public_key = None
+        self.team_ecdh_key = None
+        self.generated_ecdh_key = None
+        self.shared_key = None
 
     def encrypt_data(self, fetch, data):
         if data is None:
             raise UndefinedDataError("Data not defined")
         self.__fetch_cage_key(fetch)
-
-        if self.cage_key is None or type(self.cage_key) != str:
-            raise InvalidPublicKeyError("Provided public key is invalid")
-        if type(data) == dict:
-            return self.__encrypt_object(data)
+        self.shared_key = self.__derive_shared_key()
+        
+        if self.shared_key is None or type(self.shared_key) != bytes:
+            raise InvalidPublicKeyError("Provided EC compressed point is invalid")        
+        
+        if type(data) == dict or type(data) == list or type(data) == set:
+            return self.__traverse_and_encrypt(data)
         elif self.__encryptable_data(data):
             return self.__encrypt_string(data)
+        else:
+            raise UnknownEncryptType("Cannot encrypt unsupported type")
 
-    def __encrypt_object(self, data):
-        if self.__encryptable_data(data):
-            return self.__encrypt_string(data)
+    def __traverse_and_encrypt(self, data):
+        if type(data) == list:
+            for idx, item in enumerate(data):
+                if not self.__encryptable_data(item):
+                    data[idx] = self.__traverse_and_encrypt(item)
+                else:
+                    data[idx] = self.__encrypt_string(item)
+            return data
         elif type(data) == dict:
-            encrypted_data = {}
-            for key, value in data.items():
-                encrypted_data[key] = self.__encrypt_object(value)
-            return encrypted_data
+            return self.__encrypt_object(data)
+        elif type(data) == set:
+            return self.__encrypt_set(data)    
+        elif self.__encryptable_data(data):
+            return self.__encrypt_string(data)
+    
+    def __encrypt_object(self, data):
+        encrypted_data = {}
+        for key, value in data.items():
+            if self.__encryptable_data(value):
+                encrypted_data[key] = self.__encrypt_string(value)
+            else:
+                encrypted_data[key] = self.__traverse_and_encrypt(value)
+        return encrypted_data
+
+    def __encrypt_set(self, data):
+        encrypted_set = set()
+        for item in data:
+            if self.__encryptable_data(item):
+                encrypted_set.add(self.__encrypt_string(item))
+            else:
+                encrypted_set.add(self.__traverse_and_encrypt(item))
+        return encrypted_set
+
+    def __encrypt_string(self, data):
+        header_type = map_header_type(data)
+        coerced_data = self.__coerce_type(data) 
+        iv = token_bytes(12)
+        aesgcm = AESGCM(self.shared_key)
+        
+        encrypted_bytes = aesgcm.encrypt(iv, bytes(coerced_data, "utf8"), None)
+        
+        return self.__format(
+            header_type,
+            base64.b64encode(iv).decode("utf"),
+            base64.b64encode(self.generated_ecdh_key).decode("utf"),
+            base64.b64encode(encrypted_bytes).decode("utf"),
+        )
+
+    def __coerce_type(self, data):
+        if type(data) == bool:
+            return str(int(data))
+        elif type(data) == int or type(data) == float:
+            return str(data)
         else:
             return data
 
-    def __encrypt_string(self, data):
-        iv = token_bytes(int(BS / 2))
-        root_key = token_bytes(BS)
-        aes = AES.new(root_key, AES.MODE_GCM, iv)
-        encrypted_string, auth_tag = aes.encrypt_and_digest(data.encode("utf8"))
+    def __format(self, header, iv, public_key, encrypted_payload):
+        prefix = f":{header}" if header != "string" else ""
+        return f"ev{prefix}:{self.__base_64_remove_padding(iv)}:{self.__base_64_remove_padding(public_key)}:{self.__base_64_remove_padding(encrypted_payload)}:$"
 
-        encrypted_buffer = encrypted_string + auth_tag
-        encrypted_key = self.__public_encrypt(root_key)
-        header_type = map_header_type(data)
-
-        return self.__format(
-            header_type,
-            b64encode(encrypted_key).decode("utf"),
-            b64encode(encrypted_buffer).decode("utf"),
-            b64encode(iv).decode("utf"),
-        )
-
-    def __format(self, header, encrypted_key, encrypted_buffer, iv):
-        header = self.__utf8_to_base_64_url(
-            json.dumps({"iss": "evervault", "version": 1, "datatype": header})
-        )
-        payload = self.__utf8_to_base_64_url(
-            json.dumps(
-                {
-                    "cageData": encrypted_key,
-                    "keyIv": iv,
-                    "sharedEncryptedData": encrypted_buffer,
-                }
-            )
-        )
-        return f"{header}.{payload}.{str(uuid.uuid4())}"
-
-    def __base_64_to_base_64_url(self, base_64_string):
-        return base_64_string.replace("+", "-").replace("/", "_")
-
-    def __utf8_to_base_64_url(self, data):
-        b64_string = b64encode(data.encode("utf8")).decode("utf8")
-        return self.__base_64_to_base_64_url(b64_string)
-
-    def __public_encrypt(self, root_key):
-        return self.public_key.encrypt(
-            root_key,
-            padding.OAEP(
-                mgf=padding.MGF1(algorithm=hashes.SHA1()),
-                algorithm=hashes.SHA1(),
-                label=None,
-            ),
-        )
+    def __base_64_remove_padding(self, data):
+        return data.rstrip("=")
 
     def __encryptable_data(self, data):
         return data is not None and (
             type(data) == str
             or type(data) == bool
-            or type(data) == list
             or type(data) == int
             or type(data) == float
         )
 
     def __fetch_cage_key(self, fetch):
-        if self.cage_key is None:
+        if self.team_ecdh_key is None:
             resp = fetch.get("cages/key")
-            self.cage_key = Key(resp["key"]).key
-            self.public_key = serialization.load_pem_public_key(
-                self.cage_key.encode("utf8"), backend=default_backend()
+            decoded_team_cage_key = base64.b64decode(resp["ecdhKey"])
+            
+            self.team_ecdh_key = EllipticCurvePublicKey.from_encoded_point(ec.SECP256K1(), decoded_team_cage_key)
+            
+    def __derive_shared_key(self):
+        if self.team_ecdh_key is None:
+            raise MissingTeamEcdhKey("Team ECDH key not set in client")
+        else:
+            generated_key = ec.generate_private_key(
+                ec.SECP256K1
             )
+            self.generated_ecdh_key = generated_key.public_key().public_bytes(
+                Encoding.X962,
+                PublicFormat.CompressedPoint
+            )
+            shared_key = generated_key.exchange(
+                ec.ECDH(), self.team_ecdh_key
+            )
+            return shared_key
