@@ -1,4 +1,4 @@
-from ..errors.evervault_errors import UndefinedDataError, InvalidPublicKeyError, MissingTeamEcdhKey
+from ..errors.evervault_errors import UndefinedDataError, InvalidPublicKeyError, MissingTeamEcdhKey, UnknownEncryptType
 from ..datatypes.map import map_header_type
 from cryptography.hazmat.primitives.asymmetric import ec
 from cryptography.hazmat.primitives.asymmetric.ec import EllipticCurvePublicKey
@@ -24,28 +24,55 @@ class Client(object):
         self.shared_key = self.__derive_shared_key()
         
         if self.shared_key is None or type(self.shared_key) != bytes:
-            raise InvalidPublicKeyError("Provided EC compressed point is invalid")
-        if type(data) == dict:
-            return self.__encrypt_object(data)
+            raise InvalidPublicKeyError("Provided EC compressed point is invalid")        
+        
+        if type(data) == dict or type(data) == list or type(data) == set:
+            return self.__traverse_and_encrypt(data)
         elif self.__encryptable_data(data):
             return self.__encrypt_string(data)
-
-    def __encrypt_object(self, data):
-        if self.__encryptable_data(data):
-            return self.__encrypt_string(data)
-        elif type(data) == dict:
-            encrypted_data = {}
-            for key, value in data.items():
-                encrypted_data[key] = self.__encrypt_object(value)
-            return encrypted_data
         else:
+            raise UnknownEncryptType("Cannot encrypt unsupported type")
+
+    def __traverse_and_encrypt(self, data):
+        if type(data) == list:
+            for idx, item in enumerate(data):
+                if not self.__encryptable_data(item):
+                    data[idx] = self.__traverse_and_encrypt(item)
+                else:
+                    data[idx] = self.__encrypt_string(item)
             return data
+        elif type(data) == dict:
+            return self.__encrypt_object(data)
+        elif type(data) == set:
+            return self.__encrypt_set(data)    
+        elif self.__encryptable_data(data):
+            return self.__encrypt_string(data)
+    
+    def __encrypt_object(self, data):
+        encrypted_data = {}
+        for key, value in data.items():
+            if self.__encryptable_data(value):
+                encrypted_data[key] = self.__encrypt_string(value)
+            else:
+                encrypted_data[key] = self.__traverse_and_encrypt(value)
+        return encrypted_data
+
+    def __encrypt_set(self, data):
+        encrypted_set = set()
+        for item in data:
+            if self.__encryptable_data(item):
+                encrypted_set.add(self.__encrypt_string(item))
+            else:
+                encrypted_set.add(self.__traverse_and_encrypt(item))
+        return encrypted_set
 
     def __encrypt_string(self, data):
+        header_type = map_header_type(data)
+        coerced_data = self.__coerce_type(data) 
         iv = token_bytes(12)
         aesgcm = AESGCM(self.shared_key)
-        encrypted_bytes = aesgcm.encrypt(iv, bytes(data, "utf8"), None)
-        header_type = map_header_type(data)
+        
+        encrypted_bytes = aesgcm.encrypt(iv, bytes(coerced_data, "utf8"), None)
         
         return self.__format(
             header_type,
@@ -54,8 +81,16 @@ class Client(object):
             base64.b64encode(encrypted_bytes).decode("utf"),
         )
 
+    def __coerce_type(self, data):
+        if type(data) == bool:
+            return str(int(data))
+        elif type(data) == int or type(data) == float:
+            return str(data)
+        else:
+            return data
+
     def __format(self, header, iv, public_key, encrypted_payload):
-        prefix = ":{header}" if header != "string" else ""
+        prefix = f":{header}" if header != "string" else ""
         return f"ev{prefix}:{self.__base_64_remove_padding(iv)}:{self.__base_64_remove_padding(public_key)}:{self.__base_64_remove_padding(encrypted_payload)}:$"
 
     def __base_64_remove_padding(self, data):
@@ -65,7 +100,6 @@ class Client(object):
         return data is not None and (
             type(data) == str
             or type(data) == bool
-            or type(data) == list
             or type(data) == int
             or type(data) == float
         )

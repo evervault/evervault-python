@@ -4,6 +4,7 @@ import base64
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import ec
 import evervault
+import json
 
 class TestEvervault(unittest.TestCase):
     def setUp(self):
@@ -15,17 +16,72 @@ class TestEvervault(unittest.TestCase):
         self.evervault = None
 
     @requests_mock.Mocker()
-    def test_encrypt_dicts(self, mock_request):
+    def test_encrypting_number_generates_ev_number_type(self, mock_request):
         self.mock_fetch_cage_key(mock_request)
-        encrypted_data = self.evervault.encrypt({"name": "testing"})
-        assert encrypted_data != {"name": "testing"}
-        assert "name" in encrypted_data
+        input = 1
+        encrypted_input = self.evervault.encrypt(input)
+        assert self.__is_evervault_string(encrypted_input, "number") == True
 
     @requests_mock.Mocker()
-    def test_encrypt_strings(self, mock_request):
+    def test_encrypting_boolean_generates_ev_boolean_type(self, mock_request):
         self.mock_fetch_cage_key(mock_request)
-        encrypted_data = self.evervault.encrypt("name")
-        assert encrypted_data != "name"
+        input = False
+        encrypted_input = self.evervault.encrypt(input)
+        assert self.__is_evervault_string(encrypted_input, "boolean") == True
+
+    @requests_mock.Mocker()
+    def test_encrypting_string_generates_ev_string_type(self, mock_request):
+        self.mock_fetch_cage_key(mock_request)
+        input = "string"
+        encrypted_input = self.evervault.encrypt(input)
+        assert self.__is_evervault_string(encrypted_input, "string") == True
+
+    @requests_mock.Mocker()
+    def test_encrypt_sets(self, mock_request):
+        self.mock_fetch_cage_key(mock_request)
+        level_1_set = set(['a', True, 3])
+        level_1_set_encrypted = self.evervault.encrypt(level_1_set)
+        assert len(level_1_set_encrypted) == 3
+        for item in level_1_set_encrypted:
+            assert self.__is_evervault_string_format(item)
+    
+    @requests_mock.Mocker()
+    def test_encrypt_lists_of_various_types(self, mock_request):
+        self.mock_fetch_cage_key(mock_request)
+        level_1_list = ['a', True, 3]
+        level_1_list_encrypted = self.evervault.encrypt(level_1_list)
+        for item in level_1_list_encrypted:
+            assert self.__is_evervault_string_format(item)
+
+
+        level_2_list = ['a', False, 4.0, ['b', 2], set(["x", "b"])]
+        level_2_list_encrypted = self.evervault.encrypt(level_2_list)
+        for item in level_2_list_encrypted:
+            if type(item) == list or type(item) == set:
+                for sub_item in item:
+                    assert self.__is_evervault_string_format(sub_item)
+            else:        
+                assert self.__is_evervault_string_format(item)
+        
+    
+    @requests_mock.Mocker()
+    def test_encrypt_dicts(self, mock_request):
+        self.mock_fetch_cage_key(mock_request)
+        test_payload = {
+            "name": "testname",
+            "age": 20,
+            "array": ["team1", 1],
+            "dict": {
+                "subname": "subtestname",
+                "subnumber": 2
+            }
+        }
+        encrypted_data = self.evervault.encrypt(test_payload)
+        assert encrypted_data != {"name": "testname"}
+        assert "name" in encrypted_data
+        assert "dict" in encrypted_data
+        assert type(encrypted_data["dict"]) == dict
+        assert self.__is_evervault_string(encrypted_data["dict"]["subnumber"], "number")
 
     @requests_mock.Mocker()
     def test_run(self, mock_request):
@@ -101,3 +157,23 @@ class TestEvervault(unittest.TestCase):
         )
         
         return (base64.b64encode(key))
+
+    def __is_evervault_string(self, data, type):
+        parts = data.split(":")
+        if len(parts) < 5:
+            return False
+        elif type == "string":
+            return len(parts) == 5
+        elif type != "string" and len(parts) < 6:
+            return False    
+        elif type != parts[1]:
+            return False
+        return True
+
+    def __is_evervault_string_format(self, data):
+        parts = data.split(":")
+        if len(parts) < 5:
+            return False
+        if parts[1] == "number" or parts[1] == "boolean":
+            return len(parts) == 6
+        return True    

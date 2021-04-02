@@ -50,3 +50,6 @@ class UnexpectedError(EvervaultError):
 
 class MissingTeamEcdhKey(EvervaultError):
     pass
+
+class UnknownEncryptType(EvervaultError):
+    pass
