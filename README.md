@@ -44,15 +44,15 @@ The Evervault Python SDK exposes four functions.
 
 ### evervault.encrypt()
 
-`evervault.encrypt()` encrypts data for use in your [Cages](https://docs.evervault.com/tutorial). To encrypt data at the server, simply pass a `dict` or `string` into the `evervault.encrypt()` function. Store the encrypted data in your database as normal.
+`evervault.encrypt()` encrypts data for use in your [Cages](https://docs.evervault.com/tutorial). To encrypt data at the server, simply pass a python primitive type into the `evervault.encrypt()` function. Store the encrypted data in your database as normal.
 
 ```python
-evervault.encrypt(data = dict | str)
+evervault.encrypt(data = dict | list | set | str | int | bool)
 ```
 
 | Parameter | Type | Description |
 | --------- | ---- | ----------- |
-| data | `dict` or `str` | Data to be encrypted |
+| data | `dict`, `list`, `set`, `str`, `int`, `bool` | Data to be encrypted |
 
 ### evervault.run()
 
