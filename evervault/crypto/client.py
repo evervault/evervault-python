@@ -9,6 +9,7 @@ import base64
 import time 
 
 BS = 32
+KEY_INTERVAL = 15
 
 class Client(object):
     def __init__(self):
@@ -122,7 +123,7 @@ class Client(object):
         else:
             now = int(time.time())
             time_diff = now - self.start_time
-            if time_diff > 15:
+            if time_diff > KEY_INTERVAL:
                 self.start_time = now
                 return self.__generate_shared_key()
             return self.shared_key
