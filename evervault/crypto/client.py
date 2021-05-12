@@ -6,9 +6,9 @@ from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from secrets import token_bytes
 import base64
+import time 
 
 BS = 32
-
 
 class Client(object):
     def __init__(self):
@@ -16,6 +16,7 @@ class Client(object):
         self.team_ecdh_key = None
         self.generated_ecdh_key = None
         self.shared_key = None
+        self.start_time = int(time.time())
 
     def encrypt_data(self, fetch, data):
         if data is None:
@@ -116,15 +117,25 @@ class Client(object):
     def __derive_shared_key(self):
         if self.team_ecdh_key is None:
             raise MissingTeamEcdhKey("Team ECDH key not set in client")
+        elif self.shared_key is None:
+            return self.__generate_shared_key()
         else:
-            generated_key = ec.generate_private_key(
+            now = int(time.time())
+            time_diff = now - self.start_time
+            if time_diff > 15:
+                self.start_time = now
+                return self.__generate_shared_key()
+            return self.shared_key
+
+    def __generate_shared_key(self):
+        generated_key = ec.generate_private_key(
                 ec.SECP256K1
-            )
-            self.generated_ecdh_key = generated_key.public_key().public_bytes(
-                Encoding.X962,
-                PublicFormat.CompressedPoint
-            )
-            shared_key = generated_key.exchange(
-                ec.ECDH(), self.team_ecdh_key
-            )
-            return shared_key
+        )
+        self.generated_ecdh_key = generated_key.public_key().public_bytes(
+            Encoding.X962,
+            PublicFormat.CompressedPoint
+        )
+        shared_key = generated_key.exchange(
+            ec.ECDH(), self.team_ecdh_key
+        )
+        return shared_key      

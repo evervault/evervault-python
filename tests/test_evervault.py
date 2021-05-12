@@ -1,12 +1,10 @@
 from evervault.errors.evervault_errors import UnknownEncryptType
 import unittest
-import requests
 import requests_mock
 import base64
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import ec
 import evervault
-import json
 
 class TestEvervault(unittest.TestCase):
     def setUp(self):
@@ -98,7 +96,7 @@ class TestEvervault(unittest.TestCase):
         self.assertRaises(UnknownEncryptType, self.evervault.encrypt, test_instance)
         self.assertRaises(UnknownEncryptType, self.evervault.encrypt, level_1_list)
         self.assertRaises(UnknownEncryptType, self.evervault.encrypt, level_2_list)
-        
+
     @requests_mock.Mocker()
     def test_run(self, mock_request):
         request = mock_request.post(
