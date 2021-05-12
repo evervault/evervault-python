@@ -1,4 +1,6 @@
+from evervault.errors.evervault_errors import UnknownEncryptType
 import unittest
+import requests
 import requests_mock
 import base64
 from cryptography.hazmat.primitives import serialization
@@ -82,7 +84,21 @@ class TestEvervault(unittest.TestCase):
         assert "dict" in encrypted_data
         assert type(encrypted_data["dict"]) == dict
         assert self.__is_evervault_string(encrypted_data["dict"]["subnumber"], "number")
+    
+    @requests_mock.Mocker()
+    def test_encrypt_with_unsupported_type_throws_exception(self, mock_request):
+        self.mock_fetch_cage_key(mock_request)
+        class MyTestClass:
+            x = 5
 
+        test_instance = MyTestClass()
+        level_1_list = ['a', test_instance, 3]
+        level_2_list = ['a', ['a', test_instance]]
+        
+        self.assertRaises(UnknownEncryptType, self.evervault.encrypt, test_instance)
+        self.assertRaises(UnknownEncryptType, self.evervault.encrypt, level_1_list)
+        self.assertRaises(UnknownEncryptType, self.evervault.encrypt, level_2_list)
+        
     @requests_mock.Mocker()
     def test_run(self, mock_request):
         request = mock_request.post(

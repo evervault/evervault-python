@@ -31,7 +31,7 @@ class Client(object):
         elif self.__encryptable_data(data):
             return self.__encrypt_string(data)
         else:
-            raise UnknownEncryptType("Cannot encrypt unsupported type")
+            raise UnknownEncryptType(f'Cannot encrypt unsupported type {data}')
 
     def __traverse_and_encrypt(self, data):
         if type(data) == list:
@@ -47,6 +47,8 @@ class Client(object):
             return self.__encrypt_set(data)    
         elif self.__encryptable_data(data):
             return self.__encrypt_string(data)
+        else: 
+            raise UnknownEncryptType(f'Cannot encrypt unsupported type {data}')
     
     def __encrypt_object(self, data):
         encrypted_data = {}
