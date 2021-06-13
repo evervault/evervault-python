@@ -99,6 +99,7 @@ You may configure the SDK to automatically route all outbound HTTPS requests thr
 
 ```python
 evervault.relay()
+# All further HTTPS requests made in your program will be routed through Relay
 ```
 
 ## Contributing
