@@ -95,7 +95,7 @@ Return a `dict` of your team's Cage objects in `dict` format, with `cage-name` a
 
 ### evervault.relay()
 
-You may configure the SDK to automatically route all outbound HTTPS requests made using the [`requests`](https://docs.python-requests.org/en/master/) module through [Relay](https://docs.evervault.com/product/relay) by calling the `relay()` function.
+You may configure the SDK to automatically route all outbound HTTPS requests through [Relay](https://docs.evervault.com/product/relay) by calling the `relay()` function. This currently supports requests made using the popular [`requests`](https://docs.python-requests.org/en/master/) package.
 
 ```python
 evervault.relay()
