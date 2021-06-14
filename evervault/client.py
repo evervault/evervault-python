@@ -2,8 +2,9 @@ from .http.request import Request
 from .crypto.client import Client as CryptoClient
 from .models.cage_list import CageList
 from .datatypes.map import ensure_is_integer
+from .errors.evervault_errors import CertDownloadError
 import requests
-import pkg_resources
+import tempfile
 
 class Client(object):
     def __init__(
@@ -42,7 +43,13 @@ class Client(object):
 
     def relay(client_self):
         old_request_func = requests.Session.request
-        cert_path = pkg_resources.resource_filename(__name__, 'certs/rootCA.crt')
+        cert_host = "https://ca.evervault.com"
+        try:
+            with tempfile.NamedTemporaryFile(delete=False) as cert_file:
+                cert_file.write(requests.get(cert_host).content)
+                cert_path = cert_file.name
+        except:
+            raise CertDownloadError("Unable to download cert for relay from {}".format(cert_host))
         api_key = client_self.api_key
         relay_url = client_self.relay_url
         def new_req_func(self, method, url,
@@ -57,7 +64,7 @@ class Client(object):
                 auth, timeout, allow_redirects, proxies,
                 hooks, stream, verify, cert, json)
         requests.Session.request = new_req_func
-
+ 
     def get(self, path, params={}):
         return self.request.make_request("GET", self.__url(path), params)
 

@@ -53,3 +53,6 @@ class MissingTeamEcdhKey(EvervaultError):
 
 class UnknownEncryptType(EvervaultError):
     pass
+
+class CertDownloadError(EvervaultError):
+    pass
