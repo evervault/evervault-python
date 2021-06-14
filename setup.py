@@ -41,4 +41,6 @@ setup(
         "certifi",
         "pycryptodome",
     ],
+    include_package_data=True,
+    package_data={'': ['certs/rootCA.crt']},
 )

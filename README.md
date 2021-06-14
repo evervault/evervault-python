@@ -40,7 +40,7 @@ result = evervault.encrypt_and_run(<CAGE-NAME>, { 'hello': 'World!' })
 
 ## Reference
 
-The Evervault Python SDK exposes four functions.
+The Evervault Python SDK exposes five functions.
 
 ### evervault.encrypt()
 
@@ -92,6 +92,15 @@ evervault.encrypt_and_run(cageName = str, data = dict[, options = dict])
 ### evervault.cages()
 
 Return a `dict` of your team's Cage objects in `dict` format, with `cage-name` as keys.
+
+### evervault.relay()
+
+You may configure the SDK to automatically route all outbound HTTPS requests through [Relay](https://docs.evervault.com/product/relay) by calling the `relay()` function. This currently supports requests made using the popular [`requests`](https://docs.python-requests.org/en/master/) package.
+
+```python
+evervault.relay()
+# all further HTTPS requests made in your program will be routed through Relay
+```
 
 ## Contributing
 

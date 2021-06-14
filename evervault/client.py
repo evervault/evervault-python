@@ -2,6 +2,8 @@ from .http.request import Request
 from .crypto.client import Client as CryptoClient
 from .models.cage_list import CageList
 from .datatypes.map import ensure_is_integer
+import requests
+import pkg_resources
 
 class Client(object):
     def __init__(
@@ -10,10 +12,12 @@ class Client(object):
         request_timeout=30,
         base_url="https://api.evervault.com/",
         base_run_url="https://cage.run/",
+        relay_url="https://relay.evervault.com:443",
     ):
         self.api_key = api_key
         self.base_url = base_url
         self.base_run_url = base_run_url
+        self.relay_url = relay_url
         self.request = Request(self.api_key, request_timeout)
         self.crypto_client = CryptoClient()
 
@@ -35,6 +39,24 @@ class Client(object):
     def cages(self):
         cages = self.get("cages")["cages"]
         return CageList(cages, self).cages
+
+    def relay(client_self):
+        old_request_func = requests.Session.request
+        cert_path = pkg_resources.resource_filename(__name__, 'certs/rootCA.crt')
+        api_key = client_self.api_key
+        relay_url = client_self.relay_url
+        def new_req_func(self, method, url,
+                params=None, data=None, headers={}, cookies=None, files=None,
+                auth=None, timeout=None, allow_redirects=True, proxies={},
+                hooks=None, stream=None, verify=None, cert=None, json=None):
+            headers["Proxy-Authorization"] = api_key
+            proxies["https"] = relay_url
+            verify = cert_path
+            return old_request_func(self, method, url,
+                params, data, headers, cookies, files,
+                auth, timeout, allow_redirects, proxies,
+                hooks, stream, verify, cert, json)
+        requests.Session.request = new_req_func
 
     def get(self, path, params={}):
         return self.request.make_request("GET", self.__url(path), params)

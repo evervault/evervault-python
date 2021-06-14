@@ -10,6 +10,7 @@ api_key = None
 request_timeout = 30
 base_url = "https://api.evervault.com/"
 base_run_url = "https://cage.run/"
+relay_url="https://relay.evervault.com:443"
 
 
 def run(cage_name, encrypted_data, options = { "async": False, "version": None }):
@@ -27,6 +28,9 @@ def encrypt_and_run(cage_name, data, options = { "async": False, "version": None
 def cages():
     return __client().cages()
 
+def relay():
+    __client().relay()
+
 
 def __client():
     if not api_key:
@@ -38,6 +42,7 @@ def __client():
             request_timeout=request_timeout,
             base_url=base_url,
             base_run_url=base_run_url,
+            relay_url=relay_url,
         )
         return ev_client
     else:
