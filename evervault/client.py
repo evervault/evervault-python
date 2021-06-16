@@ -4,7 +4,7 @@ from .models.cage_list import CageList
 from .datatypes.map import ensure_is_integer
 from .errors.evervault_errors import CertDownloadError
 import requests
-import tempfile
+import certifi
 
 class Client(object):
     def __init__(
@@ -44,12 +44,17 @@ class Client(object):
     def relay(client_self):
         old_request_func = requests.Session.request
         cert_host = "https://ca.evervault.com"
-        try:
-            with tempfile.NamedTemporaryFile(delete=False) as cert_file:
-                cert_file.write(requests.get(cert_host).content)
-                cert_path = cert_file.name
-        except:
-            raise CertDownloadError("Unable to download cert for relay from {}".format(cert_host))
+        if 'Evervault' not in certifi.contents():
+            try:
+                with open(certifi.where(), 'ab') as ca_file:
+                    added_cert = bytes('\n# Evervault\n', 'ascii') + requests.get(cert_host).content
+                    ca_file.write(added_cert)
+            except:
+                raise CertDownloadError("Unable to install the Evervault root certficate from {cert_host}. "
+                    f"Likely a permissions error when trying to write to the Certifi CA at {certifi.where()}. "
+                    "You may manually append the certificate contents to the file after downloading "
+                    f"it at {cert_host}. Also add a comment \'# Evervault\' to the file to ensure "
+                    "the SDK knows it is there.")
         api_key = client_self.api_key
         relay_url = client_self.relay_url
         def new_req_func(self, method, url,
@@ -58,7 +63,6 @@ class Client(object):
                 hooks=None, stream=None, verify=None, cert=None, json=None):
             headers["Proxy-Authorization"] = api_key
             proxies["https"] = relay_url
-            verify = cert_path
             return old_request_func(self, method, url,
                 params, data, headers, cookies, files,
                 auth, timeout, allow_redirects, proxies,
