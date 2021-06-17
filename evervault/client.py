@@ -52,9 +52,9 @@ class Client(object):
                     ca_file.write(cert)
         except:
             raise CertDownloadError(f"Unable to install the Evervault root certficate from {cert_host}. "
-                f"Likely a permissions error when trying to write to the Certifi CA at {certifi.where()}. "
-                "You may manually append the certificate contents to the file after downloading "
-                f"it at {cert_host}.")
+                f"Likely a permissions error when trying to write to the Certifi CA file at {certifi.where()}. "
+                "You may manually append the certificate contents to this file after downloading "
+                f"the certificate at {cert_host}.")
         api_key = client_self.api_key
         relay_url = client_self.relay_url
         def new_req_func(self, method, url,
