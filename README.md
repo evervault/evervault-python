@@ -102,6 +102,13 @@ evervault.relay()
 # all further HTTPS requests made in your program will be routed through Relay
 ```
 
+You may also optionally pass in a list of domains which you **don't** want to go through Relay, i.e. requests sent to these domains will not be decrypted.
+
+```python
+evervault.relay(['httpbin.org', 'www.facebook.com'])
+# requests sent to urls such as https://httpbin.org/post or https://api.facebook.com will not be sent through Relay
+```
+
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/evervault/evervault-python.

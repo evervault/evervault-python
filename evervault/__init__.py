@@ -28,8 +28,8 @@ def encrypt_and_run(cage_name, data, options = { "async": False, "version": None
 def cages():
     return __client().cages()
 
-def relay():
-    __client().relay()
+def relay(ignore_domains=[]):
+    __client().relay(ignore_domains)
 
 
 def __client():
