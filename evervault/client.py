@@ -7,6 +7,7 @@ from urllib.parse import urlparse
 import requests
 import certifi
 import warnings
+import tempfile
 
 class Client(object):
     def __init__(
@@ -53,11 +54,9 @@ class Client(object):
         old_request_func = requests.Session.request
         cert_host = "https://ca.evervault.com"
         try:
-            cert = requests.get(cert_host).content
-            cert_already_installed = cert in bytes(certifi.contents(), 'ascii')
-            if not cert_already_installed:
-                with open(certifi.where(), 'ab') as ca_file:
-                    ca_file.write(cert)
+            with tempfile.NamedTemporaryFile(delete=False) as cert_file:
+                cert_file.write(bytes(certifi.contents(), 'ascii') + requests.get(cert_host).content)
+                cert_path = cert_file.name
         except:
             raise CertDownloadError(f"Unable to install the Evervault root certficate from {cert_host}. "
                 f"Likely a permissions error when trying to write to the Certifi CA file at {certifi.where()}. "
@@ -73,6 +72,7 @@ class Client(object):
             if proxies is None: proxies = {}
             headers["Proxy-Authorization"] = api_key
             proxies["https"] = relay_url
+            verify=cert_path
             try:
                 domain = urlparse(url).netloc
                 if domain in ignore_if_exact or domain.endswith(ignore_if_endswith):
