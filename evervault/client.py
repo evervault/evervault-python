@@ -69,6 +69,8 @@ class Client(object):
                 params=None, data=None, headers={}, cookies=None, files=None,
                 auth=None, timeout=None, allow_redirects=True, proxies={},
                 hooks=None, stream=None, verify=None, cert=None, json=None):
+            if headers is None: headers = {}
+            if proxies is None: proxies = {}
             headers["Proxy-Authorization"] = api_key
             proxies["https"] = relay_url
             try:
