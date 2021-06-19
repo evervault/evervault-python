@@ -54,7 +54,6 @@ class Client(object):
         old_request_func = requests.Session.request
         cert_host = "https://ca.evervault.com"
         try:
-            5/0
             with tempfile.NamedTemporaryFile(delete=False) as cert_file:
                 cert_file.write(bytes(certifi.contents(), 'ascii') + requests.get(cert_host).content)
                 cert_path = cert_file.name
