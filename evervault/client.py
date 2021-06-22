@@ -45,6 +45,7 @@ class Client(object):
         return CageList(cages, self).cages
 
     def relay(client_self, ignore_domains=[]):
+        ignore_domains.append(urlparse(client_self.base_run_url).netloc)
         ignore_if_exact = []
         ignore_if_endswith = ()
         for domain in ignore_domains:
