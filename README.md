@@ -1,4 +1,4 @@
-[![Evervault](https://evervault.com/evervault.svg)](https://welcome.evervault.com/)
+[![Evervault](https://evervault.com/evervault.svg)](https://evervault.com/)
 
 [![Unit Tests Status](https://github.com/evervault/evervault-python/workflows/evervault-unit-tests/badge.svg)](https://github.com/evervault/evervault-python/actions?query=workflow%3Aevervault-unit-tests)
 
