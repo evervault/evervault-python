@@ -15,7 +15,7 @@ class Client(object):
         api_key=None,
         request_timeout=30,
         base_url="https://api.evervault.com/",
-        base_run_url="https://cage.run/",
+        base_run_url="https://run.evervault.com/",
         relay_url="https://relay.evervault.com:443",
     ):
         self.api_key = api_key

@@ -100,7 +100,7 @@ class TestEvervault(unittest.TestCase):
     @requests_mock.Mocker()
     def test_run(self, mock_request):
         request = mock_request.post(
-            "https://cage.run/testing-cage",
+            "https://run.evervault.com/testing-cage",
             json={"result": "there was an attempt"},
             request_headers={"Api-Key": "testing"},
         )
@@ -112,7 +112,7 @@ class TestEvervault(unittest.TestCase):
     @requests_mock.Mocker()
     def test_run_with_options(self, mock_request):
         request = mock_request.post(
-            "https://cage.run/testing-cage",
+            "https://run.evervault.com/testing-cage",
             json={"status": "queued"},
             request_headers={ "Api-Key": "testing", "x-version-id": "2", "x-async": "true" },
         )
@@ -127,7 +127,7 @@ class TestEvervault(unittest.TestCase):
     def test_encrypt_and_run(self, mock_request):
         self.mock_fetch_cage_key(mock_request)
         request = mock_request.post(
-            "https://cage.run/testing-cage",
+            "https://run.evervault.com/testing-cage",
             json={"result": "there was an attempt"},
             request_headers={"Api-Key": "testing"},
         )
@@ -140,7 +140,7 @@ class TestEvervault(unittest.TestCase):
     @requests_mock.Mocker()
     def test_encrypt_and_run_with_options(self, mock_request):
         request = mock_request.post(
-            "https://cage.run/testing-cage",
+            "https://run.evervault.com/testing-cage",
             json={"status": "queued"},
             request_headers={ "Api-Key": "testing", "x-version-id": "2", "x-async": "true" },
         )
