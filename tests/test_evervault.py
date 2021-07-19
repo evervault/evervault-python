@@ -174,13 +174,13 @@ class TestEvervault(unittest.TestCase):
 
     def __is_evervault_string(self, data, type):
         parts = data.split(":")
-        if len(parts) < 5:
+        if len(parts) < 6:
             return False
         elif type == "string":
-            return len(parts) == 5
-        elif type != "string" and len(parts) < 6:
-            return False    
-        elif type != parts[1]:
+            return len(parts) == 6
+        elif type != "string" and not len(parts) == 7:
+            return False
+        elif type != parts[2]:
             return False
         return True
 

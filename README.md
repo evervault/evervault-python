@@ -14,7 +14,7 @@ For full installation support, [book time here](https://calendly.com/evervault/c
 
 ## Documentation
 
-See the Evervault [Python SDK documentation](https://docs.evervault.com/python).
+See the Evervault [Python SDK documentation](https://docs.evervault.com/sdk/python).
 
 ## Installation
 
