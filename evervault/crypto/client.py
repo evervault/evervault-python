@@ -19,8 +19,7 @@ class Client(object):
         self.generated_ecdh_key = None
         self.shared_key = None
         self.start_time = int(time.time())
-        base64_ev_version = self.__base_64_remove_padding(base64.b64encode(bytes(EV_VERSION, "utf8")).decode("utf"))
-        self.ev_version_prefix = f":{base64_ev_version}" if base64_ev_version != "" else ""
+        self.ev_version = self.__base_64_remove_padding(base64.b64encode(bytes(EV_VERSION, "utf8")).decode("utf"))
 
     def encrypt_data(self, fetch, data):
         if data is None:
@@ -98,7 +97,7 @@ class Client(object):
 
     def __format(self, header, iv, public_key, encrypted_payload):
         prefix = f":{header}" if header != "string" else ""
-        return f"ev{self.ev_version_prefix}{prefix}:{self.__base_64_remove_padding(iv)}:{self.__base_64_remove_padding(public_key)}:{self.__base_64_remove_padding(encrypted_payload)}:$"
+        return f"ev:{self.ev_version}{prefix}:{self.__base_64_remove_padding(iv)}:{self.__base_64_remove_padding(public_key)}:{self.__base_64_remove_padding(encrypted_payload)}:$"
 
     def __base_64_remove_padding(self, data):
         return data.rstrip("=")
