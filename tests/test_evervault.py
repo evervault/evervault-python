@@ -5,6 +5,7 @@ import base64
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import ec
 import evervault
+from evervault.crypto.version import EV_VERSION
 
 class TestEvervault(unittest.TestCase):
     def setUp(self):
@@ -173,14 +174,15 @@ class TestEvervault(unittest.TestCase):
         return (base64.b64encode(key))
 
     def __is_evervault_string(self, data, type):
+        ev_version_configured = EV_VERSION == ""
         parts = data.split(":")
         if len(parts) < 5:
             return False
         elif type == "string":
-            return len(parts) == 5
-        elif type != "string" and len(parts) < 6:
-            return False    
-        elif type != parts[1]:
+            return len(parts) == 5 if ev_version_configured else len(parts) == 6
+        elif type != "string" and not (len(parts) == 6 if ev_version_configured else len(parts) == 7):
+            return False
+        elif type != parts[1] if ev_version_configured else type != parts[2]:
             return False
         return True
 
