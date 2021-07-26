@@ -63,6 +63,14 @@ class Client(object):
                 "Likely a permissions error when attempting to write to the /tmp/ directory.")
         api_key = client_self.api_key
         relay_url = client_self.relay_url
+
+        # We override this method to stop the requests library from 
+        # removing the API token from the Proxy-Authorization header
+        def rebuild_proxies(self, prepared_request, proxies):
+          pass
+
+        requests.sessions.SessionRedirectMixin.rebuild_proxies = rebuild_proxies
+
         def new_req_func(self, method, url,
                 params=None, data=None, headers={}, cookies=None, files=None,
                 auth=None, timeout=None, allow_redirects=True, proxies={},
