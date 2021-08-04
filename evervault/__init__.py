@@ -6,11 +6,18 @@ from .errors.evervault_errors import AuthenticationError
 __version__ = VERSION
 
 ev_client = None
-api_key = None
+_api_key = None
 request_timeout = 30
 base_url = "https://api.evervault.com/"
 base_run_url = "https://run.evervault.com/"
 relay_url="https://relay.evervault.com:443"
+
+
+def init(api_key, intercept = True, ignore_domains=[]):
+    global _api_key
+    _api_key = api_key
+    if intercept:
+        __client().relay(ignore_domains)
 
 
 def run(cage_name, encrypted_data, options = { "async": False, "version": None }):
@@ -28,17 +35,14 @@ def encrypt_and_run(cage_name, data, options = { "async": False, "version": None
 def cages():
     return __client().cages()
 
-def relay(ignore_domains=[]):
-    __client().relay(ignore_domains)
-
 
 def __client():
-    if not api_key:
+    if not _api_key:
         raise AuthenticationError("Please enter your team's API Key")
     global ev_client
     if not ev_client:
         ev_client = Client(
-            api_key=api_key,
+            api_key=_api_key,
             request_timeout=request_timeout,
             base_url=base_url,
             base_run_url=base_run_url,
