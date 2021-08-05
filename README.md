@@ -54,7 +54,7 @@ evervault.init(api_key = str[, intercept = bool, ignore_domains = list])
 | --------- | ---- | ----------- |
 | api_key | `str` | The API key of your Evervault Team |
 | intercept | `bool` | Decides if outbound requests are intercepted by Relay (`true` by default) |
-| ignore_domains | `list of strings` | Requests sent to any of the domains in this list will not be intercepted by Relay |
+| ignore_domains | `list(str)` | Requests sent to any of the domains in this list will not be intercepted by Relay |
 
 ### evervault.encrypt()
 
@@ -106,26 +106,6 @@ evervault.encrypt_and_run(cageName = str, data = dict[, options = dict])
 ### evervault.cages()
 
 Return a `dict` of your team's Cage objects in `dict` format, with `cage-name` as keys.
-
-### Disable Relay interception on requests to specfic domains
-
-You may pass in a list of domains which you **don't** want to be intercepted by Relay, i.e. requests sent to these domains will not go through Relay, and hence will not be decrypted. This array is list in the `ignoreDomains` parameter.
-
-### evervault.relay()
-
-You may configure the SDK to automatically route all outbound HTTPS requests through [Relay](https://docs.evervault.com/product/relay) by calling the `relay()` function. This currently supports requests made using the popular [`requests`](https://docs.python-requests.org/en/master/) package.
-
-```python
-evervault.relay()
-# all further HTTPS requests made in your program will be routed through Relay
-```
-
-You may also optionally pass in a list of domains which you **don't** want to go through Relay, i.e. requests sent to these domains will not be decrypted.
-
-```python
-evervault.relay(['httpbin.org', 'www.facebook.com'])
-# requests sent to urls such as https://httpbin.org/post or https://api.facebook.com will not be sent through Relay
-```
 
 ## Contributing
 
