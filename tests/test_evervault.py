@@ -9,7 +9,7 @@ import evervault
 class TestEvervault(unittest.TestCase):
     def setUp(self):
         self.evervault = evervault
-        self.evervault.api_key = "testing"
+        self.evervault.init("testing", intercept=False)
         self.public_key = self.build_keys()
 
     def tearDown(self):
