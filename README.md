@@ -4,7 +4,7 @@
 
 # Evervault Python SDK
 
-The [Evervault](https://evervault.com) Python SDK is a toolkit for encrypting data as it enters your server, and working with Cages.
+The [Evervault](https://evervault.com) Python SDK is a toolkit for encrypting data as it enters your server, and working with Cages. By default, initializing the SDK will result in all outbound HTTPS requests being intercepted and decrypted.
 
 ## Getting Started
 
@@ -32,7 +32,7 @@ To make Evervault available for use in your app:
 import evervault
 
 # Initialize the client with your team's api key
-evervault.api_key = <YOUR-API-KEY>
+evervault.init('<YOUR-API-KEY>')
 
 # Encrypt your data and run a cage
 result = evervault.encrypt_and_run(<CAGE-NAME>, { 'hello': 'World!' })
@@ -41,6 +41,20 @@ result = evervault.encrypt_and_run(<CAGE-NAME>, { 'hello': 'World!' })
 ## Reference
 
 The Evervault Python SDK exposes five functions.
+
+### evervault.init()
+
+`evervault.init()` initializes the SDK with your API key. Configurations for the interception of outbound requests may also be passed in this function.
+
+```python
+evervault.init(api_key = str[, intercept = bool, ignore_domains = list])
+```
+
+| Parameter | Type | Description |
+| --------- | ---- | ----------- |
+| api_key | `str` | The API key of your Evervault Team |
+| intercept | `bool` | Decides if outbound requests are intercepted (`true` by default) |
+| ignore_domains | `list(str)` | Requests sent to any of the domains in this list will not be intercepted |
 
 ### evervault.encrypt()
 
@@ -92,22 +106,6 @@ evervault.encrypt_and_run(cageName = str, data = dict[, options = dict])
 ### evervault.cages()
 
 Return a `dict` of your team's Cage objects in `dict` format, with `cage-name` as keys.
-
-### evervault.relay()
-
-You may configure the SDK to automatically route all outbound HTTPS requests through [Relay](https://docs.evervault.com/product/relay) by calling the `relay()` function. This currently supports requests made using the popular [`requests`](https://docs.python-requests.org/en/master/) package.
-
-```python
-evervault.relay()
-# all further HTTPS requests made in your program will be routed through Relay
-```
-
-You may also optionally pass in a list of domains which you **don't** want to go through Relay, i.e. requests sent to these domains will not be decrypted.
-
-```python
-evervault.relay(['httpbin.org', 'www.facebook.com'])
-# requests sent to urls such as https://httpbin.org/post or https://api.facebook.com will not be sent through Relay
-```
 
 ## Contributing
 
