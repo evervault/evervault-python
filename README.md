@@ -4,7 +4,7 @@
 
 # Evervault Python SDK
 
-The [Evervault](https://evervault.com) Python SDK is a toolkit for encrypting data as it enters your server, and working with Cages. By default, initializing the SDK will result in all outbound HTTPS requests being intercepted by Relay – and decrypted.
+The [Evervault](https://evervault.com) Python SDK is a toolkit for encrypting data as it enters your server, and working with Cages. By default, initializing the SDK will result in all outbound HTTPS requests being intercepted and decrypted.
 
 ## Getting Started
 
@@ -44,7 +44,7 @@ The Evervault Python SDK exposes five functions.
 
 ### evervault.init()
 
-`evervault.init()` initializes the SDK with your API key. Configurations for Relay's interception of outbound requests may also be passed in this function.
+`evervault.init()` initializes the SDK with your API key. Configurations for the interception of outbound requests may also be passed in this function.
 
 ```python
 evervault.init(api_key = str[, intercept = bool, ignore_domains = list])
@@ -53,8 +53,8 @@ evervault.init(api_key = str[, intercept = bool, ignore_domains = list])
 | Parameter | Type | Description |
 | --------- | ---- | ----------- |
 | api_key | `str` | The API key of your Evervault Team |
-| intercept | `bool` | Decides if outbound requests are intercepted by Relay (`true` by default) |
-| ignore_domains | `list(str)` | Requests sent to any of the domains in this list will not be intercepted by Relay |
+| intercept | `bool` | Decides if outbound requests are intercepted (`true` by default) |
+| ignore_domains | `list(str)` | Requests sent to any of the domains in this list will not be intercepted |
 
 ### evervault.encrypt()
 
