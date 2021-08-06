@@ -38,7 +38,9 @@ def cages():
 
 def __client():
     if not _api_key:
-        raise AuthenticationError("Please enter your team's API Key")
+        raise AuthenticationError(
+            "Your Team's API Key must be entered using evervault.init('<API-KEY>')"
+        )
     global ev_client
     if not ev_client:
         ev_client = Client(
