@@ -89,9 +89,9 @@ evervault.run(cageName = str, payload = dict[, options = dict])
 | async   | `Boolean` | `False` | Run your Cage in async mode. Async Cage runs will be queued for processing.          |
 | version | `Integer` | `None`  | Specify the version of your Cage to run. By default, the latest version will be run. |
 
-### evervault.encryptAndRun()
+### evervault.encrypt_and_run()
 
-`evervault.encryptAndRun()` encrypts data and uses it as the payload to invoke the Cage.
+`evervault.encrypt_and_run()` encrypts data and uses it as the payload to invoke the Cage.
 
 ```python
 evervault.encrypt_and_run(cageName = str, data = dict[, options = dict])
