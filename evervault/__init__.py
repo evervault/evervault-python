@@ -20,8 +20,8 @@ def init(api_key, intercept = True, ignore_domains=[]):
         __client().relay(ignore_domains)
 
 
-def run(cage_name, encrypted_data, options = { "async": False, "version": None }):
-    return __client().run(cage_name, encrypted_data, options)
+def run(cage_name, data, options = { "async": False, "version": None }):
+    return __client().run(cage_name, data, options)
 
 
 def encrypt(data):
