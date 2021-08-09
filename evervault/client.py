@@ -46,6 +46,7 @@ class Client(object):
 
     def relay(client_self, ignore_domains=[]):
         ignore_domains.append(urlparse(client_self.base_run_url).netloc)
+        ignore_domains.append('ca.evervault.com')
         ignore_if_exact = []
         ignore_if_endswith = ()
         for domain in ignore_domains:
