@@ -11,9 +11,9 @@ metric_event_queue = queue.Queue()
 
 def worker():
     while True:
-        data = metric_send_queue.get()
+        data = metric_event_queue.get()
         requests.post(METRICS_URL, data=json.dumps(data))
-        metric_send_queue.task_done()
+        metric_event_queue.task_done()
 
 
 # Thread to post metrics without blocking
