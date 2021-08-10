@@ -73,7 +73,7 @@ evervault.encrypt(data = dict | list | set | str | int | bool)
 `evervault.run()` invokes a Cage with a given payload.
 
 ```python
-evervault.run(cageName = str, payload = dict[, options = dict])
+evervault.run(cage_name = str, data = dict[, options = dict])
 ```
 
 | Parameter | Type | Description |
