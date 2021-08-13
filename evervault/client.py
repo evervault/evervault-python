@@ -55,9 +55,23 @@ class Client(object):
             ignore_if_endswith += ('.' + domain, '@' + domain)
         old_request_func = requests.Session.request
         cert_host = "https://ca.evervault.com"
+
+        ca_content = None
+        i = 0
+        
+        while ca_content is None and i < 2:
+            i += 1
+            try:
+                ca_content = request.get(cert_host).content
+            except:
+                pass 
+        
+        if ca_content is None:
+            raise CertDownloadError(f"Unable to install the Evervault root certificate from {cert_host}. ")
+
         try:
             with tempfile.NamedTemporaryFile(delete=False) as cert_file:
-                cert_file.write(bytes(certifi.contents(), 'ascii') + requests.get(cert_host).content)
+                cert_file.write(bytes(certifi.contents(), 'ascii') + ca_content)
                 cert_path = cert_file.name
         except:
             raise CertDownloadError(f"Unable to install the Evervault root certficate from {cert_host}. "
