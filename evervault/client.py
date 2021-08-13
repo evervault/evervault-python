@@ -62,7 +62,7 @@ class Client(object):
         while ca_content is None and i < 2:
             i += 1
             try:
-                ca_content = request.get(cert_host).content
+                ca_content = requests.get(cert_host).content
             except:
                 pass 
         
