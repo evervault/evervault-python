@@ -2,16 +2,18 @@
 from .client import Client
 from .version import VERSION
 from .errors.evervault_errors import AuthenticationError
+import os
 
 __version__ = VERSION
 
 ev_client = None
 _api_key = None
 request_timeout = 30
-base_url = "https://api.evervault.com/"
-base_run_url = "https://run.evervault.com/"
-relay_url="https://relay.evervault.com:443"
 
+BASE_URL_DEFAULT = "https://api.evervault.com/"
+BASE_RUN_URL_DEFAULT = "https://run.evervault.com/"
+RELAY_URL_DEFAULT = "https://relay.evervault.com:443"
+CA_HOST_DEFAULT = "https://ca.evervault.com"
 
 def init(api_key, intercept = True, ignore_domains=[]):
     global _api_key
@@ -46,9 +48,10 @@ def __client():
         ev_client = Client(
             api_key=_api_key,
             request_timeout=request_timeout,
-            base_url=base_url,
-            base_run_url=base_run_url,
-            relay_url=relay_url,
+            base_url=os.environ.get("EV_API_URL", BASE_URL_DEFAULT),
+            base_run_url=os.environ.get("EV_CAGE_RUN_URL", BASE_RUN_URL_DEFAULT),
+            relay_url=os.environ.get("EV_TUNNEL_HOSTNAME", RELAY_URL_DEFAULT),
+            ca_host=os.environ.get("EV_CERT_HOSTNAME", CA_HOST_DEFAULT)
         )
         return ev_client
     else:
