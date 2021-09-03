@@ -17,11 +17,13 @@ class Client(object):
         base_url="https://api.evervault.com/",
         base_run_url="https://run.evervault.com/",
         relay_url="https://relay.evervault.com:443",
+        ca_host="https://ca.evervault.com"
     ):
         self.api_key = api_key
         self.base_url = base_url
         self.base_run_url = base_run_url
         self.relay_url = relay_url
+        self.ca_host = ca_host
         self.request = Request(self.api_key, request_timeout)
         self.crypto_client = CryptoClient()
 
@@ -46,7 +48,7 @@ class Client(object):
 
     def relay(client_self, ignore_domains=[]):
         ignore_domains.append(urlparse(client_self.base_run_url).netloc)
-        ignore_domains.append('ca.evervault.com')
+        ignore_domains.append(urlparse(client_self.ca_host).netloc)
         ignore_if_exact = []
         ignore_if_endswith = ()
         for domain in ignore_domains:
@@ -54,32 +56,31 @@ class Client(object):
             ignore_if_exact.append(domain)
             ignore_if_endswith += ('.' + domain, '@' + domain)
         old_request_func = requests.Session.request
-        cert_host = "https://ca.evervault.com"
 
         ca_content = None
         i = 0
-        
+
         while ca_content is None and i < 2:
             i += 1
             try:
-                ca_content = requests.get(cert_host).content
+                ca_content = requests.get(client_self.ca_host).content
             except:
-                pass 
-        
+                pass
+
         if ca_content is None:
-            raise CertDownloadError(f"Unable to install the Evervault root certificate from {cert_host}. ")
+            raise CertDownloadError(f"Unable to install the Evervault root certificate from {client_self.ca_host}. ")
 
         try:
             with tempfile.NamedTemporaryFile(delete=False) as cert_file:
                 cert_file.write(bytes(certifi.contents(), 'ascii') + ca_content)
                 cert_path = cert_file.name
         except:
-            raise CertDownloadError(f"Unable to install the Evervault root certficate from {cert_host}. "
+            raise CertDownloadError(f"Unable to install the Evervault root certficate from {client_self.ca_host}. "
                 "Likely a permissions error when attempting to write to the /tmp/ directory.")
         api_key = client_self.api_key
         relay_url = client_self.relay_url
 
-        # We override this method to stop the requests library from 
+        # We override this method to stop the requests library from
         # removing the API token from the Proxy-Authorization header
         def rebuild_proxies(self, prepared_request, proxies):
           pass
@@ -109,7 +110,7 @@ class Client(object):
                 auth, timeout, allow_redirects, proxies,
                 hooks, stream, verify, cert, json)
         requests.Session.request = new_req_func
- 
+
     def get(self, path, params={}):
         return self.request.make_request("GET", self.__url(path), params)
 
