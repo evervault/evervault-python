@@ -6,7 +6,7 @@
 
 The [Evervault](https://evervault.com) Python SDK is a toolkit for encrypting data as it enters your server, and working with Cages. By default, initializing the SDK will result in all outbound HTTPS requests being intercepted and decrypted.
 
-## Getting Started
+## Getting Started TEST!
 
 Before starting with the Evervault Python SDK, you will need to [create an account](https://app.evervault.com/register) and a team.
 
@@ -50,10 +50,10 @@ The Evervault Python SDK exposes five functions.
 evervault.init(api_key = str[, intercept = bool, ignore_domains = list])
 ```
 
-| Parameter | Type | Description |
-| --------- | ---- | ----------- |
-| api_key | `str` | The API key of your Evervault Team |
-| intercept | `bool` | Decides if outbound requests are intercepted (`true` by default) |
+| Parameter      | Type        | Description                                                              |
+| -------------- | ----------- | ------------------------------------------------------------------------ |
+| api_key        | `str`       | The API key of your Evervault Team                                       |
+| intercept      | `bool`      | Decides if outbound requests are intercepted (`true` by default)         |
 | ignore_domains | `list(str)` | Requests sent to any of the domains in this list will not be intercepted |
 
 ### evervault.encrypt()
@@ -64,9 +64,9 @@ evervault.init(api_key = str[, intercept = bool, ignore_domains = list])
 evervault.encrypt(data = dict | list | set | str | int | bool)
 ```
 
-| Parameter | Type | Description |
-| --------- | ---- | ----------- |
-| data | `dict`, `list`, `set`, `str`, `int`, `bool` | Data to be encrypted |
+| Parameter | Type                                        | Description          |
+| --------- | ------------------------------------------- | -------------------- |
+| data      | `dict`, `list`, `set`, `str`, `int`, `bool` | Data to be encrypted |
 
 ### evervault.run()
 
@@ -76,19 +76,18 @@ evervault.encrypt(data = dict | list | set | str | int | bool)
 evervault.run(cage_name = str, data = dict[, options = dict])
 ```
 
-| Parameter | Type | Description |
-| --------- | ---- | ----------- |
-| cageName | `str` | Name of the Cage to be run |
-| data | `dict` | Payload for the Cage |
-| options | `dict` | [Options for the Cage run.](#Cage-Run-Options) |
+| Parameter | Type   | Description                                    |
+| --------- | ------ | ---------------------------------------------- |
+| cageName  | `str`  | Name of the Cage to be run                     |
+| data      | `dict` | Payload for the Cage                           |
+| options   | `dict` | [Options for the Cage run.](#Cage-Run-Options) |
 
 #### Cage Run Options
 
-| Option  | Type      | Default   | Description                                                                        |
-| ------- | --------- | --------- | ---------------------------------------------------------------------------------- |
+| Option  | Type      | Default | Description                                                                          |
+| ------- | --------- | ------- | ------------------------------------------------------------------------------------ |
 | async   | `Boolean` | `False` | Run your Cage in async mode. Async Cage runs will be queued for processing.          |
 | version | `Integer` | `None`  | Specify the version of your Cage to run. By default, the latest version will be run. |
-
 
 ## Contributing
 
