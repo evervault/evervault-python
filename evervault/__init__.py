@@ -1,10 +1,9 @@
 """Package for the evervault SDK"""
 from .client import Client
-from .version import VERSION
 from .errors.evervault_errors import AuthenticationError
 import os
 
-__version__ = VERSION
+__version__ = "0.2.4"
 
 ev_client = None
 _api_key = None

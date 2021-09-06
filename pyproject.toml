@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "evervault"
-version = "0.2.4.dev2"
+version = "0.2.4"
 description = "Everault SDK"
 authors = ["Evervault <engineering@evervault.com>"]
 license = "MIT"
@@ -19,6 +19,9 @@ pycryptodome = "^3.10.1"
 pytest = "^6.2.5"
 pytest-socket = "^0.4.1"
 requests-mock = "^1.9.3"
+python-semantic-release = "^7.19.2"
+flake8 = "^3.9.2"
+black = "^21.8b0"
 
 [pytest]
 testpath = "tests"
@@ -26,6 +29,14 @@ testpath = "tests"
 [tool.black]
 line-length = 88
 target-version = ['py36', 'py37', 'py38', 'py39']
+
+[tool.semantic_release]
+version_variable = [ "evervault/__init__.py:__version__" ]
+version_toml = [ "pyproject.toml:tool.poetry.version" ]
+major_on_zero = true
+branch = "master"
+upload_to_pypi = true
+build_command = "pip install poetry && poetry build"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
