@@ -9,7 +9,7 @@ homepage = "https://evervault.com"
 repository = "https://github.com/evervault/evervault-python"
 
 [tool.poetry.dependencies]
-python = "^3.6"
+python = "^3.6.2"
 requests = "^2.24.0"
 cryptography = "^3.4.8"
 certifi = "*"
@@ -19,10 +19,16 @@ pycryptodome = "^3.10.1"
 pytest = "^6.2.5"
 pytest-socket = "^0.4.1"
 requests-mock = "^1.9.3"
+black = "^21.8b0"
+
+
+[pytest]
+testpath = "tests"
+
+[tool.black]
+line-length = 88
+target-version = ['py36', 'py37', 'py38', 'py39']
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
-
-[pytest]
-testpath = "tests"

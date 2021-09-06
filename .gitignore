@@ -12,3 +12,5 @@ dist/
 
 # Ignore Interpreted Python
 *.pyc
+
+poetry.lock

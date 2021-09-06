@@ -15,14 +15,15 @@ BASE_RUN_URL_DEFAULT = "https://run.evervault.com/"
 RELAY_URL_DEFAULT = "https://relay.evervault.com:443"
 CA_HOST_DEFAULT = "https://ca.evervault.com"
 
-def init(api_key, intercept = True, ignore_domains=[]):
+
+def init(api_key, intercept=True, ignore_domains=[]):
     global _api_key
     _api_key = api_key
     if intercept:
         __client().relay(ignore_domains)
 
 
-def run(cage_name, data, options = { "async": False, "version": None }):
+def run(cage_name, data, options={"async": False, "version": None}):
     return __client().run(cage_name, data, options)
 
 
@@ -30,7 +31,7 @@ def encrypt(data):
     return __client().encrypt(data)
 
 
-def encrypt_and_run(cage_name, data, options = { "async": False, "version": None }):
+def encrypt_and_run(cage_name, data, options={"async": False, "version": None}):
     return __client().encrypt_and_run(cage_name, data, options)
 
 
@@ -51,7 +52,7 @@ def __client():
             base_url=os.environ.get("EV_API_URL", BASE_URL_DEFAULT),
             base_run_url=os.environ.get("EV_CAGE_RUN_URL", BASE_RUN_URL_DEFAULT),
             relay_url=os.environ.get("EV_TUNNEL_HOSTNAME", RELAY_URL_DEFAULT),
-            ca_host=os.environ.get("EV_CERT_HOSTNAME", CA_HOST_DEFAULT)
+            ca_host=os.environ.get("EV_CERT_HOSTNAME", CA_HOST_DEFAULT),
         )
         return ev_client
     else:

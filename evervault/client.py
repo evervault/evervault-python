@@ -9,6 +9,7 @@ import certifi
 import warnings
 import tempfile
 
+
 class Client(object):
     def __init__(
         self,
@@ -17,7 +18,7 @@ class Client(object):
         base_url="https://api.evervault.com/",
         base_run_url="https://run.evervault.com/",
         relay_url="https://relay.evervault.com:443",
-        ca_host="https://ca.evervault.com"
+        ca_host="https://ca.evervault.com",
     ):
         self.api_key = api_key
         self.base_url = base_url
@@ -34,11 +35,13 @@ class Client(object):
     def encrypt(self, data):
         return self.crypto_client.encrypt_data(self, data)
 
-    def run(self, cage_name, data, options = { "async": False, "version": None }):
+    def run(self, cage_name, data, options={"async": False, "version": None}):
         optional_headers = self.__build_cage_run_headers(options)
         return self.post(cage_name, data, optional_headers, True)
 
-    def encrypt_and_run(self, cage_name, data, options = { "async": False, "version": None }):
+    def encrypt_and_run(
+        self, cage_name, data, options={"async": False, "version": None}
+    ):
         encrypted_data = self.encrypt(data)
         return self.run(cage_name, encrypted_data, options)
 
@@ -52,9 +55,10 @@ class Client(object):
         ignore_if_exact = []
         ignore_if_endswith = ()
         for domain in ignore_domains:
-            if domain.startswith('www.'): domain = domain[4:]
+            if domain.startswith("www."):
+                domain = domain[4:]
             ignore_if_exact.append(domain)
-            ignore_if_endswith += ('.' + domain, '@' + domain)
+            ignore_if_endswith += ("." + domain, "@" + domain)
         old_request_func = requests.Session.request
 
         ca_content = None
@@ -68,54 +72,95 @@ class Client(object):
                 pass
 
         if ca_content is None:
-            raise CertDownloadError(f"Unable to install the Evervault root certificate from {client_self.ca_host}. ")
+            raise CertDownloadError(
+                f"Unable to install the Evervault root certificate from {client_self.ca_host}. "
+            )
 
         try:
             with tempfile.NamedTemporaryFile(delete=False) as cert_file:
-                cert_file.write(bytes(certifi.contents(), 'ascii') + ca_content)
+                cert_file.write(bytes(certifi.contents(), "ascii") + ca_content)
                 cert_path = cert_file.name
         except:
-            raise CertDownloadError(f"Unable to install the Evervault root certficate from {client_self.ca_host}. "
-                "Likely a permissions error when attempting to write to the /tmp/ directory.")
+            raise CertDownloadError(
+                f"Unable to install the Evervault root certficate from {client_self.ca_host}. "
+                "Likely a permissions error when attempting to write to the /tmp/ directory."
+            )
         api_key = client_self.api_key
         relay_url = client_self.relay_url
 
         # We override this method to stop the requests library from
         # removing the API token from the Proxy-Authorization header
         def rebuild_proxies(self, prepared_request, proxies):
-          pass
+            pass
 
         requests.sessions.SessionRedirectMixin.rebuild_proxies = rebuild_proxies
 
-        def new_req_func(self, method, url,
-                params=None, data=None, headers={}, cookies=None, files=None,
-                auth=None, timeout=None, allow_redirects=True, proxies={},
-                hooks=None, stream=None, verify=None, cert=None, json=None):
-            if headers is None: headers = {}
-            if proxies is None: proxies = {}
+        def new_req_func(
+            self,
+            method,
+            url,
+            params=None,
+            data=None,
+            headers={},
+            cookies=None,
+            files=None,
+            auth=None,
+            timeout=None,
+            allow_redirects=True,
+            proxies={},
+            hooks=None,
+            stream=None,
+            verify=None,
+            cert=None,
+            json=None,
+        ):
+            if headers is None:
+                headers = {}
+            if proxies is None:
+                proxies = {}
             headers["Proxy-Authorization"] = api_key
             proxies["https"] = relay_url
-            verify=cert_path
+            verify = cert_path
             try:
                 domain = urlparse(url).netloc
                 if domain in ignore_if_exact or domain.endswith(ignore_if_endswith):
                     del headers["Proxy-Authorization"]
                     del proxies["https"]
             except Exception:
-                warnings.warn(f"Unable to parse {url} when attempting to check "
-                            "if it is an ignore_domain.")
+                warnings.warn(
+                    f"Unable to parse {url} when attempting to check "
+                    "if it is an ignore_domain."
+                )
                 pass
-            return old_request_func(self, method, url,
-                params, data, headers, cookies, files,
-                auth, timeout, allow_redirects, proxies,
-                hooks, stream, verify, cert, json)
+            return old_request_func(
+                self,
+                method,
+                url,
+                params,
+                data,
+                headers,
+                cookies,
+                files,
+                auth,
+                timeout,
+                allow_redirects,
+                proxies,
+                hooks,
+                stream,
+                verify,
+                cert,
+                json,
+            )
+
         requests.Session.request = new_req_func
 
     def get(self, path, params={}):
         return self.request.make_request("GET", self.__url(path), params)
 
     def post(self, path, params, optional_headers, cage_run=False):
-        return self.request.make_request("POST", self.__url(path, cage_run), params, optional_headers)
+        return self.request.make_request(
+            "POST", self.__url(path, cage_run), params, optional_headers
+        )
 
     def put(self, path, params):
         return self.request.make_request("PUT", self.__url(path), params)
@@ -131,13 +176,13 @@ class Client(object):
         if options is None:
             return {}
         cage_run_headers = {}
-        if 'async' in options:
-            if options['async']:
-                cage_run_headers['x-async'] = 'true'
-            options.pop('async', None)
-        if 'version' in options:
-            if ensure_is_integer(options['version']):
-                cage_run_headers['x-version-id'] = str(int(float(options['version'])))
-            options.pop('version', None)
+        if "async" in options:
+            if options["async"]:
+                cage_run_headers["x-async"] = "true"
+            options.pop("async", None)
+        if "version" in options:
+            if ensure_is_integer(options["version"]):
+                cage_run_headers["x-version-id"] = str(int(float(options["version"])))
+            options.pop("version", None)
         cage_run_headers.update(options)
         return cage_run_headers

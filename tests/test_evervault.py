@@ -7,6 +7,7 @@ from cryptography.hazmat.primitives.asymmetric import ec
 import evervault
 import os
 
+
 class TestEvervault(unittest.TestCase):
     def setUp(self):
         self.evervault = evervault
@@ -45,7 +46,7 @@ class TestEvervault(unittest.TestCase):
     @requests_mock.Mocker()
     def test_encrypt_sets(self, mock_request):
         self.mock_fetch_cage_key(mock_request)
-        level_1_set = set(['a', True, 3])
+        level_1_set = set(["a", True, 3])
         level_1_set_encrypted = self.evervault.encrypt(level_1_set)
         assert len(level_1_set_encrypted) == 3
         for item in level_1_set_encrypted:
@@ -54,13 +55,12 @@ class TestEvervault(unittest.TestCase):
     @requests_mock.Mocker()
     def test_encrypt_lists_of_various_types(self, mock_request):
         self.mock_fetch_cage_key(mock_request)
-        level_1_list = ['a', True, 3]
+        level_1_list = ["a", True, 3]
         level_1_list_encrypted = self.evervault.encrypt(level_1_list)
         for item in level_1_list_encrypted:
             assert self.__is_evervault_string_format(item)
 
-
-        level_2_list = ['a', False, 4.0, ['b', 2], set(["x", "b"])]
+        level_2_list = ["a", False, 4.0, ["b", 2], set(["x", "b"])]
         level_2_list_encrypted = self.evervault.encrypt(level_2_list)
         for item in level_2_list_encrypted:
             if type(item) == list or type(item) == set:
@@ -69,7 +69,6 @@ class TestEvervault(unittest.TestCase):
             else:
                 assert self.__is_evervault_string_format(item)
 
-
     @requests_mock.Mocker()
     def test_encrypt_dicts(self, mock_request):
         self.mock_fetch_cage_key(mock_request)
@@ -77,10 +76,7 @@ class TestEvervault(unittest.TestCase):
             "name": "testname",
             "age": 20,
             "array": ["team1", 1],
-            "dict": {
-                "subname": "subtestname",
-                "subnumber": 2
-            }
+            "dict": {"subname": "subtestname", "subnumber": 2},
         }
         encrypted_data = self.evervault.encrypt(test_payload)
         assert encrypted_data != {"name": "testname"}
@@ -92,12 +88,13 @@ class TestEvervault(unittest.TestCase):
     @requests_mock.Mocker()
     def test_encrypt_with_unsupported_type_throws_exception(self, mock_request):
         self.mock_fetch_cage_key(mock_request)
+
         class MyTestClass:
             x = 5
 
         test_instance = MyTestClass()
-        level_1_list = ['a', test_instance, 3]
-        level_2_list = ['a', ['a', test_instance]]
+        level_1_list = ["a", test_instance, 3]
+        level_2_list = ["a", ["a", test_instance]]
 
         self.assertRaises(UnknownEncryptType, self.evervault.encrypt, test_instance)
         self.assertRaises(UnknownEncryptType, self.evervault.encrypt, level_1_list)
@@ -120,9 +117,15 @@ class TestEvervault(unittest.TestCase):
         request = mock_request.post(
             "https://run.evervault.com/testing-cage",
             json={"status": "queued"},
-            request_headers={ "Api-Key": "testing", "x-version-id": "2", "x-async": "true" },
+            request_headers={
+                "Api-Key": "testing",
+                "x-version-id": "2",
+                "x-async": "true",
+            },
         )
-        resp = self.evervault.run("testing-cage", {"name": "testing"}, {"async": True, "version": 2})
+        resp = self.evervault.run(
+            "testing-cage", {"name": "testing"}, {"async": True, "version": 2}
+        )
         assert request.called
         assert resp["status"] == "queued"
         assert request.last_request.json() == {"name": "testing"}
@@ -148,10 +151,16 @@ class TestEvervault(unittest.TestCase):
         request = mock_request.post(
             "https://run.evervault.com/testing-cage",
             json={"status": "queued"},
-            request_headers={ "Api-Key": "testing", "x-version-id": "2", "x-async": "true" },
+            request_headers={
+                "Api-Key": "testing",
+                "x-version-id": "2",
+                "x-async": "true",
+            },
         )
         self.mock_fetch_cage_key(mock_request)
-        resp = self.evervault.encrypt_and_run("testing-cage", {"name": "testing"}, {"async": True, "version": 2})
+        resp = self.evervault.encrypt_and_run(
+            "testing-cage", {"name": "testing"}, {"async": True, "version": 2}
+        )
         assert request.called
         assert resp["status"] == "queued"
         assert request.last_request.json() != {"name": "testing"}
@@ -161,9 +170,9 @@ class TestEvervault(unittest.TestCase):
     @requests_mock.Mocker()
     def test_endpoint_overrides(self, mock_request):
         mock_request.get("https://ca.evervault.com", {})
-        mock_request.get("https://ca.url.com",{})
+        mock_request.get("https://ca.url.com", {})
 
-        # Test default values
+        # Test default values
         self.evervault.init("testing", intercept=True)
         assert self.evervault.ev_client.base_url == "https://api.evervault.com/"
         assert self.evervault.ev_client.base_run_url == "https://run.evervault.com/"
@@ -171,10 +180,10 @@ class TestEvervault(unittest.TestCase):
         assert self.evervault.ev_client.ca_host == "https://ca.evervault.com"
 
         # Set overrides
-        os.environ['EV_API_URL'] = "https://custom.url.com"
-        os.environ['EV_CAGE_RUN_URL'] = "https://custom.run.url.com"
-        os.environ['EV_TUNNEL_HOSTNAME'] = "https://custom.tunnel.url.com"
-        os.environ['EV_CERT_HOSTNAME'] = "https://ca.url.com"
+        os.environ["EV_API_URL"] = "https://custom.url.com"
+        os.environ["EV_CAGE_RUN_URL"] = "https://custom.run.url.com"
+        os.environ["EV_TUNNEL_HOSTNAME"] = "https://custom.tunnel.url.com"
+        os.environ["EV_CERT_HOSTNAME"] = "https://ca.url.com"
 
         # Force client to reinit
         self.evervault.ev_client = None
@@ -188,23 +197,19 @@ class TestEvervault(unittest.TestCase):
     def mock_fetch_cage_key(self, mock_request):
         mock_request.get(
             "https://api.evervault.com/cages/key",
-            json={
-                "ecdhKey": self.public_key.decode("utf8")
-            },
+            json={"ecdhKey": self.public_key.decode("utf8")},
         )
 
     def build_keys(self):
-        ecdh_private_key = ec.generate_private_key(
-            ec.SECP256K1()
-        )
+        ecdh_private_key = ec.generate_private_key(ec.SECP256K1())
 
         public_key = ecdh_private_key.public_key()
         key = public_key.public_bytes(
             encoding=serialization.Encoding.X962,
-            format=serialization.PublicFormat.CompressedPoint
+            format=serialization.PublicFormat.CompressedPoint,
         )
 
-        return (base64.b64encode(key))
+        return base64.b64encode(key)
 
     def __del_env_var(self, var):
         if var in os.environ:

@@ -7,6 +7,8 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/everva
 ## Getting Started
 
 - `poetry install`
+- `poetry run pytest`
+- `poetry run black .`
 
 <!--
 To make life easier, this module features a code formatter/linter and also a commit formatter/linter, so that our
