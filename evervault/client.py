@@ -68,7 +68,7 @@ class Client(object):
             i += 1
             try:
                 ca_content = requests.get(client_self.ca_host).content
-            except:
+            except:  # noqa: E722
                 pass
 
         if ca_content is None:
@@ -80,7 +80,7 @@ class Client(object):
             with tempfile.NamedTemporaryFile(delete=False) as cert_file:
                 cert_file.write(bytes(certifi.contents(), "ascii") + ca_content)
                 cert_path = cert_file.name
-        except:
+        except:  # noqa: 722
             raise CertDownloadError(
                 f"Unable to install the Evervault root certficate from {client_self.ca_host}. "
                 "Likely a permissions error when attempting to write to the /tmp/ directory."

@@ -19,8 +19,6 @@ pycryptodome = "^3.10.1"
 pytest = "^6.2.5"
 pytest-socket = "^0.4.1"
 requests-mock = "^1.9.3"
-black = "^21.8b0"
-
 
 [pytest]
 testpath = "tests"

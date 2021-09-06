@@ -27,21 +27,21 @@ class TestEvervault(unittest.TestCase):
         self.mock_fetch_cage_key(mock_request)
         input = 1
         encrypted_input = self.evervault.encrypt(input)
-        assert self.__is_evervault_string(encrypted_input, "number") == True
+        assert self.__is_evervault_string(encrypted_input, "number")
 
     @requests_mock.Mocker()
     def test_encrypting_boolean_generates_ev_boolean_type(self, mock_request):
         self.mock_fetch_cage_key(mock_request)
         input = False
         encrypted_input = self.evervault.encrypt(input)
-        assert self.__is_evervault_string(encrypted_input, "boolean") == True
+        assert self.__is_evervault_string(encrypted_input, "boolean")
 
     @requests_mock.Mocker()
     def test_encrypting_string_generates_ev_string_type(self, mock_request):
         self.mock_fetch_cage_key(mock_request)
         input = "string"
         encrypted_input = self.evervault.encrypt(input)
-        assert self.__is_evervault_string(encrypted_input, "string") == True
+        assert self.__is_evervault_string(encrypted_input, "string")
 
     @requests_mock.Mocker()
     def test_encrypt_sets(self, mock_request):
