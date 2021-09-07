@@ -47,7 +47,7 @@ class Request(object):
             timeout=self.timeout,
             verify=certifi.where(),
             allow_redirects=False,
-            **req_params
+            **req_params,
         )
 
     def __parse_body(self, resp):

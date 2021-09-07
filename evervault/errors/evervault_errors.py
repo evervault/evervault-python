@@ -48,11 +48,14 @@ class InvalidPublicKeyError(EvervaultError):
 class UnexpectedError(EvervaultError):
     pass
 
+
 class MissingTeamEcdhKey(EvervaultError):
     pass
 
+
 class UnknownEncryptType(EvervaultError):
     pass
+
 
 class CertDownloadError(EvervaultError):
     pass

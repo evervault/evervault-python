@@ -23,7 +23,7 @@ def raise_errors_on_failure(resp, body=None):
 
 
 def __message_for_unexpected_error_without_type(error_details):
-    if error_details != None:
+    if error_details is not None:
         message = error_details["message"]
         status_code = error_details["statusCode"]
         return (
