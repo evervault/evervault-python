@@ -45,7 +45,7 @@ def post_metric(api_key, count):
 
 
 def metric_report_schedule_manager():
-    scheduler = ReportingScheduler(0.001, worker)
+    scheduler = ReportingScheduler(1.5, worker)
     scheduler.start()
 
 
@@ -71,10 +71,11 @@ def worker():
     encrypt_metric_batches.append((current_api_key, encrypt_count))
 
     for (api_key, count) in encrypt_metric_batches:
-        try:
-            post_metric(api_key, count)
-        except:
-            pass
+        if count > 0:
+            try:
+                post_metric(api_key, count)
+            except:
+                pass
 
 
 threading.Thread(target=metric_report_schedule_manager, daemon=True).start()
