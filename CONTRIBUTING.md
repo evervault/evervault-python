@@ -9,4 +9,4 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/everva
 - `poetry install`
 - `poetry run pytest`
 - `poetry run black .`
-- `poetry run flake8 --ignore=E501,W503`
+- `poetry run flake8 --ignore=E501,W503,E722`
