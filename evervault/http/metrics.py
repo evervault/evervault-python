@@ -6,8 +6,7 @@ import os
 
 
 def post_metric(api_key, count):
-    # api_url = os.environ.get("EV_API_URL", evervault.BASE_URL_DEFAULT)
-    api_url = "https://api.evervault.io/"  # During development use the staging server
+    api_url = os.environ.get("EV_API_URL", evervault.BASE_URL_DEFAULT)
     url = f"{api_url}metrics/sdkEncryptions?sdk=python&numEncryptions={count}"
 
     headers = {"Api-Key": api_key}
@@ -22,7 +21,7 @@ def worker():
         # try:
         data = metric_event_queue.get()
 
-        a = post_metric(data["api_key"], 1)
+        post_metric(data["api_key"], 1)
 
         metric_event_queue.task_done()
         # except:
