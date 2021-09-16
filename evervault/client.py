@@ -26,7 +26,7 @@ class Client(object):
         self.relay_url = relay_url
         self.ca_host = ca_host
         self.request = Request(self.api_key, request_timeout)
-        self.crypto_client = CryptoClient()
+        self.crypto_client = CryptoClient(api_key)
 
     @property
     def _auth(self):
@@ -51,6 +51,7 @@ class Client(object):
 
     def relay(client_self, ignore_domains=[]):
         ignore_domains.append(urlparse(client_self.base_run_url).netloc)
+        ignore_domains.append(urlparse(client_self.base_url).netloc)
         ignore_domains.append(urlparse(client_self.ca_host).netloc)
         ignore_if_exact = []
         ignore_if_endswith = ()

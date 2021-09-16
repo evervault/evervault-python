@@ -1,3 +1,4 @@
+from ..http.metrics import report_metric
 from ..errors.evervault_errors import (
     UndefinedDataError,
     InvalidPublicKeyError,
@@ -19,12 +20,13 @@ KEY_INTERVAL = 15
 
 
 class Client(object):
-    def __init__(self):
+    def __init__(self, api_key=None):
         self.public_key = None
         self.team_ecdh_key = None
         self.generated_ecdh_key = None
         self.shared_key = None
         self.start_time = int(time.time())
+        self.api_key = api_key
         self.ev_version = self.__base_64_remove_padding(
             base64.b64encode(bytes(EV_VERSION, "utf8")).decode("utf")
         )
@@ -81,6 +83,8 @@ class Client(object):
         return encrypted_set
 
     def __encrypt_string(self, data):
+        report_metric(self.api_key)
+
         header_type = map_header_type(data)
         coerced_data = self.__coerce_type(data)
         iv = token_bytes(12)
