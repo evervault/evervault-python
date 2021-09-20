@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "evervault"
-version = "0.2.4"
+version = "0.3.0"
 description = "Everault SDK"
 authors = ["Evervault <engineering@evervault.com>"]
 license = "MIT"
