@@ -2,6 +2,16 @@ from ..errors import error_handler
 import json
 import requests
 import certifi
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util.retry import Retry
+
+retry_strategy = Retry(
+    total=3,
+    status_forcelist=[429, 500, 502, 503, 504],
+    allowed_methods=["HEAD", "GET", "OPTIONS", "POST", "PUT"],
+    backoff_factor=1,
+)
+adapter = HTTPAdapter(max_retries=retry_strategy)
 
 
 class Request(object):
@@ -10,12 +20,16 @@ class Request(object):
         self.timeout = timeout
         self.api_key = api_key
 
-    def make_request(self, method, url, params=None, optional_headers={}):
+    def make_request(self, method, url, params=None, optional_headers={}, retry=False):
+        print(url)
         from evervault import __version__
 
         req_params = self.__build_headers(method, params, optional_headers, __version__)
 
         request_object = requests if self.http_session is None else self.http_session
+        if retry:
+            request_object.mount("https://", adapter)
+            request_object.mount("http://", adapter)
         resp = self.__execute_request(request_object, method, url, req_params)
 
         parsed_body = self.__parse_body(resp)

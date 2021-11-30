@@ -1,7 +1,5 @@
 from .http.request import Request
 from .crypto.client import Client as CryptoClient
-from .models.cage_list import CageList
-from .datatypes.map import ensure_is_integer
 from .errors.evervault_errors import CertDownloadError
 from urllib.parse import urlparse
 import requests
@@ -9,50 +7,22 @@ import certifi
 import warnings
 import tempfile
 
-
-class Client(object):
+class RelayClient(object):
     def __init__(
         self,
         api_key=None,
         request_timeout=30,
-        base_url="https://api.evervault.com/",
-        base_run_url="https://run.evervault.com/",
         relay_url="https://relay.evervault.com:443",
         ca_host="https://ca.evervault.com",
     ):
         self.api_key = api_key
-        self.base_url = base_url
-        self.base_run_url = base_run_url
         self.relay_url = relay_url
         self.ca_host = ca_host
         self.request = Request(self.api_key, request_timeout)
         self.crypto_client = CryptoClient(api_key)
 
-    @property
-    def _auth(self):
-        return (self.api_key, "")
-
-    def encrypt(self, data):
-        return self.crypto_client.encrypt_data(self, data)
-
-    def run(self, cage_name, data, options={"async": False, "version": None}):
-        optional_headers = self.__build_cage_run_headers(options)
-        return self.post(cage_name, data, optional_headers, True, True)
-
-    def encrypt_and_run(
-        self, cage_name, data, options={"async": False, "version": None}
-    ):
-        encrypted_data = self.encrypt(data)
-        return self.run(cage_name, encrypted_data, options)
-
-    def cages(self):
-        cages = self.get("cages")["cages"]
-        return CageList(cages, self).cages
 
     def relay(client_self, ignore_domains=[]):
-        ignore_domains.append(urlparse(client_self.base_run_url).netloc)
-        ignore_domains.append(urlparse(client_self.base_url).netloc)
-        ignore_domains.append(urlparse(client_self.ca_host).netloc)
         ignore_if_exact = []
         ignore_if_endswith = ()
         for domain in ignore_domains:
@@ -68,8 +38,7 @@ class Client(object):
         while ca_content is None and i < 2:
             i += 1
             try:
-                ca_content = client_self.request.make_request("GET", client_self.ca_host, {}).content
-                print(ca_content)
+                ca_content = requests.get(client_self.ca_host).content
             except:  # noqa: E722
                 pass
 
@@ -155,36 +124,3 @@ class Client(object):
             )
 
         requests.Session.request = new_req_func
-
-    def get(self, path, params={}):
-        return self.request.make_request("GET", self.__url(path), params)
-
-    def post(self, path, params, optional_headers, cage_run=False, retry=False):
-        return self.request.make_request(
-            "POST", self.__url(path, cage_run), params, optional_headers, retry
-        )
-
-    def put(self, path, params):
-        return self.request.make_request("PUT", self.__url(path), params)
-
-    def delete(self, path, params):
-        return self.request.make_request("DELETE", self.__url(path), params)
-
-    def __url(self, path, cage_run=False):
-        base_url = self.base_run_url if cage_run else self.base_url
-        return base_url + path
-
-    def __build_cage_run_headers(self, options):
-        if options is None:
-            return {}
-        cage_run_headers = {}
-        if "async" in options:
-            if options["async"]:
-                cage_run_headers["x-async"] = "true"
-            options.pop("async", None)
-        if "version" in options:
-            if ensure_is_integer(options["version"]):
-                cage_run_headers["x-version-id"] = str(int(float(options["version"])))
-            options.pop("version", None)
-        cage_run_headers.update(options)
-        return cage_run_headers

@@ -9,10 +9,10 @@ ev_client = None
 _api_key = None
 request_timeout = 30
 
-BASE_URL_DEFAULT = "https://api.evervault.com/"
-BASE_RUN_URL_DEFAULT = "https://run.evervault.com/"
-RELAY_URL_DEFAULT = "https://relay.evervault.com:443"
-CA_HOST_DEFAULT = "https://ca.evervault.com"
+BASE_URL_DEFAULT = "https://api.evervault.io/"
+BASE_RUN_URL_DEFAULT = "https://run.evervault.io/"
+RELAY_URL_DEFAULT = "https://relay.evervault.io:443"
+CA_HOST_DEFAULT = "https://ca.evervault.io"
 
 
 def init(api_key, intercept=True, ignore_domains=[]):
