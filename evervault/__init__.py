@@ -57,7 +57,7 @@ def __client():
             base_run_url=os.environ.get("EV_CAGE_RUN_URL", BASE_RUN_URL_DEFAULT),
             relay_url=os.environ.get("EV_TUNNEL_HOSTNAME", RELAY_URL_DEFAULT),
             ca_host=os.environ.get("EV_CERT_HOSTNAME", CA_HOST_DEFAULT),
-            retry=_retry
+            retry=_retry,
         )
         return ev_client
     else:

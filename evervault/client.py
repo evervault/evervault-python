@@ -19,7 +19,7 @@ class Client(object):
         base_run_url="https://run.evervault.com/",
         relay_url="https://relay.evervault.com:443",
         ca_host="https://ca.evervault.com",
-        retry=False
+        retry=False,
     ):
         self.api_key = api_key
         self.base_url = base_url
@@ -69,7 +69,9 @@ class Client(object):
         while ca_content is None and i < 2:
             i += 1
             try:
-                ca_content = client_self.request.make_request("GET", client_self.ca_host, {}, _is_ca=True).content
+                ca_content = client_self.request.make_request(
+                    "GET", client_self.ca_host, {}, _is_ca=True
+                ).content
             except:  # noqa: E722
                 pass
 
