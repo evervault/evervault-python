@@ -19,13 +19,14 @@ class Client(object):
         base_run_url="https://run.evervault.com/",
         relay_url="https://relay.evervault.com:443",
         ca_host="https://ca.evervault.com",
+        retry=False
     ):
         self.api_key = api_key
         self.base_url = base_url
         self.base_run_url = base_run_url
         self.relay_url = relay_url
         self.ca_host = ca_host
-        self.request = Request(self.api_key, request_timeout)
+        self.request = Request(self.api_key, request_timeout, retry)
         self.crypto_client = CryptoClient(api_key)
 
     @property
@@ -37,7 +38,7 @@ class Client(object):
 
     def run(self, cage_name, data, options={"async": False, "version": None}):
         optional_headers = self.__build_cage_run_headers(options)
-        return self.post(cage_name, data, optional_headers, True, True)
+        return self.post(cage_name, data, optional_headers, True)
 
     def encrypt_and_run(
         self, cage_name, data, options={"async": False, "version": None}
@@ -68,8 +69,7 @@ class Client(object):
         while ca_content is None and i < 2:
             i += 1
             try:
-                ca_content = client_self.request.make_request("GET", client_self.ca_host, {}).content
-                print(ca_content)
+                ca_content = client_self.request.make_request("GET", client_self.ca_host, {}, _is_ca=True).content
             except:  # noqa: E722
                 pass
 
@@ -159,9 +159,9 @@ class Client(object):
     def get(self, path, params={}):
         return self.request.make_request("GET", self.__url(path), params)
 
-    def post(self, path, params, optional_headers, cage_run=False, retry=False):
+    def post(self, path, params, optional_headers, cage_run=False):
         return self.request.make_request(
-            "POST", self.__url(path, cage_run), params, optional_headers, retry
+            "POST", self.__url(path, cage_run), params, optional_headers
         )
 
     def put(self, path, params):
