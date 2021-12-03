@@ -19,13 +19,14 @@ class Client(object):
         base_run_url="https://run.evervault.com/",
         relay_url="https://relay.evervault.com:443",
         ca_host="https://ca.evervault.com",
+        retry=False,
     ):
         self.api_key = api_key
         self.base_url = base_url
         self.base_run_url = base_run_url
         self.relay_url = relay_url
         self.ca_host = ca_host
-        self.request = Request(self.api_key, request_timeout)
+        self.request = Request(self.api_key, request_timeout, retry)
         self.crypto_client = CryptoClient(api_key)
 
     @property
@@ -68,7 +69,9 @@ class Client(object):
         while ca_content is None and i < 2:
             i += 1
             try:
-                ca_content = requests.get(client_self.ca_host).content
+                ca_content = client_self.request.make_request(
+                    "GET", client_self.ca_host, {}, _is_ca=True
+                ).content
             except:  # noqa: E722
                 pass
 
