@@ -55,6 +55,7 @@ evervault.init(api_key = str[, intercept = bool, ignore_domains = list])
 | api_key        | `str`       | The API key of your Evervault Team                                       |
 | intercept      | `bool`      | Decides if outbound requests are intercepted (`true` by default)         |
 | ignore_domains | `list(str)` | Requests sent to any of the domains in this list will not be intercepted |
+| retry          | `bool`      | Retry failed Cage operations (maximum of 3 retries; `false` by default)  |
 
 ### evervault.encrypt()
 
