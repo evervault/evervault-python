@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.4.1 (2021-12-15)
+### Fix
+* **docs:** Update example to include retry ([`8dd9ec7`](https://github.com/evervault/evervault-python/commit/8dd9ec736c5ec5379bec8004a046f102f8b4be41))
+
 ## v0.4.0 (2021-12-03)
 ### Feature
 * Add optional retries to requests for cert and cage operations ([`5c28881`](https://github.com/evervault/evervault-python/commit/5c288811c5e51cd5621d24e90d236b6c0607ffbb))
