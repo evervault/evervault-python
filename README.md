@@ -47,7 +47,7 @@ The Evervault Python SDK exposes five functions.
 `evervault.init()` initializes the SDK with your API key. Configurations for the interception of outbound requests may also be passed in this function.
 
 ```python
-evervault.init(api_key = str[, intercept = bool, ignore_domains = list])
+evervault.init(api_key = str[, intercept = bool, ignore_domains = list, retry = bool])
 ```
 
 | Parameter      | Type        | Description                                                              |
