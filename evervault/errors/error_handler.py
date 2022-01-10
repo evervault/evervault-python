@@ -12,6 +12,10 @@ def raise_errors_on_failure(resp, body=None):
         raise errors.AuthenticationError("Unauthorized")
     elif resp.status_code == 403:
         raise errors.AuthenticationError("Forbidden")
+    elif resp.status_code == 408:
+        raise errors.TimeoutError("Request timed out")
+    elif resp.status_code == 422:
+        raise errors.DecryptionError("Unable to decrypt data")
     elif resp.status_code == 500:
         raise errors.ServerError("Server Error")
     elif resp.status_code == 502:

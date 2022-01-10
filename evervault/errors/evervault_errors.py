@@ -21,6 +21,14 @@ class AuthenticationError(EvervaultError):
     pass
 
 
+class TimeoutError(EvervaultError):
+    pass
+
+
+class DecryptionError(EvervaultError):
+    pass
+
+
 class ServerError(EvervaultError):
     pass
 
