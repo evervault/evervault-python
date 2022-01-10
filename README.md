@@ -79,8 +79,8 @@ evervault.run(cage_name = str, data = dict[, options = dict])
 
 | Parameter | Type   | Description                                    |
 | --------- | ------ | ---------------------------------------------- |
-| cageName  | `str`  | Name of the Cage to be run                     |
-| data      | `dict` | Payload for the Cage                           |
+| cageName  | `str`  | Name of the Cage to be run.                    |
+| data      | `dict` | Payload for the Cage.                          |
 | options   | `dict` | [Options for the Cage run.](#Cage-Run-Options) |
 
 #### Cage Run Options
