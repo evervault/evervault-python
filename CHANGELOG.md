@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.4.2 (2022-01-10)
+### Fix
+* Release new runtime error support ([`7018d75`](https://github.com/evervault/evervault-python/commit/7018d75f2af335e989b55531f33b7a66fa7991de))
+
 ## v0.4.1 (2021-12-15)
 ### Fix
 * **docs:** Update example to include retry ([`8dd9ec7`](https://github.com/evervault/evervault-python/commit/8dd9ec736c5ec5379bec8004a046f102f8b4be41))
