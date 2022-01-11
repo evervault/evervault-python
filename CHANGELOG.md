@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.4.3 (2022-01-11)
+### Fix
+* **docs:** Include reference to commitizen and contributing.md ([`a5f626a`](https://github.com/evervault/evervault-python/commit/a5f626a796ce0bf65212f1225810123410626608))
+
 ## v0.4.2 (2022-01-10)
 ### Fix
 * Release new runtime error support ([`7018d75`](https://github.com/evervault/evervault-python/commit/7018d75f2af335e989b55531f33b7a66fa7991de))
