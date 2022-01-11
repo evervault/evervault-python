@@ -12,6 +12,8 @@ Before starting with the Evervault Python SDK, you will need to [create an accou
 
 For full installation support, [book time here](https://calendly.com/evervault/cages-onboarding).
 
+Before contributing, make sure to use [commitizen](https://github.com/commitizen/cz-cli) & to read [Contributing.md](./CONTRIBUTING.md).
+
 ## Documentation
 
 See the Evervault [Python SDK documentation](https://docs.evervault.com/sdk/python).
