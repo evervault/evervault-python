@@ -1,1 +1,6 @@
 EV_VERSION = "DUB"
+
+VERSION = {
+    'SECP256R1': 'ORK',
+    'SECP256K1': 'DUB'
+}

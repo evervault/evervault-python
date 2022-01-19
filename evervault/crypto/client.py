@@ -13,14 +13,19 @@ from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from secrets import token_bytes
 import base64
 import time
-from .version import EV_VERSION
+from .version import VERSION
 
 BS = 32
 KEY_INTERVAL = 15
 
+CURVES = {
+    'SECP256K1': ec.SECP256K1,
+    'SECP256R1': ec.SECP256R1
+}
 
 class Client(object):
-    def __init__(self, api_key=None):
+    def __init__(self, api_key=None, curve='SECP256K1'):
+        self.curve = curve
         self.public_key = None
         self.team_ecdh_key = None
         self.generated_ecdh_key = None
@@ -28,7 +33,7 @@ class Client(object):
         self.start_time = int(time.time())
         self.api_key = api_key
         self.ev_version = self.__base_64_remove_padding(
-            base64.b64encode(bytes(EV_VERSION, "utf8")).decode("utf")
+            base64.b64encode(bytes(VERSION[self.curve], "utf8")).decode("utf")
         )
 
     def encrypt_data(self, fetch, data):
@@ -125,10 +130,11 @@ class Client(object):
     def __fetch_cage_key(self, fetch):
         if self.team_ecdh_key is None:
             resp = fetch.get("cages/key")
-            decoded_team_cage_key = base64.b64decode(resp["ecdhKey"])
+            key_name = "ecdhKey" if self.curve == "SECP256K1" else "ecdhP256Key"
+            decoded_team_cage_key = base64.b64decode(resp[key_name])
 
             self.team_ecdh_key = EllipticCurvePublicKey.from_encoded_point(
-                ec.SECP256K1(), decoded_team_cage_key
+                CURVES[self.curve](), decoded_team_cage_key
             )
 
     def __derive_shared_key(self):
@@ -145,7 +151,7 @@ class Client(object):
             return self.shared_key
 
     def __generate_shared_key(self):
-        generated_key = ec.generate_private_key(ec.SECP256K1)
+        generated_key = ec.generate_private_key(CURVES[self.curve])
         self.generated_ecdh_key = generated_key.public_key().public_bytes(
             Encoding.X962, PublicFormat.CompressedPoint
         )

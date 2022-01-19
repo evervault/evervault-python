@@ -20,6 +20,7 @@ class Client(object):
         relay_url="https://relay.evervault.com:443",
         ca_host="https://ca.evervault.com",
         retry=False,
+        curve="SECP256K1"
     ):
         self.api_key = api_key
         self.base_url = base_url
@@ -27,7 +28,7 @@ class Client(object):
         self.relay_url = relay_url
         self.ca_host = ca_host
         self.request = Request(self.api_key, request_timeout, retry)
-        self.crypto_client = CryptoClient(api_key)
+        self.crypto_client = CryptoClient(api_key, curve)
 
     @property
     def _auth(self):

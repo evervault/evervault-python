@@ -67,3 +67,7 @@ class UnknownEncryptType(EvervaultError):
 
 class CertDownloadError(EvervaultError):
     pass
+
+
+class UnsupportedCurveError(EvervaultError):
+    pass
