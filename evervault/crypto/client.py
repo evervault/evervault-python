@@ -18,13 +18,11 @@ from .version import VERSION
 BS = 32
 KEY_INTERVAL = 15
 
-CURVES = {
-    'SECP256K1': ec.SECP256K1,
-    'SECP256R1': ec.SECP256R1
-}
+CURVES = {"SECP256K1": ec.SECP256K1, "SECP256R1": ec.SECP256R1}
+
 
 class Client(object):
-    def __init__(self, api_key=None, curve='SECP256K1'):
+    def __init__(self, api_key=None, curve="SECP256K1"):
         self.curve = curve
         self.public_key = None
         self.team_ecdh_key = None

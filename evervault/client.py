@@ -20,7 +20,7 @@ class Client(object):
         relay_url="https://relay.evervault.com:443",
         ca_host="https://ca.evervault.com",
         retry=False,
-        curve="SECP256K1"
+        curve="SECP256K1",
     ):
         self.api_key = api_key
         self.base_url = base_url
