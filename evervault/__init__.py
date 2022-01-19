@@ -54,7 +54,7 @@ def __client():
         )
     if _curve not in SUPPORTED_CURVES:
         raise UnsupportedCurveError(
-            f"The {_curve} curve is not supported. Find a list of supported curves here: <DOC_LINK>"
+            f"The {_curve} curve is not supported."
         )
     global ev_client
     if not ev_client:
