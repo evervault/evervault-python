@@ -16,9 +16,10 @@ BASE_RUN_URL_DEFAULT = "https://run.evervault.com/"
 RELAY_URL_DEFAULT = "https://relay.evervault.com:443"
 CA_HOST_DEFAULT = "https://ca.evervault.com"
 
-SUPPORTED_CURVES = ['SECP256K1', 'SECP256R1']
+SUPPORTED_CURVES = ["SECP256K1", "SECP256R1"]
 
-def init(api_key, intercept=True, ignore_domains=[], retry=False, curve='SECP256K1'):
+
+def init(api_key, intercept=True, ignore_domains=[], retry=False, curve="SECP256K1"):
     global _api_key
     global _retry
     global _curve
@@ -53,9 +54,7 @@ def __client():
             "Your Team's API Key must be entered using evervault.init('<API-KEY>')"
         )
     if _curve not in SUPPORTED_CURVES:
-        raise UnsupportedCurveError(
-            f"The {_curve} curve is not supported."
-        )
+        raise UnsupportedCurveError(f"The {_curve} curve is not supported.")
     global ev_client
     if not ev_client:
         ev_client = Client(
@@ -66,7 +65,7 @@ def __client():
             relay_url=os.environ.get("EV_TUNNEL_HOSTNAME", RELAY_URL_DEFAULT),
             ca_host=os.environ.get("EV_CERT_HOSTNAME", CA_HOST_DEFAULT),
             retry=_retry,
-            curve=_curve
+            curve=_curve,
         )
         return ev_client
     else:

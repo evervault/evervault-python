@@ -13,10 +13,7 @@ import os
 
 
 class TestEvervault(unittest.TestCase):
-    CURVES = {
-        "SECP256K1": ec.SECP256K1,
-        "SECP256R1": ec.SECP256R1
-    }
+    CURVES = {"SECP256K1": ec.SECP256K1, "SECP256R1": ec.SECP256R1}
 
     def setUp(self, curve="SECP256K1"):
         self.curve = curve
@@ -269,7 +266,7 @@ class TestEvervault(unittest.TestCase):
 
     @requests_mock.Mocker()
     def test_p256_encrypting_number_generates_ev_number_type(self, mock_request):
-        self.setUp('SECP256R1')
+        self.setUp("SECP256R1")
         self.mock_fetch_cage_key(mock_request)
         self.mock_metrics_endpoint(mock_request)
 
@@ -279,7 +276,7 @@ class TestEvervault(unittest.TestCase):
 
     @requests_mock.Mocker()
     def test_p256_encrypting_boolean_generates_ev_boolean_type(self, mock_request):
-        self.setUp('SECP256R1')
+        self.setUp("SECP256R1")
         self.mock_fetch_cage_key(mock_request)
         self.mock_metrics_endpoint(mock_request)
 
@@ -289,7 +286,7 @@ class TestEvervault(unittest.TestCase):
 
     @requests_mock.Mocker()
     def test_p256_encrypting_string_generates_ev_string_type(self, mock_request):
-        self.setUp('SECP256R1')
+        self.setUp("SECP256R1")
         self.mock_fetch_cage_key(mock_request)
         self.mock_metrics_endpoint(mock_request)
 
@@ -299,7 +296,7 @@ class TestEvervault(unittest.TestCase):
 
     @requests_mock.Mocker()
     def test_p256_encrypt_sets(self, mock_request):
-        self.setUp('SECP256R1')
+        self.setUp("SECP256R1")
 
         self.mock_fetch_cage_key(mock_request)
         self.mock_metrics_endpoint(mock_request)
@@ -312,7 +309,7 @@ class TestEvervault(unittest.TestCase):
 
     @requests_mock.Mocker()
     def test_p256_encrypt_lists_of_various_types(self, mock_request):
-        self.setUp('SECP256R1')
+        self.setUp("SECP256R1")
 
         self.mock_fetch_cage_key(mock_request)
         self.mock_metrics_endpoint(mock_request)
@@ -333,7 +330,7 @@ class TestEvervault(unittest.TestCase):
 
     @requests_mock.Mocker()
     def test_p256_encrypt_dicts(self, mock_request):
-        self.setUp('SECP256R1')
+        self.setUp("SECP256R1")
 
         self.mock_fetch_cage_key(mock_request)
         self.mock_metrics_endpoint(mock_request)
@@ -353,7 +350,7 @@ class TestEvervault(unittest.TestCase):
 
     @requests_mock.Mocker()
     def test_p256_encrypt_with_unsupported_type_throws_exception(self, mock_request):
-        self.setUp('SECP256R1')
+        self.setUp("SECP256R1")
 
         self.mock_fetch_cage_key(mock_request)
         self.mock_metrics_endpoint(mock_request)
@@ -371,7 +368,7 @@ class TestEvervault(unittest.TestCase):
 
     @requests_mock.Mocker()
     def test_p256_run(self, mock_request):
-        self.setUp('SECP256R1')
+        self.setUp("SECP256R1")
 
         request = mock_request.post(
             "https://run.evervault.com/testing-cage",
@@ -385,7 +382,7 @@ class TestEvervault(unittest.TestCase):
 
     @requests_mock.Mocker()
     def test_p256_run_with_options(self, mock_request):
-        self.setUp('SECP256R1')
+        self.setUp("SECP256R1")
 
         request = mock_request.post(
             "https://run.evervault.com/testing-cage",
@@ -407,7 +404,7 @@ class TestEvervault(unittest.TestCase):
 
     @requests_mock.Mocker()
     def test_p256_encrypt_and_run(self, mock_request):
-        self.setUp('SECP256R1')
+        self.setUp("SECP256R1")
 
         self.mock_fetch_cage_key(mock_request)
         self.mock_metrics_endpoint(mock_request)
@@ -425,7 +422,7 @@ class TestEvervault(unittest.TestCase):
 
     @requests_mock.Mocker()
     def test_p256_encrypt_and_run_with_options(self, mock_request):
-        self.setUp('SECP256R1')
+        self.setUp("SECP256R1")
 
         request = mock_request.post(
             "https://run.evervault.com/testing-cage",
@@ -451,7 +448,10 @@ class TestEvervault(unittest.TestCase):
     def mock_fetch_cage_key(self, mock_request):
         mock_request.get(
             "https://api.evervault.com/cages/key",
-            json={"ecdhKey": self.public_key.decode("utf8"), "ecdhP256Key": self.public_key.decode("utf8")},
+            json={
+                "ecdhKey": self.public_key.decode("utf8"),
+                "ecdhP256Key": self.public_key.decode("utf8"),
+            },
         )
 
     def mock_metrics_endpoint(self, mock_request):
