@@ -49,7 +49,7 @@ The Evervault Python SDK exposes five functions.
 `evervault.init()` initializes the SDK with your API key. Configurations for the interception of outbound requests may also be passed in this function.
 
 ```python
-evervault.init(api_key = str[, intercept = bool, ignore_domains = list, retry = bool])
+evervault.init(api_key = str[, intercept = bool, ignore_domains = list, retry = bool, curve = str])
 ```
 
 | Parameter      | Type        | Description                                                              |
@@ -58,6 +58,7 @@ evervault.init(api_key = str[, intercept = bool, ignore_domains = list, retry = 
 | intercept      | `bool`      | Decides if outbound requests are intercepted (`true` by default)         |
 | ignore_domains | `list(str)` | Requests sent to any of the domains in this list will not be intercepted |
 | retry          | `bool`      | Retry failed Cage operations (maximum of 3 retries; `false` by default)  |
+| curve          | `str`       | The elliptic curve used for cryptographic operations. See [Elliptic Curve Support](https://docs.evervault.com/reference/elliptic-curve-support) to learn more. |
 
 ### evervault.encrypt()
 
