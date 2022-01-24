@@ -222,7 +222,7 @@ class TestEvervault(unittest.TestCase):
 
     @requests_mock.Mocker()
     def test_p256_encrypting_number_generates_ev_number_type(self, mock_request):
-        self.setUp("SECP256R1")
+        self.setUp(evervault.Curves.SECP256R1)
         self.mock_fetch_cage_key(mock_request)
         self.mock_metrics_endpoint(mock_request)
 
@@ -232,7 +232,7 @@ class TestEvervault(unittest.TestCase):
 
     @requests_mock.Mocker()
     def test_p256_encrypting_boolean_generates_ev_boolean_type(self, mock_request):
-        self.setUp("SECP256R1")
+        self.setUp(evervault.Curves.SECP256R1)
         self.mock_fetch_cage_key(mock_request)
         self.mock_metrics_endpoint(mock_request)
 
@@ -242,7 +242,7 @@ class TestEvervault(unittest.TestCase):
 
     @requests_mock.Mocker()
     def test_p256_encrypting_string_generates_ev_string_type(self, mock_request):
-        self.setUp("SECP256R1")
+        self.setUp(evervault.Curves.SECP256R1)
         self.mock_fetch_cage_key(mock_request)
         self.mock_metrics_endpoint(mock_request)
 
@@ -252,7 +252,7 @@ class TestEvervault(unittest.TestCase):
 
     @requests_mock.Mocker()
     def test_p256_encrypt_sets(self, mock_request):
-        self.setUp("SECP256R1")
+        self.setUp(evervault.Curves.SECP256R1)
 
         self.mock_fetch_cage_key(mock_request)
         self.mock_metrics_endpoint(mock_request)
@@ -265,7 +265,7 @@ class TestEvervault(unittest.TestCase):
 
     @requests_mock.Mocker()
     def test_p256_encrypt_lists_of_various_types(self, mock_request):
-        self.setUp("SECP256R1")
+        self.setUp(evervault.Curves.SECP256R1)
 
         self.mock_fetch_cage_key(mock_request)
         self.mock_metrics_endpoint(mock_request)
@@ -286,7 +286,7 @@ class TestEvervault(unittest.TestCase):
 
     @requests_mock.Mocker()
     def test_p256_encrypt_dicts(self, mock_request):
-        self.setUp("SECP256R1")
+        self.setUp(evervault.Curves.SECP256R1)
 
         self.mock_fetch_cage_key(mock_request)
         self.mock_metrics_endpoint(mock_request)
@@ -306,7 +306,7 @@ class TestEvervault(unittest.TestCase):
 
     @requests_mock.Mocker()
     def test_p256_encrypt_with_unsupported_type_throws_exception(self, mock_request):
-        self.setUp("SECP256R1")
+        self.setUp(evervault.Curves.SECP256R1)
 
         self.mock_fetch_cage_key(mock_request)
         self.mock_metrics_endpoint(mock_request)
@@ -324,7 +324,7 @@ class TestEvervault(unittest.TestCase):
 
     @requests_mock.Mocker()
     def test_p256_run(self, mock_request):
-        self.setUp("SECP256R1")
+        self.setUp(evervault.Curves.SECP256R1)
 
         request = mock_request.post(
             "https://run.evervault.com/testing-cage",
@@ -338,7 +338,7 @@ class TestEvervault(unittest.TestCase):
 
     @requests_mock.Mocker()
     def test_p256_run_with_options(self, mock_request):
-        self.setUp("SECP256R1")
+        self.setUp(evervault.Curves.SECP256R1)
 
         request = mock_request.post(
             "https://run.evervault.com/testing-cage",
@@ -360,7 +360,7 @@ class TestEvervault(unittest.TestCase):
 
     @requests_mock.Mocker()
     def test_p256_encrypt_and_run(self, mock_request):
-        self.setUp("SECP256R1")
+        self.setUp(evervault.Curves.SECP256R1)
 
         self.mock_fetch_cage_key(mock_request)
         self.mock_metrics_endpoint(mock_request)
@@ -378,7 +378,7 @@ class TestEvervault(unittest.TestCase):
 
     @requests_mock.Mocker()
     def test_p256_encrypt_and_run_with_options(self, mock_request):
-        self.setUp("SECP256R1")
+        self.setUp(evervault.Curves.SECP256R1)
 
         request = mock_request.post(
             "https://run.evervault.com/testing-cage",
