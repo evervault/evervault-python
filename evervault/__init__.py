@@ -19,7 +19,14 @@ CA_HOST_DEFAULT = "https://ca.evervault.com"
 SUPPORTED_CURVES = ["SECP256K1", "SECP256R1"]
 
 
-def init(api_key, intercept=True, ignore_domains=[], retry=False, curve="SECP256K1"):
+class Curves(object):
+    SECP256K1 = "SECP256K1"
+    SECP256R1 = "SECP256R1"
+
+
+def init(
+    api_key, intercept=True, ignore_domains=[], retry=False, curve=Curves.SECP256K1
+):
     global _api_key
     global _retry
     global _curve
