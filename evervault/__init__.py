@@ -3,7 +3,7 @@ from .client import Client
 from .errors.evervault_errors import AuthenticationError
 import os
 
-__version__ = "0.4.3"
+__version__ = "0.4.4"
 
 ev_client = None
 _api_key = None
