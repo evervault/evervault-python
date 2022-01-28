@@ -1,4 +1,4 @@
-from evervault.errors.evervault_errors import UnknownEncryptType
+from evervault.errors.evervault_errors import UnknownEncryptType, ForbiddenIPError, AuthenticationError
 import unittest
 import requests_mock
 import base64
@@ -160,6 +160,37 @@ class TestEvervault(unittest.TestCase):
         assert resp["result"] == "there was an attempt"
         assert request.last_request.json() != {"name": "testing"}
         assert "name" in request.last_request.json()
+
+    @requests_mock.Mocker()
+    def test_encrypt_and_forbidden_ip_run(self, mock_request):
+        self.mock_fetch_cage_key(mock_request)
+        self.mock_metrics_endpoint(mock_request)
+
+        request = mock_request.post(
+            "https://run.evervault.com/testing-cage",
+            json={"error": "An error occurred"},
+            request_headers={"Api-Key": "testing"},
+            headers={"x-evervault-error-code": "forbidden-ip-error"},
+            status_code=403
+        )
+        self.assertRaises(ForbiddenIPError, self.evervault.encrypt_and_run, "testing-cage", {"name": "testing"})
+        assert request.called
+
+
+    @requests_mock.Mocker()
+    def test_encrypt_and_forbidden_run(self, mock_request):
+        self.mock_fetch_cage_key(mock_request)
+        self.mock_metrics_endpoint(mock_request)
+
+        request = mock_request.post(
+            "https://run.evervault.com/testing-cage",
+            json={"error": "An error occurred"},
+            request_headers={"Api-Key": "testing"},
+            headers={},
+            status_code=403
+        )
+        self.assertRaises(AuthenticationError, self.evervault.encrypt_and_run, "testing-cage", {"name": "testing"})
+        assert request.called
 
     @requests_mock.Mocker()
     def test_encrypt_and_run_with_options(self, mock_request):
