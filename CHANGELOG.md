@@ -2,6 +2,24 @@
 
 <!--next-version-placeholder-->
 
+## v0.5.0 (2022-01-31)
+### Feature
+* Add optional retries to requests for cert and cage operations ([`5c28881`](https://github.com/evervault/evervault-python/commit/5c288811c5e51cd5621d24e90d236b6c0607ffbb))
+* Batch send encryption metrics ([`4975eba`](https://github.com/evervault/evervault-python/commit/4975eba1344d8347868be60f5c4a118e5f7fca84))
+
+### Fix
+* **error handling:** Add support for forbidden IP responses ([`66ddfd5`](https://github.com/evervault/evervault-python/commit/66ddfd5fbf8bcac8d24e753557cce4aaa7cdcb89))
+* **docs:** Include reference to commitizen and contributing.md ([`a5f626a`](https://github.com/evervault/evervault-python/commit/a5f626a796ce0bf65212f1225810123410626608))
+* Release new runtime error support ([`7018d75`](https://github.com/evervault/evervault-python/commit/7018d75f2af335e989b55531f33b7a66fa7991de))
+* **docs:** Update example to include retry ([`8dd9ec7`](https://github.com/evervault/evervault-python/commit/8dd9ec736c5ec5379bec8004a046f102f8b4be41))
+* **actions:** Add access token to checkout ([`6004937`](https://github.com/evervault/evervault-python/commit/600493748380a38dc69abd6511c1b2fccfaea170))
+* Avoid posting empty metrics ([`06fc26b`](https://github.com/evervault/evervault-python/commit/06fc26b70d99e91ad3c61e93a952159b84bb8afb))
+* Non-blocking metrics reporting ([`8449e30`](https://github.com/evervault/evervault-python/commit/8449e302d246d3d9c20546053d0e80c62f2a2641))
+
+### Documentation
+* **contributing:** Add a CONTRIBUTING.md and checklist ([`05ac094`](https://github.com/evervault/evervault-python/commit/05ac094c240ec784118c365884889f744f85b120))
+* Clean out old contributing code ([`98ed284`](https://github.com/evervault/evervault-python/commit/98ed2846219f32bf3dad201efef915af72313b8d))
+
 ## v0.4.3 (2022-01-11)
 ### Fix
 * **docs:** Include reference to commitizen and contributing.md ([`a5f626a`](https://github.com/evervault/evervault-python/commit/a5f626a796ce0bf65212f1225810123410626608))
