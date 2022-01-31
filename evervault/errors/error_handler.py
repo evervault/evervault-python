@@ -11,7 +11,13 @@ def raise_errors_on_failure(resp, body=None):
     elif resp.status_code == 401:
         raise errors.AuthenticationError("Unauthorized")
     elif resp.status_code == 403:
-        raise errors.AuthenticationError("Forbidden")
+        if (
+            "x-evervault-error-code" in resp.headers
+            and resp.headers["x-evervault-error-code"] == "forbidden-ip-error"
+        ):
+            raise errors.ForbiddenIPError("IP is not present in Cage whitelist")
+        else:
+            raise errors.AuthenticationError("Forbidden")
     elif resp.status_code == 408:
         raise errors.TimeoutError("Request timed out")
     elif resp.status_code == 422:
