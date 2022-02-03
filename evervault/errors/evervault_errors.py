@@ -71,3 +71,7 @@ class CertDownloadError(EvervaultError):
 
 class ForbiddenIPError(EvervaultError):
     pass
+
+
+class UnsupportedCurveError(EvervaultError):
+    pass
