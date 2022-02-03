@@ -2,6 +2,20 @@
 
 <!--next-version-placeholder-->
 
+## v0.6.0 (2022-02-03)
+### Feature
+* Add option for P256 curve in init function while keeping old curve as default ([`98b709c`](https://github.com/evervault/evervault-python/commit/98b709ca39f442d7fde1d567037e1a686d56c9cd))
+* Add option for P256 curve in init function while keeping old curve as default ([`50e691d`](https://github.com/evervault/evervault-python/commit/50e691d6fa2fbfeeca98b2c3efe968ec1a5cce3b))
+* Add option for P256 curve in init function while keeping old curve as default ([`1200a80`](https://github.com/evervault/evervault-python/commit/1200a80ccfb8dea24f7b5bbc1230124b760b5080))
+* Add option for P256 curve in init function while keeping old curve as default ([`9585c6c`](https://github.com/evervault/evervault-python/commit/9585c6c2a7102a227a7170e95822b14a874943ab))
+* Add option for P256 curve in init function while keeping old curve as default ([`1549674`](https://github.com/evervault/evervault-python/commit/15496746ee93ab57b214ef5af1f68695ba5485cb))
+* Add option for P256 curve in init function while keeping old curve as default ([`35f7fb1`](https://github.com/evervault/evervault-python/commit/35f7fb1b3fc5e56731e0eee8263b40379fa291e2))
+* Add option for P256 curve in init function while keeping old curve as default ([`a1293f8`](https://github.com/evervault/evervault-python/commit/a1293f8559921c8d99050a9292ed0f1941bd6a3f))
+* Add option for P256 curve in init function while keeping old curve as default ([`2e1eb01`](https://github.com/evervault/evervault-python/commit/2e1eb016b54c8d7ac013d39f7f7738160e937b21))
+* Add option for P256 curve in init function while keeping old curve as default ([`57b8c07`](https://github.com/evervault/evervault-python/commit/57b8c0756c379cd0c7ae63b46d8fba0ba7117f7f))
+* Add option for P256 curve in init function while keeping old curve as default ([`b12695a`](https://github.com/evervault/evervault-python/commit/b12695adee549eec3ce772a8d6b99f59f76636b2))
+* Add option for P256 curve in init function while keeping old curve as default ([`5ceecaf`](https://github.com/evervault/evervault-python/commit/5ceecaf8cca98ac0fd3e465805b7fb5147185c88))
+
 ## v0.5.0 (2022-01-31)
 ### Feature
 * Add optional retries to requests for cert and cage operations ([`5c28881`](https://github.com/evervault/evervault-python/commit/5c288811c5e51cd5621d24e90d236b6c0607ffbb))
