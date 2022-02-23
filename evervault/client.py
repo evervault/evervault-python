@@ -5,6 +5,7 @@ from .crypto.client import Client as CryptoClient
 from .models.cage_list import CageList
 from .datatypes.map import ensure_is_integer
 
+
 class Client(object):
     def __init__(
         self,
