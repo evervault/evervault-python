@@ -17,7 +17,7 @@ class Cert(object):
         self.ca_host = ca_host
         self.cert_path = None
 
-    def setup(client_self, ignore_domains):
+    def setup(client_self, ignore_domains=[]):
         ignore_domains.append(urlparse(client_self.base_run_url).netloc)
         ignore_domains.append(urlparse(client_self.base_url).netloc)
         ignore_domains.append(urlparse(client_self.ca_host).netloc)
