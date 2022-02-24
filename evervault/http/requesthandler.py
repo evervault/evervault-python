@@ -9,6 +9,8 @@ class RequestHandler(object):
         self.cert.setup(ignore_domains)
 
     def get(self, path, params={}):
+        if self.cert.is_certificate_expired():
+            self.cert.update_certificate()
         return self.request.make_request("GET", self.__url(path), params)
 
     def post(self, path, params, optional_headers, cage_run=False):

@@ -16,6 +16,12 @@ class Cert(object):
         self.request = request
         self.ca_host = ca_host
 
+    def is_certificate_expired(self):
+        return True
+
+    def update_certificate(self):
+        abc = "abc"
+
     def setup(client_self, ignore_domains=[]):
         ignore_domains.append(urlparse(client_self.base_run_url).netloc)
         ignore_domains.append(urlparse(client_self.base_url).netloc)
