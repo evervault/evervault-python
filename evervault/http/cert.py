@@ -1,4 +1,6 @@
 from urllib.parse import urlparse
+
+import OpenSSL
 import requests
 import warnings
 import certifi
@@ -15,6 +17,7 @@ class Cert(object):
         self.base_run_url = base_run_url
         self.request = request
         self.ca_host = ca_host
+        self.cert_content = None
 
     def is_certificate_expired(self):
         return True
@@ -124,6 +127,8 @@ class Cert(object):
                 f"Unable to install the Evervault root certificate from {self.ca_host}. "
             )
 
+        self.__set_cert_expire_date(ca_content)
+
         try:
             with tempfile.NamedTemporaryFile(delete=False) as cert_file:
                 cert_file.write(bytes(certifi.contents(), "ascii") + ca_content)
@@ -135,3 +140,14 @@ class Cert(object):
             )
 
         return cert_path
+
+    def __set_cert_expire_date(self, ca_content):
+        try:
+            cert_info = OpenSSL.crypto.load_certificate(OpenSSL.crypto.FILETYPE_PEM, ca_content)
+            self.exp_day = cert_info[6:8].decode('utf-8')
+            self.exp_month = cert_info[4:6].decode('utf-8')
+            self.exp_year = cert_info[:4].decode('utf-8')
+        except:
+            self.exp_day = None
+            self.exp_month = None
+            self.exp_year = None
