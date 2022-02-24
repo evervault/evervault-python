@@ -50,19 +50,19 @@ class Client(object):
         return CageList(cages, self).cages
 
     def relay(self, ignore_domains=[]):
-        self.relay.setup(ignore_domains)
+        return self.relay.setup(ignore_domains)
 
     def get(self, path, params={}):
-        self.relay.get(path, params)
+        return self.relay.get(path, params)
 
     def post(self, path, params, optional_headers, cage_run=False):
-        self.relay.post(path, params, optional_headers, cage_run)
+        return self.relay.post(path, params, optional_headers, cage_run)
 
     def put(self, path, params):
-        self.relay.put(path, params)
+        return self.relay.put(path, params)
 
     def delete(self, path, params):
-        self.relay.delete(path, params)
+        return self.relay.delete(path, params)
 
     def __build_cage_run_headers(self, options):
         if options is None:
