@@ -15,7 +15,6 @@ class Cert(object):
         self.base_run_url = base_run_url
         self.request = request
         self.ca_host = ca_host
-        self.cert_path = None
 
     def setup(client_self, ignore_domains=[]):
         ignore_domains.append(urlparse(client_self.base_run_url).netloc)
@@ -30,7 +29,7 @@ class Cert(object):
             ignore_if_endswith += ("." + domain, "@" + domain)
         old_request_func = requests.Session.request
 
-        client_self.__get_cert()
+        cert_path = client_self.__get_cert()
 
         api_key = client_self.api_key
         relay_url = client_self.relay_url
@@ -67,7 +66,7 @@ class Cert(object):
                 proxies = {}
             headers["Proxy-Authorization"] = api_key
             proxies["https"] = relay_url
-            verify = self.cert_path
+            verify = cert_path
             try:
                 domain = urlparse(url).netloc
                 if domain in ignore_if_exact or domain.endswith(ignore_if_endswith):
@@ -129,4 +128,4 @@ class Cert(object):
                 "Likely a permissions error when attempting to write to the /tmp/ directory."
             )
 
-        self.cert_path = cert_path
+        return cert_path

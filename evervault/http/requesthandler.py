@@ -1,11 +1,11 @@
-class Relay(object):
+class RequestHandler(object):
     def __init__(self, request, base_run_url, base_url, cert):
         self.cert = cert
         self.base_url = base_url
         self.base_run_url = base_run_url
         self.request = request
 
-    def setup(self, ignore_domains=[]):
+    def setup_relay(self, ignore_domains=[]):
         self.cert.setup(ignore_domains)
 
     def get(self, path, params={}):

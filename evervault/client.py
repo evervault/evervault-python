@@ -1,5 +1,5 @@
 from .http.cert import Cert
-from .http.relay import Relay
+from .http.requesthandler import RequestHandler
 from .http.request import Request
 from .crypto.client import Client as CryptoClient
 from .models.cage_list import CageList
@@ -25,7 +25,7 @@ class Client(object):
         self.ca_host = ca_host
         request = Request(self.api_key, request_timeout, retry)
         cert = Cert(request, ca_host, base_run_url, base_url, api_key, relay_url)
-        self.relay = Relay(request, base_run_url, base_url, cert)
+        self.request_handler = RequestHandler(request, base_run_url, base_url, cert)
         self.crypto_client = CryptoClient(api_key, curve)
 
     @property
@@ -50,19 +50,19 @@ class Client(object):
         return CageList(cages, self).cages
 
     def relay(self, ignore_domains=[]):
-        return self.relay.setup(ignore_domains)
+        self.request_handler.setup_relay(ignore_domains)
 
     def get(self, path, params={}):
-        return self.relay.get(path, params)
+        return self.request_handler.get(path, params)
 
     def post(self, path, params, optional_headers, cage_run=False):
-        return self.relay.post(path, params, optional_headers, cage_run)
+        return self.request_handler.post(path, params, optional_headers, cage_run)
 
     def put(self, path, params):
-        return self.relay.put(path, params)
+        return self.request_handler.put(path, params)
 
     def delete(self, path, params):
-        return self.relay.delete(path, params)
+        return self.request_handler.delete(path, params)
 
     def __build_cage_run_headers(self, options):
         if options is None:
