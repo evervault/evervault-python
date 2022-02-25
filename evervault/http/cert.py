@@ -1,3 +1,4 @@
+from datetime import datetime
 from urllib.parse import urlparse
 
 import OpenSSL
@@ -18,9 +19,14 @@ class Cert(object):
         self.request = request
         self.ca_host = ca_host
         self.cert_content = None
+        self.expire_date = None
 
     def is_certificate_expired(self):
-        return True
+        if self.expire_date is not None:
+            now = datetime.utcnow().timestamp()
+            if now > self.expire_date.timestamp():
+                return True
+        return False
 
     def update_certificate(self):
         abc = "abc"
@@ -144,10 +150,13 @@ class Cert(object):
     def __set_cert_expire_date(self, ca_content):
         try:
             cert_info = OpenSSL.crypto.load_certificate(OpenSSL.crypto.FILETYPE_PEM, ca_content)
-            self.exp_day = cert_info[6:8].decode('utf-8')
-            self.exp_month = cert_info[4:6].decode('utf-8')
-            self.exp_year = cert_info[:4].decode('utf-8')
+            not_after = cert_info.get_notAfter().decode('utf-8')
+            self.expire_date = datetime.strptime(not_after, '%Y%m%d%H%M%S%z')
+            # self.exp_day = cert_info[6:8].decode('utf-8')
+            # self.exp_month = cert_info[4:6].decode('utf-8')
+            # self.exp_year = cert_info[:4].decode('utf-8')
         except:
-            self.exp_day = None
-            self.exp_month = None
-            self.exp_year = None
+            self.expire_date = None
+            # self.exp_day = None
+            # self.exp_month = None
+            # self.exp_year = None

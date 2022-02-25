@@ -5,33 +5,33 @@ import requests_mock
 from evervault.http.cert import Cert
 from evervault.http.request import Request
 
+
 class TestHandlingCerts(unittest.TestCase):
     @requests_mock.Mocker()
     def test_cert_is_expired(self, mock_request):
         mock_request.get(
             "https://ca.evervault.com",
             text="-----BEGIN CERTIFICATE-----\n"
-                 "MIIDrDCCApQCCQDr4C3xZruyADANBgkqhkiG9w0BAQsFADCBlzELMAkGA1UEBhMC\n"
-                 "SVIxEzARBgNVBAgMCkR1YmxpbiBDby4xDzANBgNVBAcMBkR1YmxpbjESMBAGA1UE\n"
-                 "CgwJRXZlcnZhdWx0MRIwEAYDVQQLDAlFdmVydmF1bHQxEjAQBgNVBAMMCUV2ZXJ2\n"
-                 "YXVsdDEmMCQGCSqGSIb3DQEJARYXZXZlcnZhdWx0QGV2ZXJ2YXVsdC5jb20wHhcN\n"
-                 "MjIwMjIyMTYwNjU1WhcNMjIwMzI0MTYwNjU1WjCBlzELMAkGA1UEBhMCSVIxEzAR\n"
-                 "BgNVBAgMCkR1YmxpbiBDby4xDzANBgNVBAcMBkR1YmxpbjESMBAGA1UECgwJRXZl\n"
-                 "cnZhdWx0MRIwEAYDVQQLDAlFdmVydmF1bHQxEjAQBgNVBAMMCUV2ZXJ2YXVsdDEm\n"
-                 "MCQGCSqGSIb3DQEJARYXZXZlcnZhdWx0QGV2ZXJ2YXVsdC5jb20wggEiMA0GCSqG\n"
-                 "SIb3DQEBAQUAA4IBDwAwggEKAoIBAQCy6jFXCBInR8wFaalqInx7AUePoidY8Q6Q\n"
-                 "XGOSEykap/d2gTo5HV2UjHZb80IrDVm5jkO1yEnpPdSCUGxchrbktFujFHG0oNgI\n"
-                 "BuFUzF4tdEictj/YgeAA4XjUosbINYXfDv/8HXUHsfwKyjnUVwxMcSAEkMWLec7d\n"
-                 "pa5WYkNSnp+npsIMmkSgh6VkbsIu+HZJHJlrripvylqVBCLBLAjcHHbetwFAzg0q\n"
-                 "hAPfXnO7oOn5dNwJ4uEOCLsCspruaZnys5ssCchQ9FhLS6zrVNx1jpY/G4S5K9Ii\n"
-                 "DHyJvKaFj6UAPiupq2FMG1WAm0jpPD20QaEE9RlvSlNZ7McMFcMlAgMBAAEwDQYJ\n"
-                 "KoZIhvcNAQELBQADggEBAF8fo8FH02rohgBB2bJO56g/Skti6UftusEMjmWMkHCA\n"
-                 "uq7ErCcMwtl3z756Ygn89bTl89NFMt6aWoXHWMlZBCHGEIR2In2SY4cEWzW17VZJ\n"
-                 "J6NbbPC8qFuZJtyDv2fNsYMS2rEqfgKWUVNIoBJS18fET+H28vrHVjcio8uPYFNh\n"
-                 "Mh98YDkmaZDtgBZgQQLoGicn13m8KlT7AwtHx4q35qTvvcuECX6i1C5PJ987Hhzb\n"
-                 "eMEIDjfeQE81XWiClf2Ax8oh3p0JEz5pq89G1HyORgLBerS8uPrVQ8kNXlJpV/Ss\n"
-                 "+qHLABDIkCNZtJP+zzM2gTK/bflXi1do9AFB3J0E+DY=\n"
-                 "-----END CERTIFICATE-----"
+                 "MIIDgTCCAmmgAwIBAgIUHswvxVNBQtximEK88HKyfvgFSvowDQYJKoZIhvcNAQEL\n"
+                 "BQAwUDELMAkGA1UEBhMCSUUxEjAQBgNVBAgMCUR1YmxpbiBDbzEPMA0GA1UEBwwG\n"
+                 "U3dvcmRzMRwwGgYDVQQKDBNEZWZhdWx0IENvbXBhbnkgTHRkMB4XDTA4MTIyNDA4\n"
+                 "MTYwN1oXDTE4MTIyMjA4MTYwN1owUDELMAkGA1UEBhMCSUUxEjAQBgNVBAgMCUR1\n"
+                 "YmxpbiBDbzEPMA0GA1UEBwwGU3dvcmRzMRwwGgYDVQQKDBNEZWZhdWx0IENvbXBh\n"
+                 "bnkgTHRkMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAv163bZj6G8BE\n"
+                 "4uJYVOGWeOCmxjTuJVO0YSNvxF1AikosVPsFerlF4bXy88vQnW8Qc68rST5IXYpF\n"
+                 "ooGo7DalQRjMXr1z3qImx57nLVR0DBKXgPYGf4GjpAmREi4rAngvZgBB8k8lyFi/\n"
+                 "hFhRfohOOP2UOPSme7j62C7Q/t41U7UBvSGo67Y+k2dkQihKl8vCAF0Ucs5b+8Fp\n"
+                 "c5auik4nEG80MDnf6FOQc7ky1fLAsfor9hCaCS4SMPXfum+zwQvruYNxdIaktsml\n"
+                 "+SAi/ZUpEkRs2d3OXIUm9+es+ClEyJoLKwIcFvzXE1x49J5tc3J9svfbVGvtd4ts\n"
+                 "opBTAdZFNQIDAQABo1MwUTAdBgNVHQ4EFgQU2wEr/gRENzOEg35T6Y/UKn2DTbgw\n"
+                 "HwYDVR0jBBgwFoAU2wEr/gRENzOEg35T6Y/UKn2DTbgwDwYDVR0TAQH/BAUwAwEB\n"
+                 "/zANBgkqhkiG9w0BAQsFAAOCAQEAFIvXtts3WDesK/wnI7U6vy4tjuukOIZ+Pzsy\n"
+                 "rup848fhL92pmwr+2r1GRc5WFJ5R4utwk9zcQOvM2xII/JySPEj+hDPuutocG8cq\n"
+                 "GEC2dq1HTF5USMhDM0uqqYr0zcONsg/O6/wzWJ8eHoLgYIrImyeo5znm97sA7CvO\n"
+                 "gnt3YSfd6yYUD0sBBQy7TM5ZSWYoyJButlyTSPHWu7e+z91CenJ7e+IJgfHt8AzB\n"
+                 "950mXtBjHPtGH1CkrvKvAtZAOVpeE9Jlb4vdI1fOROw3gV/7+5HMdW72SxHLXGIp\n"
+                 "BplX3pdgL7YIyjBeYgCLuqWFsQOw18VeT1v/WMIZ6dx1b1GCtQ==\n"
+                 "-----END CERTIFICATE-----\n"
         )
 
         base_url_default = "https://api.evervault.com/"
@@ -44,4 +44,26 @@ class TestHandlingCerts(unittest.TestCase):
 
         cert = Cert(request, ca_host_default, base_run_url_default, base_url_default, api_key, api_key)
 
+        cert.setup()
+
         assert cert.is_certificate_expired()
+
+    @requests_mock.Mocker()
+    def test_not_available_cert_is_not_expired(self, mock_request):
+        mock_request.get(
+            "https://ca.evervault.com",
+            text=""
+        )
+        base_url_default = "https://api.evervault.com/"
+        base_run_url_default = "https://run.evervault.com/"
+        ca_host_default = "https://ca.evervault.com"
+
+        api_key = "testing"
+
+        request = Request(api_key, 30, False)
+
+        cert = Cert(request, ca_host_default, base_run_url_default, base_url_default, api_key, api_key)
+
+        cert.setup()
+
+        assert cert.is_certificate_expired() == False
