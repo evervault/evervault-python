@@ -11,14 +11,20 @@ class RequestHandler(object):
         return self.request.make_request("GET", self.__url(path), params)
 
     def post(self, path, params, optional_headers, cage_run=False):
+        if self.cert.is_certificate_expired():
+            self.cert.setup()
         return self.request.make_request(
             "POST", self.__url(path, cage_run), params, optional_headers
         )
 
     def put(self, path, params):
+        if self.cert.is_certificate_expired():
+            self.cert.setup()
         return self.request.make_request("PUT", self.__url(path), params)
 
     def delete(self, path, params):
+        if self.cert.is_certificate_expired():
+            self.cert.setup()
         return self.request.make_request("DELETE", self.__url(path), params)
 
     def __url(self, path, cage_run=False):
