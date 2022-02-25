@@ -1,4 +1,4 @@
-from .http.cert import Cert
+from .http.requestintercept import RequestIntercept
 from .http.requesthandler import RequestHandler
 from .http.request import Request
 from .crypto.client import Client as CryptoClient
@@ -24,7 +24,7 @@ class Client(object):
         self.relay_url = relay_url
         self.ca_host = ca_host
         request = Request(self.api_key, request_timeout, retry)
-        self.cert = Cert(request, ca_host, base_run_url, base_url, api_key, relay_url)
+        self.cert = RequestIntercept(request, ca_host, base_run_url, base_url, api_key, relay_url)
         self.request_handler = RequestHandler(request, base_run_url, base_url, self.cert)
         self.crypto_client = CryptoClient(api_key, curve)
 

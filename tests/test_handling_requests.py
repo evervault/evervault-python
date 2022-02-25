@@ -5,7 +5,7 @@ from evervault.http.requesthandler import RequestHandler
 
 
 class TestHandlingRequests(unittest.TestCase):
-    @patch('evervault.http.cert.Cert')
+    @patch('evervault.http.requestintercept.RequestIntercept')
     @patch('evervault.http.requesthandler.RequestHandler')
     def test_expired_cert_is_updated_for_gets(self, cert, request):
         request_handler = RequestHandler(request, "https://someaddress.io", "https://anotheraddress.io", cert)
@@ -13,7 +13,7 @@ class TestHandlingRequests(unittest.TestCase):
         request_handler.get("https://anyaddress.io")
         cert.setup.assert_called()
 
-    @patch('evervault.http.cert.Cert')
+    @patch('evervault.http.requestintercept.RequestIntercept')
     @patch('evervault.http.requesthandler.RequestHandler')
     def test_expired_cert_is_updated_for_post(self, cert, request):
         request_handler = RequestHandler(request, "https://someaddress.io", "https://anotheraddress.io", cert)
@@ -27,7 +27,7 @@ class TestHandlingRequests(unittest.TestCase):
                              })
         cert.setup.assert_called()
 
-    @patch('evervault.http.cert.Cert')
+    @patch('evervault.http.requestintercept.RequestIntercept')
     @patch('evervault.http.requesthandler.RequestHandler')
     def test_expired_cert_is_updated_for_put(self, cert, request):
         request_handler = RequestHandler(request, "https://someaddress.io", "https://anotheraddress.io", cert)
@@ -35,7 +35,7 @@ class TestHandlingRequests(unittest.TestCase):
         request_handler.put("https://anyaddress.io", {"status": "queued"})
         cert.setup.assert_called()
 
-    @patch('evervault.http.cert.Cert')
+    @patch('evervault.http.requestintercept.RequestIntercept')
     @patch('evervault.http.requesthandler.RequestHandler')
     def test_expired_cert_is_updated_for_delete(self, cert, request):
         request_handler = RequestHandler(request, "https://someaddress.io", "https://anotheraddress.io", cert)

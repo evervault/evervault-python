@@ -10,7 +10,7 @@ import tempfile
 from evervault.errors.evervault_errors import CertDownloadError
 
 
-class Cert(object):
+class RequestIntercept(object):
     def __init__(self, request, ca_host, base_run_url, base_url, api_key, relay_url):
         self.relay_url = relay_url
         self.api_key = api_key

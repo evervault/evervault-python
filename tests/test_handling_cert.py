@@ -2,7 +2,7 @@ import unittest
 
 import requests_mock
 
-from evervault.http.cert import Cert
+from evervault.http.requestintercept import RequestIntercept
 from evervault.http.request import Request
 
 
@@ -42,7 +42,7 @@ class TestHandlingCerts(unittest.TestCase):
 
         request = Request(api_key, 30, False)
 
-        cert = Cert(request, ca_host_default, base_run_url_default, base_url_default, api_key, api_key)
+        cert = RequestIntercept(request, ca_host_default, base_run_url_default, base_url_default, api_key, api_key)
 
         cert.setup()
 
@@ -62,7 +62,7 @@ class TestHandlingCerts(unittest.TestCase):
 
         request = Request(api_key, 30, False)
 
-        cert = Cert(request, ca_host_default, base_run_url_default, base_url_default, api_key, api_key)
+        cert = RequestIntercept(request, ca_host_default, base_run_url_default, base_url_default, api_key, api_key)
 
         cert.setup()
 
@@ -103,7 +103,7 @@ class TestHandlingCerts(unittest.TestCase):
 
         request = Request(api_key, 30, False)
 
-        cert = Cert(request, ca_host_default, base_run_url_default, base_url_default, api_key, api_key)
+        cert = RequestIntercept(request, ca_host_default, base_run_url_default, base_url_default, api_key, api_key)
 
         cert.setup()
 
