@@ -24,8 +24,8 @@ class Client(object):
         self.relay_url = relay_url
         self.ca_host = ca_host
         request = Request(self.api_key, request_timeout, retry)
-        cert = Cert(request, ca_host, base_run_url, base_url, api_key, relay_url)
-        self.request_handler = RequestHandler(request, base_run_url, base_url, cert)
+        self.cert = Cert(request, ca_host, base_run_url, base_url, api_key, relay_url)
+        self.request_handler = RequestHandler(request, base_run_url, base_url, self.cert)
         self.crypto_client = CryptoClient(api_key, curve)
 
     @property
@@ -50,7 +50,8 @@ class Client(object):
         return CageList(cages, self).cages
 
     def relay(self, ignore_domains=[]):
-        self.request_handler.setup_relay(ignore_domains)
+        self.cert.setup_domains(ignore_domains)
+        self.cert.setup()
 
     def get(self, path, params={}):
         return self.request_handler.get(path, params)

@@ -18,34 +18,34 @@ class Cert(object):
         self.base_run_url = base_run_url
         self.request = request
         self.ca_host = ca_host
-        self.cert_content = None
         self.expire_date = None
+        self.cert_path = None
+        self.ignore_if_exact = []
+        self.ignore_if_endswith = ()
 
     def is_certificate_expired(self):
         if self.expire_date is not None:
-            now = datetime.utcnow().timestamp()
-            if now > self.expire_date.timestamp():
+            if datetime.utcnow().timestamp() > self.expire_date:
                 return True
         return False
 
-    def update_certificate(self):
-        abc = "abc"
+    def setup_domains(self, ignore_domains=[]):
+        ignore_domains.append(urlparse(self.base_run_url).netloc)
+        ignore_domains.append(urlparse(self.base_url).netloc)
+        ignore_domains.append(urlparse(self.ca_host).netloc)
 
-    def setup(client_self, ignore_domains=[]):
-        ignore_domains.append(urlparse(client_self.base_run_url).netloc)
-        ignore_domains.append(urlparse(client_self.base_url).netloc)
-        ignore_domains.append(urlparse(client_self.ca_host).netloc)
-        ignore_if_exact = []
-        ignore_if_endswith = ()
         for domain in ignore_domains:
             if domain.startswith("www."):
                 domain = domain[4:]
-            ignore_if_exact.append(domain)
-            ignore_if_endswith += ("." + domain, "@" + domain)
+            self.ignore_if_exact.append(domain)
+            self.ignore_if_endswith += ("." + domain, "@" + domain)
+
+    def setup(client_self):
         old_request_func = requests.Session.request
 
-        cert_path = client_self.__get_cert()
+        client_self.__get_cert()
 
+        cert_path = client_self.cert_path
         api_key = client_self.api_key
         relay_url = client_self.relay_url
 
@@ -84,7 +84,7 @@ class Cert(object):
             verify = cert_path
             try:
                 domain = urlparse(url).netloc
-                if domain in ignore_if_exact or domain.endswith(ignore_if_endswith):
+                if domain in self.ignore_if_exact or domain.endswith(self.ignore_if_endswith):
                     del headers["Proxy-Authorization"]
                     del proxies["https"]
             except Exception:
@@ -138,25 +138,17 @@ class Cert(object):
         try:
             with tempfile.NamedTemporaryFile(delete=False) as cert_file:
                 cert_file.write(bytes(certifi.contents(), "ascii") + ca_content)
-                cert_path = cert_file.name
+                self.cert_path = cert_file.name
         except:
             raise CertDownloadError(
                 f"Unable to install the Evervault root certficate from {self.ca_host}. "
                 "Likely a permissions error when attempting to write to the /tmp/ directory."
             )
 
-        return cert_path
-
     def __set_cert_expire_date(self, ca_content):
         try:
             cert_info = OpenSSL.crypto.load_certificate(OpenSSL.crypto.FILETYPE_PEM, ca_content)
             not_after = cert_info.get_notAfter().decode('utf-8')
-            self.expire_date = datetime.strptime(not_after, '%Y%m%d%H%M%S%z')
-            # self.exp_day = cert_info[6:8].decode('utf-8')
-            # self.exp_month = cert_info[4:6].decode('utf-8')
-            # self.exp_year = cert_info[:4].decode('utf-8')
+            self.expire_date = datetime.strptime(not_after, '%Y%m%d%H%M%S%z').timestamp()
         except:
             self.expire_date = None
-            # self.exp_day = None
-            # self.exp_month = None
-            # self.exp_year = None

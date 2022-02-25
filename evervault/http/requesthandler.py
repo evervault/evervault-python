@@ -5,12 +5,9 @@ class RequestHandler(object):
         self.base_run_url = base_run_url
         self.request = request
 
-    def setup_relay(self, ignore_domains=[]):
-        self.cert.setup(ignore_domains)
-
     def get(self, path, params={}):
         if self.cert.is_certificate_expired():
-            self.cert.update_certificate()
+            self.cert.setup()
         return self.request.make_request("GET", self.__url(path), params)
 
     def post(self, path, params, optional_headers, cage_run=False):
