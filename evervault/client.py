@@ -26,8 +26,12 @@ class Client(object):
         self.ca_host = ca_host
         request = Request(self.api_key, request_timeout, retry)
         time_service = TimeService()
-        self.cert = RequestIntercept(request, ca_host, base_run_url, base_url, api_key, relay_url, time_service)
-        self.request_handler = RequestHandler(request, base_run_url, base_url, self.cert)
+        self.cert = RequestIntercept(
+            request, ca_host, base_run_url, base_url, api_key, relay_url, time_service
+        )
+        self.request_handler = RequestHandler(
+            request, base_run_url, base_url, self.cert
+        )
         self.crypto_client = CryptoClient(api_key, curve)
 
     @property

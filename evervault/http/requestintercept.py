@@ -11,7 +11,16 @@ from evervault.errors.evervault_errors import CertDownloadError
 
 
 class RequestIntercept(object):
-    def __init__(self, request, ca_host, base_run_url, base_url, api_key, relay_url, datetime_service):
+    def __init__(
+        self,
+        request,
+        ca_host,
+        base_run_url,
+        base_url,
+        api_key,
+        relay_url,
+        datetime_service,
+    ):
         self.datetime_service = datetime_service
         self.relay_url = relay_url
         self.api_key = api_key
@@ -87,7 +96,9 @@ class RequestIntercept(object):
             verify = cert_path
             try:
                 domain = urlparse(url).netloc
-                if domain in self.ignore_if_exact or domain.endswith(self.ignore_if_endswith):
+                if domain in self.ignore_if_exact or domain.endswith(
+                    self.ignore_if_endswith
+                ):
                     del headers["Proxy-Authorization"]
                     del proxies["https"]
             except Exception:
@@ -150,10 +161,16 @@ class RequestIntercept(object):
 
     def __set_cert_expire_date(self, ca_content):
         try:
-            cert_info = OpenSSL.crypto.load_certificate(OpenSSL.crypto.FILETYPE_PEM, ca_content)
-            not_after = cert_info.get_notAfter().decode('utf-8')
-            not_before = cert_info.get_notBefore().decode('utf-8')
-            self.expire_date = datetime.strptime(not_after, '%Y%m%d%H%M%S%z').timestamp()
-            self.initial_date = datetime.strptime(not_before, '%Y%m%d%H%M%S%z').timestamp()
+            cert_info = OpenSSL.crypto.load_certificate(
+                OpenSSL.crypto.FILETYPE_PEM, ca_content
+            )
+            not_after = cert_info.get_notAfter().decode("utf-8")
+            not_before = cert_info.get_notBefore().decode("utf-8")
+            self.expire_date = datetime.strptime(
+                not_after, "%Y%m%d%H%M%S%z"
+            ).timestamp()
+            self.initial_date = datetime.strptime(
+                not_before, "%Y%m%d%H%M%S%z"
+            ).timestamp()
         except:
             self.expire_date = None
