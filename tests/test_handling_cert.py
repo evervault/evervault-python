@@ -83,7 +83,7 @@ class TestHandlingCerts(unittest.TestCase):
         )
         cert.setup()
 
-        assert cert.is_certificate_expired() == False
+        assert cert.is_certificate_expired() is False
 
     @requests_mock.Mocker()
     def test_updated_cert_keeps_path_changes_timestamp(self, mock_request):
