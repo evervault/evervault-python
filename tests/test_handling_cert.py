@@ -1,9 +1,11 @@
 import unittest
+from unittest.mock import patch
 
 import requests_mock
 
 from evervault.http.requestintercept import RequestIntercept
 from evervault.http.request import Request
+from evervault.services.timeservice import TimeService
 
 
 class TestHandlingCerts(unittest.TestCase):
@@ -41,8 +43,9 @@ class TestHandlingCerts(unittest.TestCase):
         api_key = "testing"
 
         request = Request(api_key, 30, False)
+        time_service = TimeService()
 
-        cert = RequestIntercept(request, ca_host_default, base_run_url_default, base_url_default, api_key, api_key)
+        cert = RequestIntercept(request, ca_host_default, base_run_url_default, base_url_default, api_key, api_key, time_service)
 
         cert.setup()
 
@@ -62,8 +65,10 @@ class TestHandlingCerts(unittest.TestCase):
 
         request = Request(api_key, 30, False)
 
-        cert = RequestIntercept(request, ca_host_default, base_run_url_default, base_url_default, api_key, api_key)
+        time_service = TimeService()
 
+        cert = RequestIntercept(request, ca_host_default, base_run_url_default, base_url_default, api_key, api_key,
+                                time_service)
         cert.setup()
 
         assert cert.is_certificate_expired() == False
@@ -103,8 +108,10 @@ class TestHandlingCerts(unittest.TestCase):
 
         request = Request(api_key, 30, False)
 
-        cert = RequestIntercept(request, ca_host_default, base_run_url_default, base_url_default, api_key, api_key)
+        time_service = TimeService()
 
+        cert = RequestIntercept(request, ca_host_default, base_run_url_default, base_url_default, api_key, api_key,
+                                time_service)
         cert.setup()
 
         original_cert_path = cert.cert_path
@@ -139,3 +146,47 @@ class TestHandlingCerts(unittest.TestCase):
 
         assert original_cert_path != cert.cert_path
         assert original_cert_expire_date != cert.expire_date
+
+    @requests_mock.Mocker()
+    @patch('evervault.services.timeservice.TimeService')
+    def test_current_date_before_cert_validation_requires_update(self, mock_request, time_service):
+        mock_request.get(
+            "https://ca.evervault.com",
+            text="-----BEGIN CERTIFICATE-----\n"
+                 "MIIDgzCCAmugAwIBAgIUEL9SyDnNVvLXq8opJM2nrLgoFpgwDQYJKoZIhvcNAQEL\n"
+                 "BQAwUTELMAkGA1UEBhMCSUUxEzARBgNVBAgMCkR1YmxpbiBDby4xDzANBgNVBAcM\n"
+                 "BlN3b3JkczEcMBoGA1UECgwTRGVmYXVsdCBDb21wYW55IEx0ZDAeFw0wODEyMjQw\n"
+                 "ODE2MDhaFw0wOTAxMDMwODE2MDhaMFExCzAJBgNVBAYTAklFMRMwEQYDVQQIDApE\n"
+                 "dWJsaW4gQ28uMQ8wDQYDVQQHDAZTd29yZHMxHDAaBgNVBAoME0RlZmF1bHQgQ29t\n"
+                 "cGFueSBMdGQwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDoCOTOgSCf\n"
+                 "wsbSefJQwu51Krbz9jTFic4tbaM3B2BROtqAxDHdDIE5HQ1nhuZ06XyL9aLjDI2J\n"
+                 "9WOWTkN/iXh0XcUJmIlBgErs7EQbIeXjO6pTa4S+tjBtbnVF8Aaz2Bj2AuD4O9VJ\n"
+                 "AP8HmS654dOWjhqnEsRbv9IJo+ccvy699afWsoYePILZOJmoeiGXvQ/ZTbj4cYDx\n"
+                 "CxZOkYK5HK3Zv0VfK5B+hsz3buuijkPdIG46o6DAE2nmNjrTxaz1/BuiWDEvC8RK\n"
+                 "8NOY92LoiDMSxWVP2/UDDsKqWlGS7KmpdmIx1ndH6eYyYJut5xvLE7vlkr6s96O2\n"
+                 "AN5EQ28oQNNHAgMBAAGjUzBRMB0GA1UdDgQWBBQDqdmoCx8KJdc6giTS69YtlAsc\n"
+                 "vDAfBgNVHSMEGDAWgBQDqdmoCx8KJdc6giTS69YtlAscvDAPBgNVHRMBAf8EBTAD\n"
+                 "AQH/MA0GCSqGSIb3DQEBCwUAA4IBAQAiBFVUOI07QOVbMAMWNk5D3L308wx6avqI\n"
+                 "4FY6aSfmIGp898ab6L3XOrz54ztOuIyjdUaQ8/U1yFGxTBe66zPKDyorHm0a+kNp\n"
+                 "2h5luIXRsm6IZrpGblO7CD+ZzYZ04qWkHgugLSieKhO3GVKObdkdfnJIf2O5KW7j\n"
+                 "PulHfTQ3MNd/qXhOBNUXgI0rcWeI5xGKzAVWRoiAcAHU9UmNrunVg9CQMh0i6nYA\n"
+                 "i7xFTBvY5QrZGK/Y6mEAdGCRoGusOputz1MHn721sIyH5DtCAMXdJ/s94Ki7m557\n"
+                 "qLZdvkgx0KBRnP/JPZ55VgjZ8ipH9+SGxsZeTg9sX6nw+x/Plncz\n"
+                 "-----END CERTIFICATE-----\n"
+        )
+
+        base_url_default = "https://api.evervault.com/"
+        base_run_url_default = "https://run.evervault.com/"
+        ca_host_default = "https://ca.evervault.com"
+
+        api_key = "testing"
+
+        request = Request(api_key, 30, False)
+
+        time_service.get_datetime_now.return_value = 1171894763
+
+        cert = RequestIntercept(request, ca_host_default, base_run_url_default, base_url_default, api_key, api_key, time_service)
+
+        cert.setup()
+
+        assert cert.is_certificate_expired()

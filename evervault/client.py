@@ -4,6 +4,7 @@ from .http.request import Request
 from .crypto.client import Client as CryptoClient
 from .models.cage_list import CageList
 from .datatypes.map import ensure_is_integer
+from .services.timeservice import TimeService
 
 
 class Client(object):
@@ -24,7 +25,8 @@ class Client(object):
         self.relay_url = relay_url
         self.ca_host = ca_host
         request = Request(self.api_key, request_timeout, retry)
-        self.cert = RequestIntercept(request, ca_host, base_run_url, base_url, api_key, relay_url)
+        time_service = TimeService()
+        self.cert = RequestIntercept(request, ca_host, base_run_url, base_url, api_key, relay_url, time_service)
         self.request_handler = RequestHandler(request, base_run_url, base_url, self.cert)
         self.crypto_client = CryptoClient(api_key, curve)
 

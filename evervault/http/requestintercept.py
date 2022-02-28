@@ -11,7 +11,8 @@ from evervault.errors.evervault_errors import CertDownloadError
 
 
 class RequestIntercept(object):
-    def __init__(self, request, ca_host, base_run_url, base_url, api_key, relay_url):
+    def __init__(self, request, ca_host, base_run_url, base_url, api_key, relay_url, datetime_service):
+        self.datetime_service = datetime_service
         self.relay_url = relay_url
         self.api_key = api_key
         self.base_url = base_url
@@ -19,13 +20,15 @@ class RequestIntercept(object):
         self.request = request
         self.ca_host = ca_host
         self.expire_date = None
+        self.initial_date = None
         self.cert_path = None
         self.ignore_if_exact = []
         self.ignore_if_endswith = ()
 
     def is_certificate_expired(self):
         if self.expire_date is not None:
-            if datetime.utcnow().timestamp() > self.expire_date:
+            now = self.datetime_service.get_datetime_now()
+            if now > self.expire_date or now < self.initial_date:
                 return True
         return False
 
@@ -149,6 +152,8 @@ class RequestIntercept(object):
         try:
             cert_info = OpenSSL.crypto.load_certificate(OpenSSL.crypto.FILETYPE_PEM, ca_content)
             not_after = cert_info.get_notAfter().decode('utf-8')
+            not_before = cert_info.get_notBefore().decode('utf-8')
             self.expire_date = datetime.strptime(not_after, '%Y%m%d%H%M%S%z').timestamp()
+            self.initial_date = datetime.strptime(not_before, '%Y%m%d%H%M%S%z').timestamp()
         except:
             self.expire_date = None
