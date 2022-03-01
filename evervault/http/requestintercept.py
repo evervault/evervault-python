@@ -1,7 +1,7 @@
 from datetime import datetime
 from urllib.parse import urlparse
 
-import OpenSSL
+from cryptography import x509
 import requests
 import warnings
 import certifi
@@ -161,16 +161,9 @@ class RequestIntercept(object):
 
     def __set_cert_expire_date(self, ca_content):
         try:
-            cert_info = OpenSSL.crypto.load_certificate(
-                OpenSSL.crypto.FILETYPE_PEM, ca_content
-            )
-            not_after = cert_info.get_notAfter().decode("utf-8")
-            not_before = cert_info.get_notBefore().decode("utf-8")
-            self.expire_date = datetime.strptime(
-                not_after, "%Y%m%d%H%M%S%z"
-            ).timestamp()
-            self.initial_date = datetime.strptime(
-                not_before, "%Y%m%d%H%M%S%z"
-            ).timestamp()
+            cert_info = x509.load_pem_x509_certificate(ca_content)
+
+            self.expire_date = datetime.timestamp(cert_info.not_valid_after)
+            self.initial_date = datetime.timestamp(cert_info.not_valid_before)
         except:
             self.expire_date = None
