@@ -10,6 +10,7 @@ from cryptography.hazmat.primitives.asymmetric import ec
 from cryptography.hazmat.primitives.asymmetric.ec import EllipticCurvePublicKey
 from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+from cryptography.hazmat.primitives import hashes
 from secrets import token_bytes
 import base64
 import time
@@ -19,6 +20,8 @@ from .encoder import encode_p256_public_key
 BS = 32
 KEY_INTERVAL = 15
 
+SECP256R1 = "SECP256R1"
+SECP256K1 = "SECP256K1"
 CURVES = {"SECP256K1": ec.SECP256K1, "SECP256R1": ec.SECP256R1}
 
 
@@ -28,6 +31,8 @@ class Client(object):
         self.public_key = None
         self.team_ecdh_key = None
         self.generated_ecdh_key = None
+        self.compressed_public_key = None
+        self.uncompressed_public_key = None
         self.shared_key = None
         self.start_time = int(time.time())
         self.api_key = api_key
@@ -94,12 +99,12 @@ class Client(object):
         iv = token_bytes(12)
         aesgcm = AESGCM(self.shared_key)
 
-        encrypted_bytes = aesgcm.encrypt(iv, bytes(coerced_data, "utf8"), None)
+        encrypted_bytes = aesgcm.encrypt(iv, bytes(coerced_data, "utf8"), self.team_ecdh_key)
 
         return self.__format(
             header_type,
             base64.b64encode(iv).decode("utf"),
-            base64.b64encode(self.generated_ecdh_key).decode("utf"),
+            base64.b64encode(self.compressed_public_key).decode("utf"),
             base64.b64encode(encrypted_bytes).decode("utf"),
         )
 
@@ -151,8 +156,16 @@ class Client(object):
 
     def __generate_shared_key(self):
         generated_key = ec.generate_private_key(CURVES[self.curve])
-        self.generated_ecdh_key = generated_key.public_key().public_bytes(
-            Encoding.X962, PublicFormat.CompressedPoint
-        )
+        public_key = generated_key.public_key()
+        self.compressed_public_key = public_key.public_bytes(Encoding.X962, PublicFormat.CompressedPoint)
+        self.uncompressed_public_key = public_key.public_bytes(Encoding.X962, PublicFormat.UncompressedPoint)
         shared_key = generated_key.exchange(ec.ECDH(), self.team_ecdh_key)
+
+        if self.curve == SECP256R1:
+          # Perform KDF
+          hash_input = shared_key + b'\x00\x00\x00\x01' + encode_p256_public_key(self.uncompressed_public_key.hex())
+          digest = hashes.Hash(hashes.SHA256())
+          digest.update(hash_input)
+          return digest.finalize()
+
         return shared_key

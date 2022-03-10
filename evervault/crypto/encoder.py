@@ -1,7 +1,6 @@
 from pyasn1.type import univ, namedtype
 from pyasn1.type.namedtype import NamedTypes, NamedType, OptionalNamedType
 from pyasn1.codec.der import encoder
-import base64
 
 class Curve(univ.Sequence):
   componentType = NamedTypes(
