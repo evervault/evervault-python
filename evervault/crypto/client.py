@@ -14,6 +14,7 @@ from secrets import token_bytes
 import base64
 import time
 from .version import VERSION
+from .encoder import encode_p256_public_key
 
 BS = 32
 KEY_INTERVAL = 15
