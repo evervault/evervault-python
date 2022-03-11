@@ -99,7 +99,9 @@ class Client(object):
         iv = token_bytes(12)
         aesgcm = AESGCM(self.shared_key)
 
-        encrypted_bytes = aesgcm.encrypt(iv, bytes(coerced_data, "utf8"), self.team_ecdh_key)
+        encrypted_bytes = aesgcm.encrypt(
+            iv, bytes(coerced_data, "utf8"), self.team_ecdh_key
+        )
 
         return self.__format(
             header_type,
@@ -157,15 +159,23 @@ class Client(object):
     def __generate_shared_key(self):
         generated_key = ec.generate_private_key(CURVES[self.curve])
         public_key = generated_key.public_key()
-        self.compressed_public_key = public_key.public_bytes(Encoding.X962, PublicFormat.CompressedPoint)
-        self.uncompressed_public_key = public_key.public_bytes(Encoding.X962, PublicFormat.UncompressedPoint)
+        self.compressed_public_key = public_key.public_bytes(
+            Encoding.X962, PublicFormat.CompressedPoint
+        )
+        self.uncompressed_public_key = public_key.public_bytes(
+            Encoding.X962, PublicFormat.UncompressedPoint
+        )
         shared_key = generated_key.exchange(ec.ECDH(), self.team_ecdh_key)
 
         if self.curve == SECP256R1:
-          # Perform KDF
-          hash_input = shared_key + b'\x00\x00\x00\x01' + encode_p256_public_key(self.uncompressed_public_key.hex())
-          digest = hashes.Hash(hashes.SHA256())
-          digest.update(hash_input)
-          return digest.finalize()
+            # Perform KDF
+            hash_input = (
+                shared_key
+                + b"\x00\x00\x00\x01"
+                + encode_p256_public_key(self.uncompressed_public_key.hex())
+            )
+            digest = hashes.Hash(hashes.SHA256())
+            digest.update(hash_input)
+            return digest.finalize()
 
         return shared_key
