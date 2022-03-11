@@ -30,6 +30,7 @@ class Client(object):
         self.curve = curve
         self.public_key = None
         self.team_ecdh_key = None
+        self.decoded_team_cage_key = None
         self.generated_ecdh_key = None
         self.compressed_public_key = None
         self.uncompressed_public_key = None
@@ -100,7 +101,7 @@ class Client(object):
         aesgcm = AESGCM(self.shared_key)
 
         encrypted_bytes = aesgcm.encrypt(
-            iv, bytes(coerced_data, "utf8"), self.team_ecdh_key
+            iv, bytes(coerced_data, "utf8"), self.decoded_team_cage_key
         )
 
         return self.__format(
@@ -137,10 +138,9 @@ class Client(object):
         if self.team_ecdh_key is None:
             resp = fetch.get("cages/key")
             key_name = "ecdhKey" if self.curve == "SECP256K1" else "ecdhP256Key"
-            decoded_team_cage_key = base64.b64decode(resp[key_name])
-
+            self.decoded_team_cage_key = base64.b64decode(resp[key_name])
             self.team_ecdh_key = EllipticCurvePublicKey.from_encoded_point(
-                CURVES[self.curve](), decoded_team_cage_key
+                CURVES[self.curve](), self.decoded_team_cage_key
             )
 
     def __derive_shared_key(self):
