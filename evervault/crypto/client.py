@@ -15,7 +15,7 @@ from secrets import token_bytes
 import base64
 import time
 from .version import VERSION
-from .encoder import encode_p256_public_key
+from .curves.p256 import P256PublicKey
 
 BS = 32
 KEY_INTERVAL = 15
@@ -171,7 +171,7 @@ class Client(object):
             hash_input = (
                 shared_key
                 + b"\x00\x00\x00\x01"
-                + encode_p256_public_key(self.uncompressed_public_key.hex())
+                + P256PublicKey(self.uncompressed_public_key.hex()).encode()
             )
             digest = hashes.Hash(hashes.SHA256())
             digest.update(hash_input)
