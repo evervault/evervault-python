@@ -51,7 +51,7 @@ class Request(object):
         req_params = {}
         headers = {
             "User-Agent": "evervault-python/" + version,
-            "AcceptEncoding": "gzip, deflate",
+            "Accept-Encoding": "gzip, deflate",
             "Accept": "application/json",
             "Content-Type": "application/json",
             "Api-Key": self.api_key,
