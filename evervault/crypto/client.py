@@ -31,7 +31,6 @@ class Client(object):
         self.public_key = None
         self.team_ecdh_key = None
         self.decoded_team_cage_key = None
-        self.generated_ecdh_key = None
         self.compressed_public_key = None
         self.uncompressed_public_key = None
         self.shared_key = None
