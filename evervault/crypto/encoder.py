@@ -1,4 +1,4 @@
-from pyasn1.type import univ, namedtype
+from pyasn1.type import univ
 from pyasn1.type.namedtype import NamedTypes, NamedType, OptionalNamedType
 from pyasn1.codec.der import encoder
 
