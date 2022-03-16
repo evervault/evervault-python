@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.7.0 (2022-03-16)
+### Feature
+* Implement latest crypto scheme support adding KDF to derived secret keys ([`f7c5e49`](https://github.com/evervault/evervault-python/commit/f7c5e496508b0b31f570b14e8bffb4c2fccb2e77))
+
 ## v0.6.0 (2022-02-03)
 ### Feature
 * Add option for P256 curve in init function while keeping old curve as default ([`98b709c`](https://github.com/evervault/evervault-python/commit/98b709ca39f442d7fde1d567037e1a686d56c9cd))
