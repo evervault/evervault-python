@@ -45,4 +45,4 @@ class RequestHandler(object):
 
     def __assert_certificate_available(self):
         if self.request.http_session.cert is None:
-            raise Exception('Certificate not available')
+            raise Exception("Certificate not available")

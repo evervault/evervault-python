@@ -63,7 +63,9 @@ class Client(object):
         return self.request_handler.get(path, params, check_cert=True)
 
     def post(self, path, params, optional_headers, cage_run=False):
-        return self.request_handler.post(path, params, optional_headers, cage_run, check_cert=True)
+        return self.request_handler.post(
+            path, params, optional_headers, cage_run, check_cert=True
+        )
 
     def put(self, path, params):
         return self.request_handler.put(path, params, check_cert=True)
