@@ -60,16 +60,16 @@ class Client(object):
         self.cert.setup()
 
     def get(self, path, params={}):
-        return self.request_handler.get(path, params)
+        return self.request_handler.get(path, params, check_cert=True)
 
     def post(self, path, params, optional_headers, cage_run=False):
-        return self.request_handler.post(path, params, optional_headers, cage_run)
+        return self.request_handler.post(path, params, optional_headers, cage_run, check_cert=True)
 
     def put(self, path, params):
-        return self.request_handler.put(path, params)
+        return self.request_handler.put(path, params, check_cert=True)
 
     def delete(self, path, params):
-        return self.request_handler.delete(path, params)
+        return self.request_handler.delete(path, params, check_cert=True)
 
     def __build_cage_run_headers(self, options):
         if options is None:
