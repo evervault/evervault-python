@@ -58,7 +58,7 @@ class TestHandlingRequests(unittest.TestCase):
     def test_if_outbound_set_get_needs_to_assert_certificate_presence(
         self, cert, request
     ):
-        with self.assertRaises(Exception) as context:
+        with self.assertRaises(Exception):
             request_handler = RequestHandler(
                 request, "https://someaddress.io", "https://anotheraddress.io", cert
             )
@@ -71,7 +71,7 @@ class TestHandlingRequests(unittest.TestCase):
     def test_if_outbound_set_post_needs_to_assert_certificate_presence(
         self, cert, request
     ):
-        with self.assertRaises(Exception) as context:
+        with self.assertRaises(Exception):
             request_handler = RequestHandler(
                 request, "https://someaddress.io", "https://anotheraddress.io", cert
             )
@@ -93,7 +93,7 @@ class TestHandlingRequests(unittest.TestCase):
     def test_if_outbound_set_put_needs_to_assert_certificate_presence(
         self, cert, request
     ):
-        with self.assertRaises(Exception) as context:
+        with self.assertRaises(Exception):
             request_handler = RequestHandler(
                 request, "https://someaddress.io", "https://anotheraddress.io", cert
             )
@@ -108,7 +108,7 @@ class TestHandlingRequests(unittest.TestCase):
     def test_if_outbound_set_delete_needs_to_assert_certificate_presence(
         self, cert, request
     ):
-        with self.assertRaises(Exception) as context:
+        with self.assertRaises(Exception):
             request_handler = RequestHandler(
                 request, "https://someaddress.io", "https://anotheraddress.io", cert
             )
