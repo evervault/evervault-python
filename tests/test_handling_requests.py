@@ -12,7 +12,7 @@ class TestHandlingRequests(unittest.TestCase):
             request, "https://someaddress.io", "https://anotheraddress.io", cert
         )
         cert.is_certificate_expired.return_value = True
-        request_handler.get("https://anyaddress.io")
+        request_handler.get("https://anyaddress.io", check_cert=True)
         cert.setup.assert_called()
 
     @patch("evervault.http.requestintercept.RequestIntercept")
@@ -30,6 +30,7 @@ class TestHandlingRequests(unittest.TestCase):
                 "x-version-id": "2",
                 "x-async": "true",
             },
+            check_cert=True,
         )
         cert.setup.assert_called()
 
@@ -40,7 +41,9 @@ class TestHandlingRequests(unittest.TestCase):
             request, "https://someaddress.io", "https://anotheraddress.io", cert
         )
         cert.is_certificate_expired.return_value = True
-        request_handler.put("https://anyaddress.io", {"status": "queued"})
+        request_handler.put(
+            "https://anyaddress.io", {"status": "queued"}, check_cert=True
+        )
         cert.setup.assert_called()
 
     @patch("evervault.http.requestintercept.RequestIntercept")
@@ -50,7 +53,9 @@ class TestHandlingRequests(unittest.TestCase):
             request, "https://someaddress.io", "https://anotheraddress.io", cert
         )
         cert.is_certificate_expired.return_value = True
-        request_handler.delete("https://anyaddress.io", {"status": "queued"})
+        request_handler.delete(
+            "https://anyaddress.io", {"status": "queued"}, check_cert=True
+        )
         cert.setup.assert_called()
 
     @patch("evervault.http.requestintercept.RequestIntercept")
