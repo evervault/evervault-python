@@ -5,28 +5,34 @@ class RequestHandler(object):
         self.base_run_url = base_run_url
         self.request = request
 
-    def get(self, path, params={}):
-        if self.cert.is_certificate_expired():
-            self.cert.setup()
+    def get(self, path, params={}, check_cert=False):
+        if check_cert:
+            self.__validate_certificate()
         return self.request.make_request("GET", self.__url(path), params)
 
-    def post(self, path, params, optional_headers, cage_run=False):
-        if self.cert.is_certificate_expired():
-            self.cert.setup()
+    def post(self, path, params, optional_headers, cage_run=False, check_cert=False):
+        if check_cert:
+            self.__validate_certificate()
         return self.request.make_request(
             "POST", self.__url(path, cage_run), params, optional_headers
         )
 
-    def put(self, path, params):
-        if self.cert.is_certificate_expired():
-            self.cert.setup()
+    def put(self, path, params, check_cert=False):
+        if check_cert:
+            self.__validate_certificate()
         return self.request.make_request("PUT", self.__url(path), params)
 
-    def delete(self, path, params):
-        if self.cert.is_certificate_expired():
-            self.cert.setup()
+    def delete(self, path, params, check_cert=False):
+        if check_cert:
+            self.__validate_certificate()
         return self.request.make_request("DELETE", self.__url(path), params)
 
     def __url(self, path, cage_run=False):
         base_url = self.base_run_url if cage_run else self.base_url
         return base_url + path
+
+    def __validate_certificate(self):
+        if self.request.http_session.cert is None:
+            raise Exception("Certificate not available")
+        if self.cert.is_certificate_expired():
+            self.cert.setup()

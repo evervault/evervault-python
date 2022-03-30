@@ -24,6 +24,7 @@ class Client(object):
         self.base_run_url = base_run_url
         self.relay_url = relay_url
         self.ca_host = ca_host
+        self.assert_cert = False
         request = Request(self.api_key, request_timeout, retry)
         time_service = TimeService()
         self.cert = RequestIntercept(
@@ -58,18 +59,21 @@ class Client(object):
     def relay(self, ignore_domains=[]):
         self.cert.setup_domains(ignore_domains)
         self.cert.setup()
+        self.assert_cert = True
 
     def get(self, path, params={}):
-        return self.request_handler.get(path, params)
+        return self.request_handler.get(path, params, check_cert=self.assert_cert)
 
     def post(self, path, params, optional_headers, cage_run=False):
-        return self.request_handler.post(path, params, optional_headers, cage_run)
+        return self.request_handler.post(
+            path, params, optional_headers, cage_run, check_cert=self.assert_cert
+        )
 
     def put(self, path, params):
-        return self.request_handler.put(path, params)
+        return self.request_handler.put(path, params, check_cert=self.assert_cert)
 
     def delete(self, path, params):
-        return self.request_handler.delete(path, params)
+        return self.request_handler.delete(path, params, check_cert=self.assert_cert)
 
     def __build_cage_run_headers(self, options):
         if options is None:
