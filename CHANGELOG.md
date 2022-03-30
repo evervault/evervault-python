@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.7.1 (2022-03-30)
+### Fix
+* Assert certificate presence when relay is called ([`e87dac5`](https://github.com/evervault/evervault-python/commit/e87dac580fbac3b9c3029b1cb17e9477dc6c6dab))
+
 ## v0.7.0 (2022-03-16)
 ### Feature
 * Implement latest crypto scheme support adding KDF to derived secret keys ([`f7c5e49`](https://github.com/evervault/evervault-python/commit/f7c5e496508b0b31f570b14e8bffb4c2fccb2e77))
