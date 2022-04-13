@@ -23,7 +23,7 @@ See the Evervault [Python SDK documentation](https://docs.evervault.com/sdk/pyth
 Our Python SDK is distributed via [pypi](https://pypi.org/project/evervault/), and can be installed using `pip`.
 
 ```sh
- pip install evervault
+pip install evervault
 ```
 
 ## Setup
