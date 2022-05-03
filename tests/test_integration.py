@@ -39,32 +39,32 @@ class TestIntegration(unittest.TestCase):
             == "Hello from a Cage! It seems you have 3 letters in your name"
         )
 
-    def test_relay_works_as_expected_without_intercept(self):
-        api_key = os.environ.get(API_KEY)
-        ev_cage_name = os.environ.get(EV_CAGE_NAME)
-        evervault.init(api_key, intercept=False)
-        result = evervault.encrypt_and_run(ev_cage_name, {"name": "foo"})
-        assert (
-            result["result"]["message"]
-            == "Hello from a Cage! It seems you have 3 letters in your name"
-        )
-
-    def test_encrypts_and_run_correctly_with_intercept_256R1(self):
-        api_key = os.environ.get(API_KEY)
-        ev_cage_name = os.environ.get(EV_CAGE_NAME)
-        evervault.init(api_key, curve=evervault.Curves.SECP256R1)
-        result = evervault.encrypt_and_run(ev_cage_name, {"name": "foo"})
-        assert (
-            result["result"]["message"]
-            == "Hello from a Cage! It seems you have 3 letters in your name"
-        )
-
-    def test_relay_works_as_expected_without_intercept_256R1(self):
-        api_key = os.environ.get(API_KEY)
-        ev_cage_name = os.environ.get(EV_CAGE_NAME)
-        evervault.init(api_key, intercept=False, curve=evervault.Curves.SECP256R1)
-        result = evervault.encrypt_and_run(ev_cage_name, {"name": "foo"})
-        assert (
-            result["result"]["message"]
-            == "Hello from a Cage! It seems you have 3 letters in your name"
-        )
+    # def test_relay_works_as_expected_without_intercept(self):
+    #     api_key = os.environ.get(API_KEY)
+    #     ev_cage_name = os.environ.get(EV_CAGE_NAME)
+    #     evervault.init(api_key, intercept=False)
+    #     result = evervault.encrypt_and_run(ev_cage_name, {"name": "foo"})
+    #     assert (
+    #         result["result"]["message"]
+    #         == "Hello from a Cage! It seems you have 3 letters in your name"
+    #     )
+    #
+    # def test_encrypts_and_run_correctly_with_intercept_256R1(self):
+    #     api_key = os.environ.get(API_KEY)
+    #     ev_cage_name = os.environ.get(EV_CAGE_NAME)
+    #     evervault.init(api_key, curve=evervault.Curves.SECP256R1)
+    #     result = evervault.encrypt_and_run(ev_cage_name, {"name": "foo"})
+    #     assert (
+    #         result["result"]["message"]
+    #         == "Hello from a Cage! It seems you have 3 letters in your name"
+    #     )
+    #
+    # def test_relay_works_as_expected_without_intercept_256R1(self):
+    #     api_key = os.environ.get(API_KEY)
+    #     ev_cage_name = os.environ.get(EV_CAGE_NAME)
+    #     evervault.init(api_key, intercept=False, curve=evervault.Curves.SECP256R1)
+    #     result = evervault.encrypt_and_run(ev_cage_name, {"name": "foo"})
+    #     assert (
+    #         result["result"]["message"]
+    #         == "Hello from a Cage! It seems you have 3 letters in your name"
+    #     )
