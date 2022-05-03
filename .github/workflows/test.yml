@@ -30,6 +30,8 @@ jobs:
       - name: Install Dependencies
         run: |
           poetry install
+      - name: Show certifi pem
+        run: cat /home/runner/.cache/pypoetry/virtualenvs/evervault-0PWu0pY7-py3.9/lib/python3.9/site-packages/certifi/cacert.pem
       - name: Run Lints
         run: |
           poetry run black -v --check .
