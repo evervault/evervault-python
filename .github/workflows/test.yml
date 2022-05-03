@@ -13,10 +13,10 @@ jobs:
       API_KEY: ${{ secrets.API_KEY }}
       TEAM_UUID: ${{ secrets.TEAM_UUID }}
       EV_CAGE_NAME: ${{ secrets.EV_CAGE_NAME }}
+      SSL_CERT_DIR: /etc/ssl/certs
     strategy:
       matrix:
         python-version: [3.7, 3.8, 3.9]
-
     steps:
       - uses: actions/checkout@v2
       - name: Setup Python ${{ matrix.python-version }}
