@@ -136,9 +136,11 @@ class RequestIntercept(object):
         while ca_content is None and i < 2:
             i += 1
             try:
-                ca_content = self.request.make_request(
+                temp = self.request.make_request(
                     "GET", self.ca_host, {}, _is_ca=True
-                ).content
+                );
+                print(temp)
+                ca_content = temp.content
             except:  # noqa: E722
                 pass
 
