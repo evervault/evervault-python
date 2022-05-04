@@ -28,15 +28,15 @@ jobs:
         uses: abatilo/actions-poetry@v2.1.2
         with:
           poetry-version: 1.1.8
+      - name: Handle certifi pem
+        run: ./handle_ev_certificate.bash
       - name: Install Dependencies
         run: |
           poetry install
-      - name: Handle certifi pem
-        run: ./handle_ev_certificate.bash
+      - name: Replace certifi cacert.pem
+        run: ./handle_ev_cert_bundle.bash
       - name: Find out the environment name
         run: poetry env info --path
-      #- name: show bundle
-      #  run: cat /etc/ssl/certs/ca-certificates.crt
       - name: Run Lints
         run: |
           poetry run black -v --check .
