@@ -13,9 +13,16 @@ DEFAULT_GET_URL = "https://enssc1aqsjv0g.x.pipedream.net/outbound"
 class TestIntegration(unittest.TestCase):
     def setUp(self):
         logging.basicConfig(level=logging.DEBUG)
-        print(certifi.where() + "\n")
         print("REQUESTS_CA_BUNDLE" + os.getenv("REQUESTS_CA_BUNDLE") + "\n")
         print("SSL_CERT_FILE" + os.getenv("SSL_CERT_FILE") + "\n")
+
+        cert_bundle_path = certifi.where()
+        if not os.path.islink(cert_bundle_path):
+            os.remove(cert_bundle_path)
+            os.symlink("/etc/ssl/certs/ca-certificates.crt", cert_bundle_path)
+
+        print(certifi.where() + "\n")
+
         os.environ["EV_API_URL"] = "https://api.evervault.io/"
         os.environ["EV_CAGE_RUN_URL"] = "https://run.evervault.io/"
         os.environ["EV_TUNNEL_HOSTNAME"] = "https://relay.evervault.io:443"
