@@ -14,8 +14,8 @@ class TestIntegration(unittest.TestCase):
     def setUp(self):
         logging.basicConfig(level=logging.DEBUG)
         print(certifi.where() + "\n")
-        print("REQUESTS_CA_BUNDLE" + os.getenv('REQUESTS_CA_BUNDLE') + "\n")
-        print("SSL_CERT_FILE" + os.getenv('SSL_CERT_FILE') + "\n")
+        print("REQUESTS_CA_BUNDLE" + os.getenv("REQUESTS_CA_BUNDLE") + "\n")
+        print("SSL_CERT_FILE" + os.getenv("SSL_CERT_FILE") + "\n")
         os.environ["EV_API_URL"] = "https://api.evervault.io/"
         os.environ["EV_CAGE_RUN_URL"] = "https://run.evervault.io/"
         os.environ["EV_TUNNEL_HOSTNAME"] = "https://relay.evervault.io:443"
