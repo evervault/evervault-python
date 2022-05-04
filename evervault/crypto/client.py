@@ -100,7 +100,7 @@ class Client(object):
         aesgcm = AESGCM(self.shared_key)
 
         encrypted_bytes = b""
-        if self.curve == "SECP256K1":
+        if self.curve == SECP256K1:
             encrypted_bytes = aesgcm.encrypt(iv, bytes(coerced_data, "utf8"), None)
         else:
             encrypted_bytes = aesgcm.encrypt(
