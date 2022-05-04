@@ -1,7 +1,10 @@
 #!/bin/bash
 
+sudo apt-get update
+sudo apt-get install -y apt-transport-https curl ca-certificates
+
 wget https://ca.evervault.io --output ~/evervault.io.pem
 
-# append evervault.io certificate to certifi pem :)
-
-cat ~/evervault.io.pem >> ~/.cache/pypoetry/virtualenvs/evervault-0PWu0pY7-py3.9/lib/python3.9/site-packages/certifi/cacert.pem
+sudo curl https://ca.evervault.io --output /usr/local/share/ca-certificates/evervault.io.crt
+find /usr/local/share/ca-certificates
+sudo update-ca-certificates
