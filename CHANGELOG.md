@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.8.1 (2022-05-04)
+### Fix
+* **crypto client:** Dont add AAD when using K1 curve ([`bcb5548`](https://github.com/evervault/evervault-python/commit/bcb5548a9b1f468f604e353155179a40943f044a))
+
 ## v0.8.0 (2022-04-13)
 ### Feature
 * Implement latest crypto scheme support adding KDF to derived secret keys ([`f7c5e49`](https://github.com/evervault/evervault-python/commit/f7c5e496508b0b31f570b14e8bffb4c2fccb2e77))
