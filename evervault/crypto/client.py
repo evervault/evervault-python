@@ -99,9 +99,13 @@ class Client(object):
         iv = token_bytes(12)
         aesgcm = AESGCM(self.shared_key)
 
-        encrypted_bytes = aesgcm.encrypt(
-            iv, bytes(coerced_data, "utf8"), self.decoded_team_cage_key
-        )
+        encrypted_bytes = b""
+        if self.curve == SECP256K1:
+            encrypted_bytes = aesgcm.encrypt(iv, bytes(coerced_data, "utf8"), None)
+        else:
+            encrypted_bytes = aesgcm.encrypt(
+                iv, bytes(coerced_data, "utf8"), self.decoded_team_cage_key
+            )
 
         return self.__format(
             header_type,
