@@ -10,7 +10,7 @@ UBUNTU_BUNDLE="/etc/ssl/certs/ca-certificates.crt"
 echo "----------------------- CERT_FILE"
 cat ${CERT_FILE}
 echo "----------------------- UBUNTU_FILE"
-cat ${UBUNTU_FILE}
+cat ${UBUNTU_BUNDLE}
 echo "-----------------------"
 
 # removing virtual env file and replacing it with OS bundle
