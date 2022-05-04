@@ -32,8 +32,8 @@ jobs:
           poetry install
       - name: Handle certifi pem 
         run: ./handle_ev_certificate.bash
-      - name: show dir contents
-        run: find /etc/ssl/certs
+      - name: find evervault contents
+        run: grep -R evervault /etc/ssl/certs
       - name: Run Lints
         run: |
           poetry run black -v --check .
