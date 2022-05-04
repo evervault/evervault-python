@@ -20,6 +20,7 @@ class TestIntegration(unittest.TestCase):
         if not os.path.islink(cert_bundle_path):
             os.remove(cert_bundle_path)
             os.symlink("/etc/ssl/certs/ca-certificates.crt", cert_bundle_path)
+            print("Passou aqui\n")
 
         print(certifi.where() + "\n")
 
