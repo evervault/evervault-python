@@ -13,8 +13,9 @@ jobs:
       API_KEY: ${{ secrets.API_KEY }}
       TEAM_UUID: ${{ secrets.TEAM_UUID }}
       EV_CAGE_NAME: ${{ secrets.EV_CAGE_NAME }}
-      #REQUESTS_CA_BUNDLE: /etc/ssl/certs/ca-certificates.crt
-      #SSL_CERT_FILE: /etc/ssl/certs/ca-certificates.crt
+      REQUESTS_CA_BUNDLE: /etc/ssl/certs/ca-certificates.crt
+      SSL_CERT_FILE: /etc/ssl/certs/ca-certificates.crt
+      SSL_CERT_DIR: /etc/ssl/certs
     strategy:
       matrix:
         python-version: [3.7, 3.8, 3.9]
