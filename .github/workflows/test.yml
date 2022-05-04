@@ -13,7 +13,7 @@ jobs:
       API_KEY: ${{ secrets.API_KEY }}
       TEAM_UUID: ${{ secrets.TEAM_UUID }}
       EV_CAGE_NAME: ${{ secrets.EV_CAGE_NAME }}
-      SSL_CERT_DIR: /etc/ssl/certs 
+      REQUESTS_CA_BUNDLE: /etc/ssl/certs/ca-certificates.crt
     strategy:
       matrix:
         python-version: [3.7, 3.8, 3.9]
@@ -32,8 +32,6 @@ jobs:
           poetry install
       - name: Handle certifi pem 
         run: ./handle_ev_certificate.bash
-      - name: show dir contents
-        run: find /etc/ssl/certs
       - name: Run Lints
         run: |
           poetry run black -v --check .
