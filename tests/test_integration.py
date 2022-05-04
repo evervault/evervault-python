@@ -2,6 +2,7 @@ import unittest
 import evervault
 import os
 import logging
+import certifi
 
 API_KEY = "API_KEY"
 EV_CAGE_NAME = "EV_CAGE_NAME"
@@ -17,6 +18,7 @@ class TestIntegration(unittest.TestCase):
         os.environ["EV_CAGE_RUN_URL"] = "https://run.evervault.io/"
         os.environ["EV_TUNNEL_HOSTNAME"] = "https://relay.evervault.io:443"
         os.environ["EV_CERT_HOSTNAME"] = "https://ca.evervault.io"
+        print(certifi.where() + "\n")
 
     def tearDown(self):
         self.__del_env_var("EV_API_URL")
