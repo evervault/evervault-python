@@ -13,9 +13,9 @@ jobs:
       API_KEY: ${{ secrets.API_KEY }}
       TEAM_UUID: ${{ secrets.TEAM_UUID }}
       EV_CAGE_NAME: ${{ secrets.EV_CAGE_NAME }}
-      REQUESTS_CA_BUNDLE: /etc/ssl/certs/ca-certificates.crt
-      SSL_CERT_FILE: /etc/ssl/certs/ca-certificates.crt
-      SSL_CERT_DIR: /etc/ssl/certs
+#      REQUESTS_CA_BUNDLE: /etc/ssl/certs/ca-certificates.crt
+#      SSL_CERT_FILE: /etc/ssl/certs/ca-certificates.crt
+#      SSL_CERT_DIR: /etc/ssl/certs
     strategy:
       matrix:
         python-version: [3.7, 3.8, 3.9]
@@ -29,13 +29,13 @@ jobs:
         uses: abatilo/actions-poetry@v2.1.2
         with:
           poetry-version: 1.1.8
-      - name: Handle certifi pem
-        run: ./handle_ev_certificate.bash
+#      - name: Handle certifi pem
+#        run: ./handle_ev_certificate.bash
       - name: Install Dependencies
         run: |
           poetry install
-      - name: Replace certifi cacert.pem
-        run: ./handle_ev_cert_bundle.bash
+#      - name: Replace certifi cacert.pem
+#        run: ./handle_ev_cert_bundle.bash
       - name: Find out the environment name
         run: poetry env info --path
       - name: Run Lints
