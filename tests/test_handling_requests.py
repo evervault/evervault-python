@@ -11,7 +11,9 @@ class TestHandlingRequests(unittest.TestCase):
         request_handler = RequestHandler(
             request, "https://someaddress.io", "https://anotheraddress.io", cert
         )
+        request_handler.setup_certificate([])
         cert.is_certificate_expired.return_value = True
+        cert.certificate_not_available.return_value = False
         request_handler.get("https://anyaddress.io")
         cert.setup.assert_called()
 
@@ -21,7 +23,9 @@ class TestHandlingRequests(unittest.TestCase):
         request_handler = RequestHandler(
             request, "https://someaddress.io", "https://anotheraddress.io", cert
         )
+        request_handler.setup_certificate([])
         cert.is_certificate_expired.return_value = True
+        cert.certificate_not_available.return_value = False
         request_handler.post(
             "https://run.anyaddress.com/testing-cage",
             {"status": "queued"},
@@ -39,7 +43,9 @@ class TestHandlingRequests(unittest.TestCase):
         request_handler = RequestHandler(
             request, "https://someaddress.io", "https://anotheraddress.io", cert
         )
+        request_handler.setup_certificate([])
         cert.is_certificate_expired.return_value = True
+        cert.certificate_not_available.return_value = False
         request_handler.put("https://anyaddress.io", {"status": "queued"})
         cert.setup.assert_called()
 
@@ -49,6 +55,8 @@ class TestHandlingRequests(unittest.TestCase):
         request_handler = RequestHandler(
             request, "https://someaddress.io", "https://anotheraddress.io", cert
         )
+        request_handler.setup_certificate([])
+        cert.certificate_not_available.return_value = False
         cert.is_certificate_expired.return_value = True
         request_handler.delete("https://anyaddress.io", {"status": "queued"})
         cert.setup.assert_called()

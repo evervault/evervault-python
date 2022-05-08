@@ -60,32 +60,6 @@ class TestHandlingCerts(unittest.TestCase):
         assert cert.is_certificate_expired()
 
     @requests_mock.Mocker()
-    def test_not_available_cert_is_not_expired(self, mock_request):
-        mock_request.get("https://ca.evervault.com", text="")
-        base_url_default = "https://api.evervault.com/"
-        base_run_url_default = "https://run.evervault.com/"
-        ca_host_default = "https://ca.evervault.com"
-
-        api_key = "testing"
-
-        request = Request(api_key, 30, False)
-
-        time_service = TimeService()
-
-        cert = RequestIntercept(
-            request,
-            ca_host_default,
-            base_run_url_default,
-            base_url_default,
-            api_key,
-            api_key,
-            time_service,
-        )
-        cert.setup()
-
-        assert cert.is_certificate_expired() is False
-
-    @requests_mock.Mocker()
     def test_updated_cert_keeps_path_changes_timestamp(self, mock_request):
         mock_request.get(
             "https://ca.evervault.com",
