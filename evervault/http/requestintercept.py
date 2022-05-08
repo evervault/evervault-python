@@ -12,14 +12,14 @@ from evervault.errors.evervault_errors import CertDownloadError
 
 class RequestIntercept(object):
     def __init__(
-            self,
-            request,
-            ca_host,
-            base_run_url,
-            base_url,
-            api_key,
-            relay_url,
-            datetime_service,
+        self,
+        request,
+        ca_host,
+        base_run_url,
+        base_url,
+        api_key,
+        relay_url,
+        datetime_service,
     ):
         self.datetime_service = datetime_service
         self.relay_url = relay_url
@@ -69,23 +69,23 @@ class RequestIntercept(object):
         requests.sessions.SessionRedirectMixin.rebuild_proxies = rebuild_proxies
 
         def new_req_func(
-                self,
-                method,
-                url,
-                params=None,
-                data=None,
-                headers={},
-                cookies=None,
-                files=None,
-                auth=None,
-                timeout=None,
-                allow_redirects=True,
-                proxies={},
-                hooks=None,
-                stream=None,
-                verify=None,
-                cert=None,
-                json=None,
+            self,
+            method,
+            url,
+            params=None,
+            data=None,
+            headers={},
+            cookies=None,
+            files=None,
+            auth=None,
+            timeout=None,
+            allow_redirects=True,
+            proxies={},
+            hooks=None,
+            stream=None,
+            verify=None,
+            cert=None,
+            json=None,
         ):
             if headers is None:
                 headers = {}
@@ -97,7 +97,7 @@ class RequestIntercept(object):
             try:
                 domain = urlparse(url).netloc
                 if domain in self.ignore_if_exact or domain.endswith(
-                        self.ignore_if_endswith
+                    self.ignore_if_endswith
                 ):
                     del headers["Proxy-Authorization"]
                     del proxies["https"]
