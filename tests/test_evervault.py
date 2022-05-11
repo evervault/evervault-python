@@ -149,7 +149,6 @@ class TestEvervault(unittest.TestCase):
     def test_encrypt_and_run(self, mock_request):
         self.mock_fetch_cage_key(mock_request)
 
-
         request = mock_request.post(
             "https://run.evervault.com/testing-cage",
             json={"result": "there was an attempt"},
