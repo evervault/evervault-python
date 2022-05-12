@@ -1,4 +1,3 @@
-from ..http.metrics import report_metric
 from ..errors.evervault_errors import (
     UndefinedDataError,
     InvalidPublicKeyError,
@@ -92,8 +91,6 @@ class Client(object):
         return encrypted_set
 
     def __encrypt_string(self, data):
-        report_metric(self.api_key)
-
         header_type = map_header_type(data)
         coerced_data = self.__coerce_type(data)
         iv = token_bytes(12)
