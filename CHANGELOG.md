@@ -2,6 +2,11 @@
 
 <!--next-version-placeholder-->
 
+## v0.8.2 (2022-05-12)
+### Fix
+* Format ([`e3010a9`](https://github.com/evervault/evervault-python/commit/e3010a961c26a9d8c0804e1e6a377e1816258ad0))
+* Remove metrics ([`ade1ff9`](https://github.com/evervault/evervault-python/commit/ade1ff9ddfad9d231cbd8c4d83d33d609c0ba42a))
+
 ## v0.8.1 (2022-05-04)
 ### Fix
 * **crypto client:** Dont add AAD when using K1 curve ([`bcb5548`](https://github.com/evervault/evervault-python/commit/bcb5548a9b1f468f604e353155179a40943f044a))
