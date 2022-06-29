@@ -72,8 +72,6 @@ class RequestIntercept(object):
             self,
             method,
             url,
-            ignore_if_exact=client_self.ignore_if_exact,
-            ignore_if_endswith=client_self.ignore_if_endswith,
             params=None,
             data=None,
             headers={},
@@ -98,7 +96,7 @@ class RequestIntercept(object):
             verify = cert_path
             try:
                 domain = urlparse(url).netloc
-                if domain in ignore_if_exact or domain.endswith(ignore_if_endswith):
+                if domain in client_self.ignore_if_exact or domain.endswith(client_self.ignore_if_endswith):
                     del headers["Proxy-Authorization"]
                     del proxies["https"]
             except Exception:
