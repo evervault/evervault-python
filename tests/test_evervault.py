@@ -10,7 +10,6 @@ from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import ec
 import evervault
 import os
-import requests
 
 
 class TestEvervault(unittest.TestCase):
@@ -426,46 +425,6 @@ class TestEvervault(unittest.TestCase):
         assert request.last_request.headers["x-async"] == "true"
         assert request.last_request.headers["x-version-id"] == "2"
 
-    @requests_mock.Mocker()
-    def test_run_with_intercept_domain(self, mock_request):
-        self.__mock_cert(mock_request)
-
-        evervault.init("testing", intercept=True)
-
-        request = mock_request.get("https://test2.com/hello")
-        requests.get("https://test2.com/hello")
-        assert request.last_request.headers["Proxy-Authorization"] == "testing"
-
-        self.__reinit_client()
-
-    @requests_mock.Mocker()
-    def test_run_with_intercept_cage_domain_ignored(self, mock_request):
-        self.__mock_cert(mock_request)
-
-        request = mock_request.get("https://run.evervault.com/hello")
-        evervault.init("testing", intercept=True)
-
-        requests.get("https://run.evervault.com/hello")
-
-        self.assertRaises(
-            KeyError, lambda: request.last_request.headers["Proxy-Authorization"]
-        )
-
-        self.__reinit_client()
-
-    @requests_mock.Mocker()
-    def test_run_with_intercept_with_allowed_domain(self, mock_request):
-        self.__mock_cert(mock_request)
-
-        request = mock_request.get("https://testing.com/hello")
-        evervault.init("testing", intercept=True)
-
-        requests.get("https://testing.com/hello")
-
-        assert request.last_request.headers["Proxy-Authorization"] == "testing"
-
-        self.__reinit_client()
-
     def mock_fetch_cage_key(self, mock_request):
         mock_request.get(
             "https://api.evervault.com/cages/key",
@@ -515,33 +474,3 @@ class TestEvervault(unittest.TestCase):
         if parts[1] == "number" or parts[1] == "boolean":
             return len(parts) == 6
         return True
-
-    def __reinit_client(self):
-        self.evervault.ev_client = None
-        self.evervault.init("testing")
-
-    def __mock_cert(self, mock_request):
-        mock_request.get(
-            "https://ca.evervault.com",
-            text="-----BEGIN CERTIFICATE-----\n"
-            "MIIDgzCCAmugAwIBAgIUEL9SyDnNVvLXq8opJM2nrLgoFpgwDQYJKoZIhvcNAQEL\n"
-            "BQAwUTELMAkGA1UEBhMCSUUxEzARBgNVBAgMCkR1YmxpbiBDby4xDzANBgNVBAcM\n"
-            "BlN3b3JkczEcMBoGA1UECgwTRGVmYXVsdCBDb21wYW55IEx0ZDAeFw0wODEyMjQw\n"
-            "ODE2MDhaFw0wOTAxMDMwODE2MDhaMFExCzAJBgNVBAYTAklFMRMwEQYDVQQIDApE\n"
-            "dWJsaW4gQ28uMQ8wDQYDVQQHDAZTd29yZHMxHDAaBgNVBAoME0RlZmF1bHQgQ29t\n"
-            "cGFueSBMdGQwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDoCOTOgSCf\n"
-            "wsbSefJQwu51Krbz9jTFic4tbaM3B2BROtqAxDHdDIE5HQ1nhuZ06XyL9aLjDI2J\n"
-            "9WOWTkN/iXh0XcUJmIlBgErs7EQbIeXjO6pTa4S+tjBtbnVF8Aaz2Bj2AuD4O9VJ\n"
-            "AP8HmS654dOWjhqnEsRbv9IJo+ccvy699afWsoYePILZOJmoeiGXvQ/ZTbj4cYDx\n"
-            "CxZOkYK5HK3Zv0VfK5B+hsz3buuijkPdIG46o6DAE2nmNjrTxaz1/BuiWDEvC8RK\n"
-            "8NOY92LoiDMSxWVP2/UDDsKqWlGS7KmpdmIx1ndH6eYyYJut5xvLE7vlkr6s96O2\n"
-            "AN5EQ28oQNNHAgMBAAGjUzBRMB0GA1UdDgQWBBQDqdmoCx8KJdc6giTS69YtlAsc\n"
-            "vDAfBgNVHSMEGDAWgBQDqdmoCx8KJdc6giTS69YtlAscvDAPBgNVHRMBAf8EBTAD\n"
-            "AQH/MA0GCSqGSIb3DQEBCwUAA4IBAQAiBFVUOI07QOVbMAMWNk5D3L308wx6avqI\n"
-            "4FY6aSfmIGp898ab6L3XOrz54ztOuIyjdUaQ8/U1yFGxTBe66zPKDyorHm0a+kNp\n"
-            "2h5luIXRsm6IZrpGblO7CD+ZzYZ04qWkHgugLSieKhO3GVKObdkdfnJIf2O5KW7j\n"
-            "PulHfTQ3MNd/qXhOBNUXgI0rcWeI5xGKzAVWRoiAcAHU9UmNrunVg9CQMh0i6nYA\n"
-            "i7xFTBvY5QrZGK/Y6mEAdGCRoGusOputz1MHn721sIyH5DtCAMXdJ/s94Ki7m557\n"
-            "qLZdvkgx0KBRnP/JPZ55VgjZ8ipH9+SGxsZeTg9sX6nw+x/Plncz\n"
-            "-----END CERTIFICATE-----\n",
-        )
