@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.8.3 (2022-06-29)
+### Fix
+* Respect ignore domains list ([`6fd9e49`](https://github.com/evervault/evervault-python/commit/6fd9e49051ba6c0ab016b0b4c38d4d92d86380b2))
+
 ## v0.8.2 (2022-05-12)
 ### Fix
 * Format ([`e3010a9`](https://github.com/evervault/evervault-python/commit/e3010a961c26a9d8c0804e1e6a377e1816258ad0))

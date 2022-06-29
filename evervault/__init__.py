@@ -3,7 +3,7 @@ from .client import Client
 from .errors.evervault_errors import AuthenticationError, UnsupportedCurveError
 import os
 
-__version__ = "0.8.2"
+__version__ = "0.8.3"
 
 ev_client = None
 _api_key = None
