@@ -9,6 +9,7 @@ import tempfile
 
 from evervault.errors.evervault_errors import CertDownloadError
 
+old_request_func = requests.Session.request
 
 class RequestIntercept(object):
     def __init__(
@@ -61,8 +62,6 @@ class RequestIntercept(object):
         )
 
     def setup(client_self):
-        old_request_func = requests.Session.request
-
         client_self.__get_cert()
 
         cert_path = client_self.cert_path

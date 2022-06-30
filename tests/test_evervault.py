@@ -11,6 +11,7 @@ from cryptography.hazmat.primitives.asymmetric import ec
 import evervault
 import os
 import requests
+import importlib
 
 
 class TestEvervault(unittest.TestCase):
@@ -18,6 +19,7 @@ class TestEvervault(unittest.TestCase):
 
     def setUp(self, curve="SECP256K1"):
         self.curve = curve
+        importlib.reload(evervault)
         self.evervault = evervault
         self.evervault.init("testing", curve=curve)
         self.public_key = self.build_keys()
@@ -471,7 +473,7 @@ class TestEvervault(unittest.TestCase):
     ):
         self.__mock_cert(mock_request)
 
-        evervault.init("testing", decryption_domains=["test2.com"])
+        evervault.init("testing", decryption_domains=["test-other.com"])
 
         request = mock_request.get("https://www.test2.com/hello")
         requests.get("https://www.test2.com/hello")

@@ -50,7 +50,7 @@ def init(
         )
 
     if len(decryption_domains) > 0:
-        __client().relay(decryption_domains)
+        __client().relay(decryption_domains=decryption_domains)
     elif intercept or len(ignore_domains) > 0:
         __client().relay(ignore_domains=ignore_domains)
 
