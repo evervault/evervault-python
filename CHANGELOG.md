@@ -2,6 +2,11 @@
 
 <!--next-version-placeholder-->
 
+## v0.8.4 (2022-06-30)
+### Fix
+* Merge pull request #67 from evervault/eoinpm/pro-989-end-the-ddos-machine-python-sdk ([`06d0d05`](https://github.com/evervault/evervault-python/commit/06d0d05bca35b9e4f19568e4d9087dff2c296b25))
+* Keeps static link to requests.Session.request ([`65a281c`](https://github.com/evervault/evervault-python/commit/65a281c0cab89df19d8f40e22aab9bb519f75eb9))
+
 ## v0.8.3 (2022-06-29)
 ### Fix
 * Respect ignore domains list ([`6fd9e49`](https://github.com/evervault/evervault-python/commit/6fd9e49051ba6c0ab016b0b4c38d4d92d86380b2))
