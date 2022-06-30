@@ -11,6 +11,7 @@ from evervault.errors.evervault_errors import CertDownloadError
 
 old_request_func = requests.Session.request
 
+
 class RequestIntercept(object):
     def __init__(
         self,
