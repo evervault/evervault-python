@@ -4,7 +4,7 @@
 
 # Evervault Python SDK
 
-The [Evervault](https://evervault.com) Python SDK is a toolkit for encrypting data as it enters your server, and working with Cages. By default, initializing the SDK will result in all outbound HTTPS requests being intercepted and decrypted.
+The [Evervault](https://evervault.com) Python SDK is a toolkit for encrypting data as it enters your server, working with Cages, and proxying your outbound api requests to specific domains through [Outbound Relay](https://docs.evervault.com/concepts/relay/outbound-interception) to allow them to be decrypted before reaching their target.
 
 ## Getting Started
 
@@ -49,14 +49,13 @@ The Evervault Python SDK exposes five functions.
 `evervault.init()` initializes the SDK with your API key. Configurations for the interception of outbound requests may also be passed in this function.
 
 ```python
-evervault.init(api_key = str[, intercept = bool, ignore_domains = list, retry = bool, curve = str])
+evervault.init(api_key = str[, decryption_domains=[], retry = bool, curve = str])
 ```
 
 | Parameter      | Type        | Description                                                              |
 | -------------- | ----------- | ------------------------------------------------------------------------ |
 | api_key        | `str`       | The API key of your Evervault Team                                       |
-| intercept      | `bool`      | Decides if outbound requests are intercepted (`true` by default)         |
-| ignore_domains | `list(str)` | Requests sent to any of the domains in this list will not be intercepted |
+| `decryption_domains` | `list(str)` | Requests sent to any of the domains listed will be proxied through outbound relay. See [Outbound Relay](/concepts/relay/outbound-interception) to learn more.    |
 | retry          | `bool`      | Retry failed Cage operations (maximum of 3 retries; `false` by default)  |
 | curve          | `str`       | The elliptic curve used for cryptographic operations. See [Elliptic Curve Support](https://docs.evervault.com/reference/elliptic-curve-support) to learn more. |
 
