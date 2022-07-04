@@ -34,6 +34,7 @@ class RequestIntercept(object):
         self.initial_date = None
         self.cert_path = None
         self.should_proxy_domain = lambda host: False
+        self.debug_enabled = False
 
     def is_certificate_expired(self):
         if self.expire_date is not None:
@@ -42,10 +43,12 @@ class RequestIntercept(object):
                 return True
         return False
 
-    def setup_decryption_domains(self, decryption_domains=[]):
+    def setup_decryption_domains(self, decryption_domains, debugRequests):
+        self.debug_enabled = debugRequests
         self.should_proxy_domain = lambda host: host in decryption_domains
 
-    def setup_ignore_domains(self, ignore_domains=[]):
+    def setup_ignore_domains(self, ignore_domains, debugRequests):
+        self.debug_enabled = debugRequests
         ignore_domains.append(urlparse(self.base_run_url).netloc)
         ignore_domains.append(urlparse(self.base_url).netloc)
         ignore_domains.append(urlparse(self.ca_host).netloc)
@@ -102,14 +105,19 @@ class RequestIntercept(object):
 
             try:
                 domain = urlparse(url).netloc
-                if client_self.should_proxy_domain(domain):
+                should_proxy = client_self.should_proxy_domain(domain)
+                if client_self.debug_enabled:
+                    print(
+                        f"Request to domain: {domain}, Outbound Proxy enabled: {should_proxy}"
+                    )
+                if should_proxy:
                     headers["Proxy-Authorization"] = api_key
                     proxies["https"] = relay_url
                     verify = cert_path
             except Exception:
                 warnings.warn(
                     f"Unable to parse {url} when attempting to check "
-                    "if it is an ignore_domain."
+                    "if it should be proxied."
                 )
                 pass
             return old_request_func(
