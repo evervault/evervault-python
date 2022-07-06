@@ -33,8 +33,8 @@ class RequestIntercept(object):
         self.expire_date = None
         self.initial_date = None
         self.cert_path = None
-        self.ignore_if_exact = []
-        self.ignore_if_endswith = ()
+        self.should_proxy_domain = lambda host: False
+        self.debug_enabled = False
 
     def is_certificate_expired(self):
         if self.expire_date is not None:
@@ -43,16 +43,27 @@ class RequestIntercept(object):
                 return True
         return False
 
-    def setup_domains(self, ignore_domains=[]):
+    def setup_decryption_domains(self, decryption_domains, debugRequests):
+        self.debug_enabled = debugRequests
+        self.should_proxy_domain = lambda host: host in decryption_domains
+
+    def setup_ignore_domains(self, ignore_domains, debugRequests):
+        self.debug_enabled = debugRequests
         ignore_domains.append(urlparse(self.base_run_url).netloc)
         ignore_domains.append(urlparse(self.base_url).netloc)
         ignore_domains.append(urlparse(self.ca_host).netloc)
 
+        ignore_if_exact = []
+        ignore_if_endswith = ()
         for domain in ignore_domains:
             if domain.startswith("www."):
                 domain = domain[4:]
-            self.ignore_if_exact.append(domain)
-            self.ignore_if_endswith += ("." + domain, "@" + domain)
+            ignore_if_exact.append(domain)
+            ignore_if_endswith += ("." + domain, "@" + domain)
+
+        self.should_proxy_domain = lambda host: not (
+            host in ignore_if_exact or host.endswith(ignore_if_endswith)
+        )
 
     def setup(client_self):
         client_self.__get_cert()
@@ -91,20 +102,22 @@ class RequestIntercept(object):
                 headers = {}
             if proxies is None:
                 proxies = {}
-            headers["Proxy-Authorization"] = api_key
-            proxies["https"] = relay_url
-            verify = cert_path
+
             try:
                 domain = urlparse(url).netloc
-                if domain in client_self.ignore_if_exact or domain.endswith(
-                    client_self.ignore_if_endswith
-                ):
-                    del headers["Proxy-Authorization"]
-                    del proxies["https"]
+                should_proxy = client_self.should_proxy_domain(domain)
+                if client_self.debug_enabled:
+                    print(
+                        f"Request to domain: {domain}, Outbound Proxy enabled: {should_proxy}"
+                    )
+                if should_proxy:
+                    headers["Proxy-Authorization"] = api_key
+                    proxies["https"] = relay_url
+                    verify = cert_path
             except Exception:
                 warnings.warn(
                     f"Unable to parse {url} when attempting to check "
-                    "if it is an ignore_domain."
+                    "if it should be proxied."
                 )
                 pass
             return old_request_func(

@@ -11,6 +11,7 @@ from cryptography.hazmat.primitives.asymmetric import ec
 import evervault
 import os
 import requests
+import importlib
 
 
 class TestEvervault(unittest.TestCase):
@@ -18,8 +19,9 @@ class TestEvervault(unittest.TestCase):
 
     def setUp(self, curve="SECP256K1"):
         self.curve = curve
+        importlib.reload(evervault)
         self.evervault = evervault
-        self.evervault.init("testing", intercept=False, curve=curve)
+        self.evervault.init("testing", curve=curve)
         self.public_key = self.build_keys()
 
     def tearDown(self):
@@ -446,6 +448,35 @@ class TestEvervault(unittest.TestCase):
         evervault.init("testing", intercept=True)
 
         requests.get("https://run.evervault.com/hello")
+
+        self.assertRaises(
+            KeyError, lambda: request.last_request.headers["Proxy-Authorization"]
+        )
+
+        self.__reinit_client()
+
+    @requests_mock.Mocker()
+    def test_run_with_decryption_domain(self, mock_request):
+        self.__mock_cert(mock_request)
+
+        evervault.init("testing", decryption_domains=["test2.com"])
+
+        request = mock_request.get("https://test2.com/hello")
+        requests.get("https://test2.com/hello")
+        assert request.last_request.headers["Proxy-Authorization"] == "testing"
+
+        self.__reinit_client()
+
+    @requests_mock.Mocker()
+    def test_run_with_decryption_domain_set_and_other_domain_requested(
+        self, mock_request
+    ):
+        self.__mock_cert(mock_request)
+
+        evervault.init("testing", decryption_domains=["test-other.com"])
+
+        request = mock_request.get("https://www.test2.com/hello")
+        requests.get("https://www.test2.com/hello")
 
         self.assertRaises(
             KeyError, lambda: request.last_request.headers["Proxy-Authorization"]

@@ -25,7 +25,13 @@ class Curves(object):
 
 
 def init(
-    api_key, intercept=True, ignore_domains=[], retry=False, curve=Curves.SECP256K1
+    api_key,
+    decryption_domains=[],
+    intercept=False,
+    ignore_domains=[],
+    retry=False,
+    curve=Curves.SECP256K1,
+    debugRequests=False,
 ):
     global _api_key
     global _retry
@@ -35,8 +41,19 @@ def init(
     _retry = retry
     _curve = curve
 
-    if intercept:
-        __client().relay(ignore_domains)
+    if intercept or len(ignore_domains) > 0:
+        print(
+            "The `intercept` and `ignore_domains` config options in Evervault SDK are deprecated and slated for removal"
+        )
+        print("Please switch to the `decryption_domains config option.")
+        print(
+            "For more details please see https://docs.evervault.com/reference/python-sdk#evervaultinit"
+        )
+
+    if len(decryption_domains) > 0:
+        __client().relay(debugRequests, decryption_domains=decryption_domains)
+    elif intercept or len(ignore_domains) > 0:
+        __client().relay(debugRequests, ignore_domains=ignore_domains)
 
 
 def run(cage_name, data, options={"async": False, "version": None}):

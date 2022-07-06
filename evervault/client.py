@@ -55,8 +55,11 @@ class Client(object):
         cages = self.get("cages")["cages"]
         return CageList(cages, self).cages
 
-    def relay(self, ignore_domains=[]):
-        self.cert.setup_domains(ignore_domains)
+    def relay(self, debugRequests, ignore_domains=[], decryption_domains=[]):
+        if len(decryption_domains) > 0:
+            self.cert.setup_decryption_domains(decryption_domains, debugRequests)
+        else:
+            self.cert.setup_ignore_domains(ignore_domains, debugRequests)
         self.cert.setup()
 
     def get(self, path, params={}):
