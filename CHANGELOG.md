@@ -2,6 +2,13 @@
 
 <!--next-version-placeholder-->
 
+## v1.0.0 (2022-07-06)
+### Feature
+* Supports decrypt_domains config option ([`1a69cce`](https://github.com/evervault/evervault-python/commit/1a69cce6254ba09d62510b2ff3adc9b8a2def22b))
+
+### Breaking
+* Traffic won't be sent through outbound proxy by default anymore  ([`1a69cce`](https://github.com/evervault/evervault-python/commit/1a69cce6254ba09d62510b2ff3adc9b8a2def22b))
+
 ## v0.8.4 (2022-06-30)
 ### Fix
 * Merge pull request #67 from evervault/eoinpm/pro-989-end-the-ddos-machine-python-sdk ([`06d0d05`](https://github.com/evervault/evervault-python/commit/06d0d05bca35b9e4f19568e4d9087dff2c296b25))
