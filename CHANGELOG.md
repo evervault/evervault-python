@@ -2,6 +2,13 @@
 
 <!--next-version-placeholder-->
 
+## v1.1.0 (2022-07-20)
+### Feature
+* **outbound:** Supports wildcard decryption domains ([`dbdf279`](https://github.com/evervault/evervault-python/commit/dbdf2796a6a9bbef43536186399daa0d1b658777))
+
+### Documentation
+* Adds wildcard reference ([`5d7bfc7`](https://github.com/evervault/evervault-python/commit/5d7bfc7e440de2690beca949a2ff177758d704a3))
+
 ## v1.0.0 (2022-07-06)
 ### Feature
 * Supports decrypt_domains config option ([`1a69cce`](https://github.com/evervault/evervault-python/commit/1a69cce6254ba09d62510b2ff3adc9b8a2def22b))
