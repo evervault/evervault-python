@@ -12,6 +12,17 @@ from evervault.errors.evervault_errors import CertDownloadError
 old_request_func = requests.Session.request
 
 
+def is_ignore_domain(domain, decryption_domains, always_ignore_domains):
+    if domain in always_ignore_domains:
+        return False
+
+    return any(
+        domain == decryption_domain
+        or (decryption_domain[0] == "*" and domain.endswith(decryption_domain[1:]))
+        for decryption_domain in decryption_domains
+    )
+
+
 class RequestIntercept(object):
     def __init__(
         self,
@@ -43,15 +54,23 @@ class RequestIntercept(object):
                 return True
         return False
 
+    def get_always_ignore_domains(self):
+        return [
+            urlparse(self.base_run_url).netloc,
+            urlparse(self.base_url).netloc,
+            urlparse(self.ca_host).netloc,
+        ]
+
     def setup_decryption_domains(self, decryption_domains, debugRequests):
         self.debug_enabled = debugRequests
-        self.should_proxy_domain = lambda host: host in decryption_domains
+        always_ignore_domains = self.get_always_ignore_domains()
+        self.should_proxy_domain = lambda host: is_ignore_domain(
+            host, decryption_domains, always_ignore_domains
+        )
 
     def setup_ignore_domains(self, ignore_domains, debugRequests):
         self.debug_enabled = debugRequests
-        ignore_domains.append(urlparse(self.base_run_url).netloc)
-        ignore_domains.append(urlparse(self.base_url).netloc)
-        ignore_domains.append(urlparse(self.ca_host).netloc)
+        ignore_domains.extend(self.get_always_ignore_domains())
 
         ignore_if_exact = []
         ignore_if_endswith = ()

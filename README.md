@@ -55,7 +55,7 @@ evervault.init(api_key = str[, decryption_domains=[], retry = bool, curve = str]
 | Parameter      | Type        | Description                                                              |
 | -------------- | ----------- | ------------------------------------------------------------------------ |
 | api_key        | `str`       | The API key of your Evervault Team                                       |
-| decryption_domains | `list(str)` | Requests sent to any of the domains listed will be proxied through outbound relay. See [Outbound Relay](/concepts/relay/outbound-interception) to learn more.    |
+| decryption_domains | `list(str)` | Requests sent to any of the domains listed will be proxied through outbound relay. Wildcard domains are supported. See [Outbound Relay](/concepts/relay/outbound-interception) to learn more.    |
 | retry          | `bool`      | Retry failed Cage operations (maximum of 3 retries; `false` by default)  |
 | curve          | `str`       | The elliptic curve used for cryptographic operations. See [Elliptic Curve Support](https://docs.evervault.com/reference/elliptic-curve-support) to learn more. |
 | debugRequests  | `bool`      | Output request domains and whether they were sent through outbound proxy |

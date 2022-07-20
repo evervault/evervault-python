@@ -468,6 +468,18 @@ class TestEvervault(unittest.TestCase):
         self.__reinit_client()
 
     @requests_mock.Mocker()
+    def test_run_with_wildcard_decryption_domain(self, mock_request):
+        self.__mock_cert(mock_request)
+
+        evervault.init("testing", decryption_domains=["*.test2.com"])
+
+        request = mock_request.get("https://test.test2.com/hello")
+        requests.get("https://test.test2.com/hello")
+        assert request.last_request.headers["Proxy-Authorization"] == "testing"
+
+        self.__reinit_client()
+
+    @requests_mock.Mocker()
     def test_run_with_decryption_domain_set_and_other_domain_requested(
         self, mock_request
     ):
