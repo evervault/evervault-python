@@ -249,7 +249,7 @@ class TestEvervault(unittest.TestCase):
         assert self.evervault.ev_client.base_run_url == "https://custom.run.url.com"
         assert self.evervault.ev_client.relay_url == "https://custom.tunnel.url.com"
         assert self.evervault.ev_client.ca_host == "https://ca.url.com"
-    
+
     @requests_mock.Mocker()
     def test_create_run_token(self, mock_request):
         request = mock_request.post(
