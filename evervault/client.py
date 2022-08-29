@@ -62,6 +62,9 @@ class Client(object):
             self.cert.setup_ignore_domains(ignore_domains, debugRequests)
         self.cert.setup()
 
+    def create_run_token(self, cage_name, data):
+        return self.post(f"v2/functions/{cage_name}/run-token", data, {})
+
     def get(self, path, params={}):
         return self.request_handler.get(path, params)
 
