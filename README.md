@@ -95,7 +95,7 @@ evervault.run(cage_name = str, data = dict[, options = dict])
 
 ### evervault.create_run_token()
 
-`evervault.create_run_token()` creates a run token so a cage can be run without an api key.
+`evervault.create_run_token()` creates a single use, time bound token for invoking a cage.
 
 ```python
 evervault.create_run_token(cage_name = str, data = dict)
