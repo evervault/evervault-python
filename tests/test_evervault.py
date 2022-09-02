@@ -250,6 +250,18 @@ class TestEvervault(unittest.TestCase):
         assert self.evervault.ev_client.relay_url == "https://custom.tunnel.url.com"
         assert self.evervault.ev_client.ca_host == "https://ca.url.com"
 
+    @requests_mock.Mocker()
+    def test_create_run_token(self, mock_request):
+        request = mock_request.post(
+            "https://api.evervault.com/v2/functions/testing-cage/run-token",
+            json={"result": "there was an attempt"},
+            request_headers={"Api-Key": "testing"},
+        )
+        resp = self.evervault.create_run_token("testing-cage", {"name": "testing"})
+        assert request.called
+        assert resp["result"] == "there was an attempt"
+        assert request.last_request.json() == {"name": "testing"}
+
     ################################################################
     #                                                              #
     # TESTS USING P256 CURVE - SETUP IS CALLED AGAIN ON EACH TEST  #

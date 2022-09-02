@@ -72,6 +72,10 @@ def cages():
     return __client().cages()
 
 
+def create_run_token(cage_name, data):
+    return __client().create_run_token(cage_name, data)
+
+
 def __client():
     if not _api_key:
         raise AuthenticationError(

@@ -82,7 +82,7 @@ evervault.run(cage_name = str, data = dict[, options = dict])
 
 | Parameter | Type   | Description                                    |
 | --------- | ------ | ---------------------------------------------- |
-| cageName  | `str`  | Name of the Cage to be run.                    |
+| cage_name | `str`  | Name of the Cage to be run.                    |
 | data      | `dict` | Payload for the Cage.                          |
 | options   | `dict` | [Options for the Cage run.](#Cage-Run-Options) |
 
@@ -92,6 +92,19 @@ evervault.run(cage_name = str, data = dict[, options = dict])
 | ------- | --------- | ------- | ------------------------------------------------------------------------------------ |
 | async   | `Boolean` | `False` | Run your Cage in async mode. Async Cage runs will be queued for processing.          |
 | version | `Integer` | `None`  | Specify the version of your Cage to run. By default, the latest version will be run. |
+
+### evervault.create_run_token()
+
+`evervault.create_run_token()` creates a single use, time bound token for invoking a cage.
+
+```python
+evervault.create_run_token(cage_name = str, data = dict)
+```
+
+| Parameter | Type   | Description                                           |
+| --------- | ------ | ----------------------------------------------------- |
+| cage_name | `str`  | Name of the Cage the run token should be created for. |
+| data      | `dict` | Payload that the token can be used with.              |
 
 ## Contributing
 
