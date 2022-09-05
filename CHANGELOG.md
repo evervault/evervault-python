@@ -2,6 +2,13 @@
 
 <!--next-version-placeholder-->
 
+## v1.2.0 (2022-09-05)
+### Feature
+* **create_run_token:** Adding create_run_token ([`177236a`](https://github.com/evervault/evervault-python/commit/177236a944de99e9ea5278123a3e96e9a7b82c35))
+
+### Documentation
+* **createruntoken:** Describing run tokens ([`e8ee900`](https://github.com/evervault/evervault-python/commit/e8ee900f10d8ac61905fa89735db54b227ae3742))
+
 ## v1.1.0 (2022-07-20)
 ### Feature
 * **outbound:** Supports wildcard decryption domains ([`dbdf279`](https://github.com/evervault/evervault-python/commit/dbdf2796a6a9bbef43536186399daa0d1b658777))
