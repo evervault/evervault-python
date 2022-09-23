@@ -119,8 +119,7 @@ class RequestIntercept(object):
         ):
             if headers is None:
                 headers = {}
-            if proxies is None:
-                proxies = {}
+            proxies = {}
 
             try:
                 domain = urlparse(url).netloc
