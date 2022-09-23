@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v1.2.1 (2022-09-23)
+### Fix
+* Empty proxies for each request ([`8d9c6a2`](https://github.com/evervault/evervault-python/commit/8d9c6a2d536d98dacb295b4c4595a79f384ac499))
+
 ## v1.2.0 (2022-09-05)
 ### Feature
 * **create_run_token:** Adding create_run_token ([`177236a`](https://github.com/evervault/evervault-python/commit/177236a944de99e9ea5278123a3e96e9a7b82c35))
