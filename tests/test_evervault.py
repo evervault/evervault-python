@@ -521,6 +521,18 @@ class TestEvervault(unittest.TestCase):
 
         self.__reinit_client()
 
+    @requests_mock.Mocker()
+    def test_run_with_relay_outbound_enabled(self, mock_request):
+        self.__mock_cert(mock_request)
+        self.__mock_relay_outbound_config(mock_request)
+
+        request = mock_request.get("https://test-one.destinations.com/hello")
+        evervault.init("testing", enable_outbound_relay=True)
+        requests.get("https://test-one.destinations.com/hello")
+
+        assert request.last_request.headers["Proxy-Authorization"] == "testing"
+        self.__reinit_client()
+
     def mock_fetch_cage_key(self, mock_request):
         mock_request.get(
             "https://api.evervault.com/cages/key",
@@ -599,4 +611,42 @@ class TestEvervault(unittest.TestCase):
             "i7xFTBvY5QrZGK/Y6mEAdGCRoGusOputz1MHn721sIyH5DtCAMXdJ/s94Ki7m557\n"
             "qLZdvkgx0KBRnP/JPZ55VgjZ8ipH9+SGxsZeTg9sX6nw+x/Plncz\n"
             "-----END CERTIFICATE-----\n",
+        )
+
+    def __mock_relay_outbound_config(self, mock_request):
+        mock_request.get(
+            "https://api.evervault.com/v2/relay-outbound",
+            json={
+                "appUuid": "app_33b88ca7da01",
+                "teamUuid": "2ef8d35ce661",
+                "strictMode": True,
+                "outboundDestinations": {
+                    "test-one.destinations.com": {
+                        "id": 144,
+                        "appUuid": "app_33b88ca7da01",
+                        "createdAt": "2022-10-05T08: 36: 35.681Z",
+                        "updatedAt": "2022-10-05T08: 36: 35.681Z",
+                        "deletedAt": None,
+                        "routeSpecificFieldsToEncrypt": [],
+                        "deterministicFieldsToEncrypt": [],
+                        "encryptEmptyStrings": True,
+                        "curve": "secp256k1",
+                        "uuid": "outbound_destination_9733a04135f1",
+                        "destinationDomain": "test-one.destinations.com",
+                    },
+                    "test-two.destinations.com": {
+                        "id": 20,
+                        "appUuid": "app_33b88ca7da01",
+                        "createdAt": "2022-07-20T16: 02: 36.601Z",
+                        "updatedAt": "2022-10-05T12: 40: 44.511Z",
+                        "deletedAt": None,
+                        "routeSpecificFieldsToEncrypt": [],
+                        "deterministicFieldsToEncrypt": [],
+                        "encryptEmptyStrings": True,
+                        "curve": "secp256k1",
+                        "uuid": "outbound_destination_e7f791332c51",
+                        "destinationDomain": "test-two.destinations.com",
+                    },
+                },
+            },
         )
