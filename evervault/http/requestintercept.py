@@ -213,10 +213,14 @@ class RequestIntercept(object):
     def __get_relay_outbound_config(self):
         logger.debug("Polling Outbound Relay configuration")
         try:
-            res = self.request.make_request("GET", self.base_url + "v2/relay-outbound", {})
+            res = self.request.make_request(
+                "GET", self.base_url + "v2/relay-outbound", {}
+            )
             self.relay_outbound_destinations = list(res["outboundDestinations"])
         except:
-            logger.error("An error occurred while attempting to refresh the outbound relay config")
+            logger.error(
+                "An error occurred while attempting to refresh the outbound relay config"
+            )
 
     def __set_cert_expire_date(self, ca_content):
         try:
