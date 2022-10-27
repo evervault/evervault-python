@@ -32,6 +32,7 @@ def init(
     retry=False,
     curve=Curves.SECP256K1,
     debugRequests=False,
+    enable_outbound_relay=False,
 ):
     global _api_key
     global _retry
@@ -41,11 +42,11 @@ def init(
     _retry = retry
     _curve = curve
 
-    if intercept or len(ignore_domains) > 0:
+    if intercept or len(ignore_domains) > 0 or len(decryption_domains) > 0:
         print(
-            "The `intercept` and `ignore_domains` config options in Evervault SDK are deprecated and slated for removal"
+            "The `intercept`,`ignore_domains` and `decryption_domains` config options in Evervault SDK are deprecated and slated for removal"
         )
-        print("Please switch to the `decryption_domains config option.")
+        print("Please switch to the `enable_outbound_relay` config option.")
         print(
             "For more details please see https://docs.evervault.com/reference/python-sdk#evervaultinit"
         )
@@ -54,6 +55,12 @@ def init(
         __client().relay(debugRequests, decryption_domains=decryption_domains)
     elif intercept or len(ignore_domains) > 0:
         __client().relay(debugRequests, ignore_domains=ignore_domains)
+    elif not intercept and enable_outbound_relay:
+        __client().relay(
+            debugRequests,
+            ignore_domains=ignore_domains,
+            enable_outbound_relay=enable_outbound_relay,
+        )
 
 
 def run(cage_name, data, options={"async": False, "version": None}):

@@ -1,21 +1,21 @@
 from datetime import datetime
 from urllib.parse import urlparse
-
 from cryptography import x509
 import requests
 import warnings
 import certifi
 import tempfile
-
+import threading
+import logging
 from evervault.errors.evervault_errors import CertDownloadError
 
 old_request_func = requests.Session.request
+logger = logging.getLogger(__name__)
 
 
 def is_ignore_domain(domain, decryption_domains, always_ignore_domains):
     if domain in always_ignore_domains:
         return False
-
     return any(
         domain == decryption_domain
         or (decryption_domain[0] == "*" and domain.endswith(decryption_domain[1:]))
@@ -83,6 +83,26 @@ class RequestIntercept(object):
         self.should_proxy_domain = lambda host: not (
             host in ignore_if_exact or host.endswith(ignore_if_endswith)
         )
+
+    def set_relay_outbound_config(self, debugRequests):
+        self.debug_enabled = debugRequests
+        self.__get_relay_outbound_config()
+        self.set_interval(self.__get_relay_outbound_config, 120)
+        always_ignore_domains = self.get_always_ignore_domains()
+        self.should_proxy_domain = lambda host: is_ignore_domain(
+            host, self.relay_outbound_destinations, always_ignore_domains
+        )
+
+    def set_interval(self, func, sec):
+        logger.debug(f"Starting Thread to poll evervault at {sec} second interval")
+
+        def func_wrapper():
+            self.set_interval(func, sec)
+            func()
+
+        timer = threading.Timer(sec, func_wrapper)
+        timer.daemon = True
+        timer.start()
 
     def setup(client_self):
         client_self.__get_cert()
@@ -188,6 +208,18 @@ class RequestIntercept(object):
             raise CertDownloadError(
                 f"Unable to install the Evervault root certficate from {self.ca_host}. "
                 "Likely a permissions error when attempting to write to the /tmp/ directory."
+            )
+
+    def __get_relay_outbound_config(self):
+        logger.debug("Polling Outbound Relay configuration")
+        try:
+            res = self.request.make_request(
+                "GET", self.base_url + "v2/relay-outbound", {}
+            )
+            self.relay_outbound_destinations = list(res["outboundDestinations"])
+        except:
+            logger.error(
+                "An error occurred while attempting to refresh the outbound relay config"
             )
 
     def __set_cert_expire_date(self, ca_content):
