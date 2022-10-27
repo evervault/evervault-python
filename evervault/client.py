@@ -55,17 +55,9 @@ class Client(object):
         cages = self.get("cages")["cages"]
         return CageList(cages, self).cages
 
-    def relay(
-        self,
-        debugRequests,
-        ignore_domains=[],
-        decryption_domains=[],
-        enable_outbound_relay=False,
-    ):
+    def relay(self, debugRequests, ignore_domains=[], decryption_domains=[]):
         if len(decryption_domains) > 0:
             self.cert.setup_decryption_domains(decryption_domains, debugRequests)
-        elif enable_outbound_relay:
-            self.cert.set_relay_outbound_config(debugRequests)
         else:
             self.cert.setup_ignore_domains(ignore_domains, debugRequests)
         self.cert.setup()
