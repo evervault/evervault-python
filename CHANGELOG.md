@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v1.3.0 (2022-10-27)
+### Feature
+* Poll the Evervault API for relay outbound configuration ([#74](https://github.com/evervault/evervault-python/issues/74)) ([`e1cbfb4`](https://github.com/evervault/evervault-python/commit/e1cbfb4694ee37140880cfb3b850c91be8a52f8b))
+
 ## v1.2.1 (2022-09-23)
 ### Fix
 * Empty proxies for each request ([`8d9c6a2`](https://github.com/evervault/evervault-python/commit/8d9c6a2d536d98dacb295b4c4595a79f384ac499))
