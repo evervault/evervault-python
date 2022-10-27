@@ -14,6 +14,3 @@ dist/
 *.pyc
 
 poetry.lock
-
-# Vitual Environment
-venv/
