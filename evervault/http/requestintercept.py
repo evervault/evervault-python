@@ -8,6 +8,7 @@ import tempfile
 import threading
 import logging
 from evervault.errors.evervault_errors import CertDownloadError
+from . import repeated_timer
 
 old_request_func = requests.Session.request
 logger = logging.getLogger(__name__)
@@ -87,22 +88,15 @@ class RequestIntercept(object):
     def set_relay_outbound_config(self, debugRequests):
         self.debug_enabled = debugRequests
         self.__get_relay_outbound_config()
-        self.set_interval(self.__get_relay_outbound_config, 120)
+        self._set_interval(self.__get_relay_outbound_config, 120)
         always_ignore_domains = self.get_always_ignore_domains()
         self.should_proxy_domain = lambda host: is_ignore_domain(
             host, self.relay_outbound_destinations, always_ignore_domains
         )
 
-    def set_interval(self, func, sec):
+    def _set_interval(self, func, sec):
         logger.debug(f"Starting Thread to poll evervault at {sec} second interval")
-
-        def func_wrapper():
-            self.set_interval(func, sec)
-            func()
-
-        timer = threading.Timer(sec, func_wrapper)
-        timer.daemon = True
-        timer.start()
+        repeated_timer.RepeatedTimer(sec, func)
 
     def setup(client_self):
         client_self.__get_cert()
