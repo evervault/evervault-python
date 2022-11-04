@@ -8,7 +8,7 @@ import tempfile
 import threading
 import logging
 from evervault.errors.evervault_errors import CertDownloadError
-from . import repeated_timer
+from .repeated_timer import RepeatedTimer
 
 old_request_func = requests.Session.request
 logger = logging.getLogger(__name__)
@@ -96,7 +96,7 @@ class RequestIntercept(object):
 
     def _set_interval(self, func, sec):
         logger.debug(f"Starting Thread to poll evervault at {sec} second interval")
-        repeated_timer.RepeatedTimer(sec, func)
+        RepeatedTimer(sec, func)
 
     def setup(client_self):
         client_self.__get_cert()
