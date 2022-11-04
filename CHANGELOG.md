@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v1.3.1 (2022-11-04)
+### Fix
+* Store thread spawing on each call to init ([#77](https://github.com/evervault/evervault-python/issues/77)) ([`e5ae0e1`](https://github.com/evervault/evervault-python/commit/e5ae0e1ef3fbb750cc8dc7bb396fd022e18c8603))
+
 ## v1.3.0 (2022-10-27)
 ### Feature
 * Poll the Evervault API for relay outbound configuration ([#74](https://github.com/evervault/evervault-python/issues/74)) ([`e1cbfb4`](https://github.com/evervault/evervault-python/commit/e1cbfb4694ee37140880cfb3b850c91be8a52f8b))
