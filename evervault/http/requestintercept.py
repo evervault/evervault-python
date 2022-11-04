@@ -5,7 +5,6 @@ import requests
 import warnings
 import certifi
 import tempfile
-import threading
 import logging
 from evervault.errors.evervault_errors import CertDownloadError
 from .repeated_timer import RepeatedTimer
