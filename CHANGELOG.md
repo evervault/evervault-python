@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v1.3.2 (2022-11-07)
+### Fix
+* Replace recursive timer call with RepeatedTimer class ([#78](https://github.com/evervault/evervault-python/issues/78)) ([`cf22d6c`](https://github.com/evervault/evervault-python/commit/cf22d6c0e8c352d6228497efd0f4e8babdff0769))
+
 ## v1.3.1 (2022-11-04)
 ### Fix
 * Store thread spawing on each call to init ([#77](https://github.com/evervault/evervault-python/issues/77)) ([`e5ae0e1`](https://github.com/evervault/evervault-python/commit/e5ae0e1ef3fbb750cc8dc7bb396fd022e18c8603))
