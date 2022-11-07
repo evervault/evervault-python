@@ -12,9 +12,10 @@ class RepeatedTimer(object):
         self.start()
 
     def _run(self):
-        self.is_running = False
-        self.start()
         self.function(*self.args, **self.kwargs)
+
+    def running(self):
+        return self.is_running
 
     def start(self):
         if not self.is_running:
