@@ -44,9 +44,9 @@ def init(
 
     if intercept or len(ignore_domains) > 0 or len(decryption_domains) > 0:
         print(
-            "The `intercept`,`ignore_domains` and `decryption_domains` config options in Evervault SDK are deprecated and slated for removal"
+            "The `intercept` and `ignore_domains` config options in Evervault SDK are deprecated and slated for removal"
         )
-        print("Please switch to the `enable_outbound_relay` config option.")
+        print("Please switch to the `decryption_domains` config option.")
         print(
             "For more details please see https://docs.evervault.com/reference/python-sdk#evervaultinit"
         )
