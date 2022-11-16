@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v1.3.3 (2022-11-16)
+### Fix
+* Remove decryption domains from whitelist ([#79](https://github.com/evervault/evervault-python/issues/79)) ([`d5af814`](https://github.com/evervault/evervault-python/commit/d5af81443bdd527376af28c7ad2214b5ec6c0157))
+
 ## v1.3.2 (2022-11-07)
 ### Fix
 * Replace recursive timer call with RepeatedTimer class ([#78](https://github.com/evervault/evervault-python/issues/78)) ([`cf22d6c`](https://github.com/evervault/evervault-python/commit/cf22d6c0e8c352d6228497efd0f4e8babdff0769))
