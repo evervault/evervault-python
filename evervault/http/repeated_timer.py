@@ -12,10 +12,8 @@ class RepeatedTimer(threading.Thread):
         self.start()
 
     def _run(self):
-        nextExecution = time.time() + self.interval
-        while not self.stopEvent.wait(nextExecution - time.time()) :
+        while not self.stopEvent.wait(self.interval):
             self.function(*self.args, **self.kwargs)
-            nextExecution = time.time() + self.interval
 
     def running(self):
         return self.is_running
