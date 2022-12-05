@@ -1,9 +1,9 @@
-from threading import Timer
+import threading
+import time
 
 
-class RepeatedTimer(object):
+class RepeatedTimer(threading.Thread):
     def __init__(self, interval, function, *args, **kwargs):
-        self._timer = None
         self.interval = interval
         self.function = function
         self.args = args
@@ -12,18 +12,26 @@ class RepeatedTimer(object):
         self.start()
 
     def _run(self):
-        self.function(*self.args, **self.kwargs)
+        nextExecution = time.time() + self.interval
+        while not self.stopEvent.wait(nextExecution - time.time()) :
+            self.function(*self.args, **self.kwargs)
+            nextExecution = time.time() + self.interval
 
     def running(self):
         return self.is_running
 
+    def update_interval(self, interval):
+        self.interval = interval
+        self.stop()
+        self.start()
+
     def start(self):
         if not self.is_running:
-            self._timer = Timer(self.interval, self._run)
-            self._timer.daemon = True
-            self._timer.start()
             self.is_running = True
+            self.stopEvent = threading.Event()
+            thread = threading.Thread(target = self._run)
+            thread.start()
 
     def stop(self):
-        self._timer.cancel()
+        self.stopEvent.set()
         self.is_running = False

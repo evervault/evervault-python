@@ -95,7 +95,7 @@ class RequestIntercept(object):
 
     def _set_interval(self, func, sec):
         logger.debug(f"Starting Thread to poll evervault at {sec} second interval")
-        RepeatedTimer(sec, func)
+        RepeatedTimer(func, sec)
 
     def setup(client_self):
         client_self.__get_cert()
