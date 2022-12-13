@@ -51,11 +51,13 @@ def init(
                 For more details please see https://docs.evervault.com/reference/python-sdk#evervaultenable_outbound_relay
             """,
             DeprecationWarning,
-            stacklevel=2
+            stacklevel=2,
         )
 
     if len(decryption_domains) > 0:
-        __client().enable_outbound_relay(debug_requests, decryption_domains=decryption_domains)
+        __client().enable_outbound_relay(
+            debug_requests, decryption_domains=decryption_domains
+        )
     elif intercept or len(ignore_domains) > 0:
         __client().enable_outbound_relay(debug_requests, ignore_domains=ignore_domains)
     elif not intercept and enable_outbound_relay:
@@ -78,7 +80,7 @@ def encrypt_and_run(cage_name, data, options={"async": False, "version": None}):
     warn(
         "The `encrypt_and_run` method is deprecated and slated for removal. Please use the `encrypt` and `run` methods instead.",
         DeprecationWarning,
-        stacklevel=2
+        stacklevel=2,
     )
     return __client().encrypt_and_run(cage_name, data, options)
 
@@ -87,7 +89,7 @@ def cages():
     warn(
         "The `cages` method is deprecated and slated for removal. For more details please see https://docs.evervault.com/reference/python-sdk",
         DeprecationWarning,
-        stacklevel=2
+        stacklevel=2,
     )
     return __client().cages()
 
@@ -100,7 +102,9 @@ def enable_outbound_relay(decryption_domains=None, debug_requests=False):
     if decryption_domains is None:
         __client().enable_outbound_relay(debug_requests, enable_outbound_relay=True)
     else:
-        __client().enable_outbound_relay(debug_requests, decryption_domains=decryption_domains)
+        __client().enable_outbound_relay(
+            debug_requests, decryption_domains=decryption_domains
+        )
 
 
 def __client():

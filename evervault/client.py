@@ -77,7 +77,9 @@ class Client(object):
         return self.request_handler.get(path, params).parsed_body
 
     def post(self, path, params, optional_headers, cage_run=False):
-        return self.request_handler.post(path, params, optional_headers, cage_run).parsed_body
+        return self.request_handler.post(
+            path, params, optional_headers, cage_run
+        ).parsed_body
 
     def put(self, path, params):
         return self.request_handler.put(path, params).parsed_body

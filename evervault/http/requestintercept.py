@@ -7,11 +7,11 @@ import certifi
 import tempfile
 from evervault.errors.evervault_errors import CertDownloadError
 from evervault.http.outboundrelayconfig import OutboundRelayConfig
-from ..threading.repeatedtimer import RepeatedTimer
 
 EVERVAULT_DOMAINS = ["evervault.com", "evervault.io", "evervault.test"]
 
 old_request_func = requests.Session.request
+
 
 def is_ignore_domain(domain, decryption_domains, always_ignore_domains):
     if domain in always_ignore_domains:
@@ -21,6 +21,7 @@ def is_ignore_domain(domain, decryption_domains, always_ignore_domains):
         or (decryption_domain[0] == "*" and domain.endswith(decryption_domain[1:]))
         for decryption_domain in decryption_domains
     )
+
 
 class RequestIntercept(object):
     def __init__(
@@ -61,14 +62,14 @@ class RequestIntercept(object):
             urlparse(self.ca_host).netloc,
         ]
 
-    def setup_decryption_domains(self, decryption_domains, debug_requests = False):
+    def setup_decryption_domains(self, decryption_domains, debug_requests=False):
         self.debug_requests = debug_requests
         always_ignore_domains = self.get_always_ignore_domains()
         self.should_proxy_domain = lambda host: is_ignore_domain(
             host, decryption_domains, always_ignore_domains
         )
 
-    def setup_ignore_domains(self, ignore_domains, debug_requests = False):
+    def setup_ignore_domains(self, ignore_domains, debug_requests=False):
         self.debug_requests = debug_requests
         ignore_domains.extend(self.get_always_ignore_domains())
 
@@ -84,7 +85,7 @@ class RequestIntercept(object):
             host in ignore_if_exact or host.endswith(ignore_if_endswith)
         )
 
-    def set_relay_outbound_config(self, debug_requests = False):
+    def set_relay_outbound_config(self, debug_requests=False):
         self.debug_requests = debug_requests
         OutboundRelayConfig.init(self.request, self.base_url, self.debug_requests)
         always_ignore_domains = self.get_always_ignore_domains()
@@ -132,8 +133,15 @@ class RequestIntercept(object):
             try:
                 domain = urlparse(url).netloc
                 should_proxy = client_self.should_proxy_domain(domain)
-                if client_self.debug_requests and not any(map(lambda evervault_domain: domain.endswith(evervault_domain), EVERVAULT_DOMAINS)):
-                    print(f"Request to domain: {domain}, Outbound Proxy enabled: {should_proxy}")
+                if client_self.debug_requests and not any(
+                    map(
+                        lambda evervault_domain: domain.endswith(evervault_domain),
+                        EVERVAULT_DOMAINS,
+                    )
+                ):
+                    print(
+                        f"Request to domain: {domain}, Outbound Proxy enabled: {should_proxy}"
+                    )
                 if should_proxy:
                     headers["Proxy-Authorization"] = api_key
                     proxies["https"] = relay_url

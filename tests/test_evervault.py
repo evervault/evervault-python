@@ -481,7 +481,7 @@ class TestEvervault(unittest.TestCase):
         self.__reinit_client()
 
     @requests_mock.Mocker()
-    def test_run_with_decryption_domain_constructor(self, mock_request):
+    def test_run_with_decryption_domain(self, mock_request):
         self.__mock_cert(mock_request)
 
         evervault.init("testing")

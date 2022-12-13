@@ -31,7 +31,6 @@ class TestRepeatedTimer(TestCase):
         rt.stop()
 
     def test_timer_will_catch_exceptions(self):
-        counter = TestRepeatedTimer.Counter()
         rt = RepeatedTimer(0.05, self.__throws)
         self.assertTrue(rt.running())
         time.sleep(0.12)
@@ -51,7 +50,6 @@ class TestRepeatedTimer(TestCase):
     class Counter(object):
         def __init__(self):
             self.value = 0
-        
+
         def increment(self):
             self.value += 1
-        

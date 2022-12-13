@@ -3,6 +3,7 @@ import threading
 
 logger = logging.getLogger(__name__)
 
+
 class RepeatedTimer(object):
     def __init__(self, interval, function, *args, **kwargs):
         self.interval = interval
@@ -17,10 +18,8 @@ class RepeatedTimer(object):
             self.function(*self.args, **self.kwargs)
             self._create_and_start_timer()
         except Exception as e:
-            logger.error(
-                "EVERVAULT :: An error occurred while polling - (%s)", e
-            )
-    
+            logger.error("EVERVAULT :: An error occurred while polling - (%s)", e)
+
     def _create_and_start_timer(self):
         self.timer = threading.Timer(self.interval, self._run)
         self.timer.daemon = True

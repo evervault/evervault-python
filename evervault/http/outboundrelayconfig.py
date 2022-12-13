@@ -1,10 +1,10 @@
 import logging
-import traceback
 from evervault.threading.repeatedtimer import RepeatedTimer
 
 DEFAULT_POLL_INTERVAL = 5
 
 logger = logging.getLogger(__name__)
+
 
 class OutboundRelayConfig:
 
@@ -15,7 +15,7 @@ class OutboundRelayConfig:
     repeated_timer = None
     poll_interval = None
 
-    def init(request, base_url, debug_requests = False):
+    def init(request, base_url, debug_requests=False):
         OutboundRelayConfig.request = request
         OutboundRelayConfig.base_url = base_url
         OutboundRelayConfig.debug_requests = debug_requests
@@ -26,7 +26,8 @@ class OutboundRelayConfig:
 
         if OutboundRelayConfig.repeated_timer is None:
             OutboundRelayConfig.repeated_timer = RepeatedTimer(
-                OutboundRelayConfig.poll_interval, OutboundRelayConfig.__get_relay_outbound_config
+                OutboundRelayConfig.poll_interval,
+                OutboundRelayConfig.__get_relay_outbound_config,
             )
 
     def get_decryption_domains() -> list:
@@ -52,5 +53,12 @@ class OutboundRelayConfig:
         if poll_interval is not None:
             OutboundRelayConfig.poll_interval = float(poll_interval)
             if OutboundRelayConfig.repeated_timer is not None:
-                OutboundRelayConfig.repeated_timer.update_interval(OutboundRelayConfig.poll_interval)
-        OutboundRelayConfig.config_cache = list(map(lambda destination: destination["destinationDomain"], res.parsed_body["outboundDestinations"].values()))
+                OutboundRelayConfig.repeated_timer.update_interval(
+                    OutboundRelayConfig.poll_interval
+                )
+        OutboundRelayConfig.config_cache = list(
+            map(
+                lambda destination: destination["destinationDomain"],
+                res.parsed_body["outboundDestinations"].values(),
+            )
+        )
