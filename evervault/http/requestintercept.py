@@ -6,7 +6,7 @@ import warnings
 import certifi
 import tempfile
 from evervault.errors.evervault_errors import CertDownloadError
-from evervault.http.outboundrelayconfig import OutboundRelayConfig
+from evervault.http.outboundrelayconfig import RelayOutboundConfig
 
 EVERVAULT_DOMAINS = ["evervault.com", "evervault.io", "evervault.test"]
 
@@ -87,10 +87,10 @@ class RequestIntercept(object):
 
     def set_relay_outbound_config(self, debug_requests=False):
         self.debug_requests = debug_requests
-        OutboundRelayConfig.init(self.request, self.base_url, self.debug_requests)
+        RelayOutboundConfig.init(self.request, self.base_url, self.debug_requests)
         always_ignore_domains = self.get_always_ignore_domains()
         self.should_proxy_domain = lambda host: is_ignore_domain(
-            host, OutboundRelayConfig.get_decryption_domains(), always_ignore_domains
+            host, RelayOutboundConfig.get_decryption_domains(), always_ignore_domains
         )
 
     def setup(client_self):

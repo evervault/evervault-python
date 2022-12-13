@@ -3,7 +3,7 @@ import unittest
 import requests_mock
 import pytest
 
-from evervault.http.outboundrelayconfig import OutboundRelayConfig
+from evervault.http.outboundrelayconfig import RelayOutboundConfig
 from evervault.http.request import Request
 
 
@@ -15,47 +15,47 @@ class TestOutboundRelayConfig(unittest.TestCase):
     @pytest.fixture(autouse=True)
     def run_before_and_after_tests(tmpdir):
         yield
-        OutboundRelayConfig.clear_cache()
-        OutboundRelayConfig.disable_polling()
+        RelayOutboundConfig.clear_cache()
+        RelayOutboundConfig.disable_polling()
 
     @requests_mock.Mocker()
     def test_retrieve_config_from_api(self, mock_request):
         self.__mock_relay_outbound_static(mock_request)
-        OutboundRelayConfig.init(self.request, self.base_url)
+        RelayOutboundConfig.init(self.request, self.base_url)
 
-        actual = OutboundRelayConfig.get_decryption_domains()
+        actual = RelayOutboundConfig.get_decryption_domains()
         expected = ["test-one.destinations.com", "test-two.destinations.com"]
         assert actual == expected
 
     @requests_mock.Mocker()
     def test_retrieve_config_from_api_change(self, mock_request):
         self.__mock_relay_outbound_config_changed(mock_request, "0.2")
-        OutboundRelayConfig.init(self.request, self.base_url)
+        RelayOutboundConfig.init(self.request, self.base_url)
 
         time.sleep(0.5)
 
-        actual = OutboundRelayConfig.get_decryption_domains()
+        actual = RelayOutboundConfig.get_decryption_domains()
         expected = ["test-one.destinations.com"]
         assert actual == expected
 
     @requests_mock.Mocker()
     def test_retrieve_config_from_api_with_poll_interval_change(self, mock_request):
         self.__mock_relay_outbound_config_poll_interval_changed(mock_request, 0.2, 0.5)
-        OutboundRelayConfig.init(self.request, self.base_url)
+        RelayOutboundConfig.init(self.request, self.base_url)
 
         time.sleep(0.5)
 
-        actual = OutboundRelayConfig.get_poll_interval()
+        actual = RelayOutboundConfig.get_poll_interval()
         expected = 0.5
         assert actual == expected
 
     @requests_mock.Mocker()
     def test_clear_cache(self, mock_request):
         self.__mock_relay_outbound_static(mock_request, "0.2")
-        OutboundRelayConfig.init(self.request, self.base_url)
+        RelayOutboundConfig.init(self.request, self.base_url)
 
-        OutboundRelayConfig.clear_cache()
-        actual = OutboundRelayConfig.get_decryption_domains()
+        RelayOutboundConfig.clear_cache()
+        actual = RelayOutboundConfig.get_decryption_domains()
         expected = None
         assert actual == expected
 

@@ -4,7 +4,7 @@ from evervault.errors.evervault_errors import (
     AuthenticationError,
 )
 import unittest
-from evervault.http.outboundrelayconfig import OutboundRelayConfig
+from evervault.http.outboundrelayconfig import RelayOutboundConfig
 import requests_mock
 import base64
 from cryptography.hazmat.primitives import serialization
@@ -633,8 +633,8 @@ class TestEvervault(unittest.TestCase):
             self.evervault.ev_client.cert.relay_outbound_config.clear_cache()
         self.evervault.ev_client = None
         self.evervault.init("testing")
-        OutboundRelayConfig.clear_cache()
-        OutboundRelayConfig.disable_polling()
+        RelayOutboundConfig.clear_cache()
+        RelayOutboundConfig.disable_polling()
 
     def __mock_cert(self, mock_request):
         mock_request.get(
