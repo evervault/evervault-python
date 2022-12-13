@@ -2,7 +2,7 @@ from unittest import TestCase
 from unittest.mock import Mock
 import time
 
-from evervault.http.repeated_timer import RepeatedTimer
+from evervault.threading.repeatedtimer import RepeatedTimer
 
 
 class TestRepeatedTimer(TestCase):
@@ -20,14 +20,21 @@ class TestRepeatedTimer(TestCase):
         rt.stop()
         self.assertEqual(counter.value, 2)
 
-    def test_timer_interval_updated(self):
+    def test_timer_poll_interval_updated(self):
         counter = TestRepeatedTimer.Counter()
         rt = RepeatedTimer(0.05, counter.increment)
         self.assertTrue(rt.running())
         time.sleep(0.12)
         rt.update_interval(0.1)
         time.sleep(0.25)
-        self.assertEqual(counter.value, 4)
+        self.assertEqual(counter.value, 5)
+        rt.stop()
+
+    def test_timer_will_catch_exceptions(self):
+        counter = TestRepeatedTimer.Counter()
+        rt = RepeatedTimer(0.05, self.__throws)
+        self.assertTrue(rt.running())
+        time.sleep(0.12)
         rt.stop()
 
     def test_timer_will_stop(self):
@@ -38,11 +45,13 @@ class TestRepeatedTimer(TestCase):
         rt.stop()
         self.assertFalse(rt.running())
 
+    def __throws():
+        raise Exception("This is an exception")
+
     class Counter(object):
         def __init__(self):
             self.value = 0
         
         def increment(self):
             self.value += 1
-            print("polling")
         
