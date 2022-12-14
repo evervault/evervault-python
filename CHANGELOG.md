@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v1.4.0 (2022-12-14)
+### Feature
+* Increase frequency at which the Outbound Relay Config cache is refreshed ([#80](https://github.com/evervault/evervault-python/issues/80)) ([`3d05c58`](https://github.com/evervault/evervault-python/commit/3d05c58d1878b8adc837afc8ade81f7ef926c9bf))
+
 ## v1.3.3 (2022-11-16)
 ### Fix
 * Remove decryption domains from whitelist ([#79](https://github.com/evervault/evervault-python/issues/79)) ([`d5af814`](https://github.com/evervault/evervault-python/commit/d5af81443bdd527376af28c7ad2214b5ec6c0157))

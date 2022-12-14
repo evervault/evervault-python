@@ -4,7 +4,7 @@ from .errors.evervault_errors import AuthenticationError, UnsupportedCurveError
 import os
 from warnings import warn
 
-__version__ = "1.3.3"
+__version__ = "1.4.0"
 
 ev_client = None
 _api_key = None
