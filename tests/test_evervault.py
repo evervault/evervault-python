@@ -4,6 +4,7 @@ from evervault.errors.evervault_errors import (
     AuthenticationError,
 )
 import unittest
+from evervault.http.outboundrelayconfig import RelayOutboundConfig
 import requests_mock
 import base64
 from cryptography.hazmat.primitives import serialization
@@ -468,10 +469,23 @@ class TestEvervault(unittest.TestCase):
         self.__reinit_client()
 
     @requests_mock.Mocker()
-    def test_run_with_decryption_domain(self, mock_request):
+    def test_run_with_decryption_domain_constructor(self, mock_request):
         self.__mock_cert(mock_request)
 
         evervault.init("testing", decryption_domains=["test2.com"])
+
+        request = mock_request.get("https://test2.com/hello")
+        requests.get("https://test2.com/hello")
+        assert request.last_request.headers["Proxy-Authorization"] == "testing"
+
+        self.__reinit_client()
+
+    @requests_mock.Mocker()
+    def test_run_with_decryption_domain(self, mock_request):
+        self.__mock_cert(mock_request)
+
+        evervault.init("testing")
+        evervault.enable_outbound_relay(decryption_domains=["test2.com"])
 
         request = mock_request.get("https://test2.com/hello")
         requests.get("https://test2.com/hello")
@@ -492,12 +506,30 @@ class TestEvervault(unittest.TestCase):
         self.__reinit_client()
 
     @requests_mock.Mocker()
-    def test_run_with_decryption_domain_set_and_other_domain_requested(
+    def test_run_with_decryption_domain_set_and_other_domain_requested_constructor(
         self, mock_request
     ):
         self.__mock_cert(mock_request)
 
         evervault.init("testing", decryption_domains=["test-other.com"])
+
+        request = mock_request.get("https://www.test2.com/hello")
+        requests.get("https://www.test2.com/hello")
+
+        self.assertRaises(
+            KeyError, lambda: request.last_request.headers["Proxy-Authorization"]
+        )
+
+        self.__reinit_client()
+
+    @requests_mock.Mocker()
+    def test_run_with_decryption_domain_set_and_other_domain_requested(
+        self, mock_request
+    ):
+        self.__mock_cert(mock_request)
+
+        evervault.init("testing")
+        evervault.enable_outbound_relay(decryption_domains=["test-other.com"])
 
         request = mock_request.get("https://www.test2.com/hello")
         requests.get("https://www.test2.com/hello")
@@ -522,12 +554,25 @@ class TestEvervault(unittest.TestCase):
         self.__reinit_client()
 
     @requests_mock.Mocker()
-    def test_run_with_relay_outbound_enabled(self, mock_request):
+    def test_run_with_relay_outbound_enabled_constructor(self, mock_request):
         self.__mock_cert(mock_request)
         self.__mock_relay_outbound_config(mock_request)
 
         request = mock_request.get("https://test-one.destinations.com/hello")
         evervault.init("testing", enable_outbound_relay=True)
+        requests.get("https://test-one.destinations.com/hello")
+
+        assert request.last_request.headers["Proxy-Authorization"] == "testing"
+        self.__reinit_client()
+
+    @requests_mock.Mocker()
+    def test_run_with_relay_outbound_enabled(self, mock_request):
+        self.__mock_cert(mock_request)
+        self.__mock_relay_outbound_config(mock_request)
+
+        request = mock_request.get("https://test-one.destinations.com/hello")
+        evervault.init("testing")
+        evervault.enable_outbound_relay()
         requests.get("https://test-one.destinations.com/hello")
 
         assert request.last_request.headers["Proxy-Authorization"] == "testing"
@@ -584,8 +629,12 @@ class TestEvervault(unittest.TestCase):
         return True
 
     def __reinit_client(self):
+        if self.evervault.ev_client.cert.relay_outbound_config is not None:
+            self.evervault.ev_client.cert.relay_outbound_config.clear_cache()
         self.evervault.ev_client = None
         self.evervault.init("testing")
+        RelayOutboundConfig.clear_cache()
+        RelayOutboundConfig.disable_polling()
 
     def __mock_cert(self, mock_request):
         mock_request.get(
@@ -616,6 +665,7 @@ class TestEvervault(unittest.TestCase):
     def __mock_relay_outbound_config(self, mock_request):
         mock_request.get(
             "https://api.evervault.com/v2/relay-outbound",
+            headers={"X-Poll-Interval": "5"},
             json={
                 "appUuid": "app_33b88ca7da01",
                 "teamUuid": "2ef8d35ce661",

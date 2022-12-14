@@ -5,12 +5,12 @@ import requests
 import warnings
 import certifi
 import tempfile
-import logging
 from evervault.errors.evervault_errors import CertDownloadError
-from .repeated_timer import RepeatedTimer
+from evervault.http.outboundrelayconfig import RelayOutboundConfig
+
+EVERVAULT_DOMAINS = ["evervault.com", "evervault.io", "evervault.test"]
 
 old_request_func = requests.Session.request
-logger = logging.getLogger(__name__)
 
 
 def is_ignore_domain(domain, decryption_domains, always_ignore_domains):
@@ -45,7 +45,8 @@ class RequestIntercept(object):
         self.initial_date = None
         self.cert_path = None
         self.should_proxy_domain = lambda host: False
-        self.debug_enabled = False
+        self.debug_requests = False
+        self.relay_outbound_config = None
 
     def is_certificate_expired(self):
         if self.expire_date is not None:
@@ -61,15 +62,15 @@ class RequestIntercept(object):
             urlparse(self.ca_host).netloc,
         ]
 
-    def setup_decryption_domains(self, decryption_domains, debugRequests):
-        self.debug_enabled = debugRequests
+    def setup_decryption_domains(self, decryption_domains, debug_requests=False):
+        self.debug_requests = debug_requests
         always_ignore_domains = self.get_always_ignore_domains()
         self.should_proxy_domain = lambda host: is_ignore_domain(
             host, decryption_domains, always_ignore_domains
         )
 
-    def setup_ignore_domains(self, ignore_domains, debugRequests):
-        self.debug_enabled = debugRequests
+    def setup_ignore_domains(self, ignore_domains, debug_requests=False):
+        self.debug_requests = debug_requests
         ignore_domains.extend(self.get_always_ignore_domains())
 
         ignore_if_exact = []
@@ -84,18 +85,13 @@ class RequestIntercept(object):
             host in ignore_if_exact or host.endswith(ignore_if_endswith)
         )
 
-    def set_relay_outbound_config(self, debugRequests):
-        self.debug_enabled = debugRequests
-        self.__get_relay_outbound_config()
-        self._set_interval(self.__get_relay_outbound_config, 120)
+    def set_relay_outbound_config(self, debug_requests=False):
+        self.debug_requests = debug_requests
+        RelayOutboundConfig.init(self.request, self.base_url, self.debug_requests)
         always_ignore_domains = self.get_always_ignore_domains()
         self.should_proxy_domain = lambda host: is_ignore_domain(
-            host, self.relay_outbound_destinations, always_ignore_domains
+            host, RelayOutboundConfig.get_decryption_domains(), always_ignore_domains
         )
-
-    def _set_interval(self, func, sec):
-        logger.debug(f"Starting Thread to poll evervault at {sec} second interval")
-        RepeatedTimer(sec, func)
 
     def setup(client_self):
         client_self.__get_cert()
@@ -137,7 +133,12 @@ class RequestIntercept(object):
             try:
                 domain = urlparse(url).netloc
                 should_proxy = client_self.should_proxy_domain(domain)
-                if client_self.debug_enabled:
+                if client_self.debug_requests and not any(
+                    map(
+                        lambda evervault_domain: domain.endswith(evervault_domain),
+                        EVERVAULT_DOMAINS,
+                    )
+                ):
                     print(
                         f"Request to domain: {domain}, Outbound Proxy enabled: {should_proxy}"
                     )
@@ -145,10 +146,9 @@ class RequestIntercept(object):
                     headers["Proxy-Authorization"] = api_key
                     proxies["https"] = relay_url
                     verify = cert_path
-            except Exception:
+            except Exception as e:
                 warnings.warn(
-                    f"Unable to parse {url} when attempting to check "
-                    "if it should be proxied."
+                    f"EVERVAULT :: Unable to parse {url} when attempting to check if it should be proxied. {e}"
                 )
                 pass
             return old_request_func(
@@ -201,18 +201,6 @@ class RequestIntercept(object):
             raise CertDownloadError(
                 f"Unable to install the Evervault root certficate from {self.ca_host}. "
                 "Likely a permissions error when attempting to write to the /tmp/ directory."
-            )
-
-    def __get_relay_outbound_config(self):
-        logger.debug("Polling Outbound Relay configuration")
-        try:
-            res = self.request.make_request(
-                "GET", self.base_url + "v2/relay-outbound", {}
-            )
-            self.relay_outbound_destinations = list(res["outboundDestinations"])
-        except:
-            logger.error(
-                "An error occurred while attempting to refresh the outbound relay config"
             )
 
     def __set_cert_expire_date(self, ca_content):

@@ -45,7 +45,8 @@ class Request(object):
         else:
             parsed_body = self.__parse_body(resp)
             error_handler.raise_errors_on_failure(resp, parsed_body)
-            return parsed_body
+            resp.parsed_body = parsed_body
+            return resp
 
     def __build_headers(self, method, params, optional_headers, version):
         req_params = {}

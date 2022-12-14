@@ -55,35 +55,37 @@ class Client(object):
         cages = self.get("cages")["cages"]
         return CageList(cages, self).cages
 
-    def relay(
+    def enable_outbound_relay(
         self,
-        debugRequests,
+        debug_requests,
         ignore_domains=[],
         decryption_domains=[],
         enable_outbound_relay=False,
     ):
         if len(decryption_domains) > 0:
-            self.cert.setup_decryption_domains(decryption_domains, debugRequests)
+            self.cert.setup_decryption_domains(decryption_domains, debug_requests)
         elif enable_outbound_relay:
-            self.cert.set_relay_outbound_config(debugRequests)
+            self.cert.set_relay_outbound_config(debug_requests)
         else:
-            self.cert.setup_ignore_domains(ignore_domains, debugRequests)
+            self.cert.setup_ignore_domains(ignore_domains, debug_requests)
         self.cert.setup()
 
     def create_run_token(self, cage_name, data):
         return self.post(f"v2/functions/{cage_name}/run-token", data, {})
 
     def get(self, path, params={}):
-        return self.request_handler.get(path, params)
+        return self.request_handler.get(path, params).parsed_body
 
     def post(self, path, params, optional_headers, cage_run=False):
-        return self.request_handler.post(path, params, optional_headers, cage_run)
+        return self.request_handler.post(
+            path, params, optional_headers, cage_run
+        ).parsed_body
 
     def put(self, path, params):
-        return self.request_handler.put(path, params)
+        return self.request_handler.put(path, params).parsed_body
 
     def delete(self, path, params):
-        return self.request_handler.delete(path, params)
+        return self.request_handler.delete(path, params).parsed_body
 
     def __build_cage_run_headers(self, options):
         if options is None:
