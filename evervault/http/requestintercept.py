@@ -115,7 +115,7 @@ class RequestIntercept(object):
             print(domain)
             should_proxy = self.should_proxy_domain(domain)
 
-            if not "headers" in kwargs:
+            if "headers" not in kwargs:
                 kwargs["headers"] = {}
 
             if self.debug_requests and not any(
