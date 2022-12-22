@@ -70,7 +70,7 @@ class Client(object):
         else:
             self.cert.setup_ignore_domains(ignore_domains, debug_requests)
         self.cert.setup()
-        if client_session :
+        if client_session:
             self.cert.setup_aiohttp(client_session)
 
     def create_run_token(self, cage_name, data):

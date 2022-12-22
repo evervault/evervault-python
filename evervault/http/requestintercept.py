@@ -23,10 +23,11 @@ def is_ignore_domain(domain, decryption_domains, always_ignore_domains):
         for decryption_domain in decryption_domains
     )
 
-def hostname_from_str_or_url(str_or_url) :
-    if hasattr(str_or_url, 'host') :
+
+def hostname_from_str_or_url(str_or_url):
+    if hasattr(str_or_url, "host"):
         return str_or_url.host
-    
+
     return urlparse(str_or_url).netloc
 
 
@@ -106,16 +107,16 @@ class RequestIntercept(object):
         evervault_ssl_context = ssl.create_default_context(cafile=self.cert_path)
         api_key = self.api_key
         relay_url = self.relay_url
-        
+
         old_request = client_session._request
-        
-        def new_req_func(method, str_or_url, **kwargs) :
+
+        def new_req_func(method, str_or_url, **kwargs):
             domain = hostname_from_str_or_url(str_or_url)
             print(domain)
             should_proxy = self.should_proxy_domain(domain)
 
-            if not 'headers' in kwargs :
-                kwargs['headers'] = {}
+            if not "headers" in kwargs:
+                kwargs["headers"] = {}
 
             if self.debug_requests and not any(
                 map(
@@ -126,15 +127,15 @@ class RequestIntercept(object):
                 print(
                     f"Request to domain: {domain}, Outbound Proxy enabled: {should_proxy}"
                 )
-            if should_proxy :
-                kwargs['proxy'] = relay_url
-                kwargs['headers']['Proxy-Authorization'] = api_key
-                kwargs['ssl'] = evervault_ssl_context
-            else :
-                kwargs['ssl'] = default_ssl_context
+            if should_proxy:
+                kwargs["proxy"] = relay_url
+                kwargs["headers"]["Proxy-Authorization"] = api_key
+                kwargs["ssl"] = evervault_ssl_context
+            else:
+                kwargs["ssl"] = default_ssl_context
 
             return old_request(method, str_or_url, **kwargs)
-        
+
         client_session._request = new_req_func
 
     def setup(client_self):
