@@ -123,7 +123,7 @@ evervault.enable_outbound_relay([decryption_domains = Array, debug_requests = Bo
 | ------------------ | --------- | ------- | ---------------------------------------------------------------------------------------- |
 | decryption_domains | `Array`   | `None`  | Requests sent to any of the domains listed will be proxied through Outbound Relay. This will override the configuration created using the Evervault dashboard. |
 | debug_requests     | `Boolean` | `False` | Output request domains and whether they were sent through Outbound Relay.                |
-| client_session     | `[aiohttp.ClientSession](https://docs.aiohttp.org/en/stable/client_reference.html)` | `None`  | The [aiohttp](https://docs.aiohttp.org/) client session to enable outbound relay on. Requires Python >= 3.11.         |
+| client_session     | [aiohttp.ClientSession](https://docs.aiohttp.org/en/stable/client_reference.html) | `None`  | The [aiohttp](https://docs.aiohttp.org/) client session to enable outbound relay on. Requires Python >= 3.11.         |
 
 
 ## Contributing
