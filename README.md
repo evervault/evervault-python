@@ -112,7 +112,8 @@ evervault.create_run_token(function_name = str, data = dict)
 
 ### evervault.enable_outbound_relay()
 
-`evervault.enable_outbound_relay()` configures your application to proxy HTTP requests using Outbound Relay based on the configuration created in the Evervault dashboard. See [Outbound Relay](https://docs.evervault.com/concepts/outbound-relay/overview) to learn more.  
+`evervault.enable_outbound_relay()` configures your application to proxy HTTP requests using Outbound Relay based on the configuration created in the Evervault dashboard. See [Outbound Relay](https://docs.evervault.com/concepts/outbound-relay/overview) to learn more. 
+Asynchronous HTTP requests are supported with [aiohttp](https://docs.aiohttp.org/). Pass in a [aiohttp.ClientSession](https://docs.aiohttp.org/en/stable/client_reference.html) to enable them for that session. Note: Requires Python 3.11+
 
 ```python
 evervault.enable_outbound_relay([decryption_domains = Array, debug_requests = Boolean])
@@ -122,6 +123,8 @@ evervault.enable_outbound_relay([decryption_domains = Array, debug_requests = Bo
 | ------------------ | --------- | ------- | ---------------------------------------------------------------------------------------- |
 | decryption_domains | `Array`   | `None`  | Requests sent to any of the domains listed will be proxied through Outbound Relay. This will override the configuration created using the Evervault dashboard. |
 | debug_requests     | `Boolean` | `False` | Output request domains and whether they were sent through Outbound Relay.                |
+| client_session     | `[aiohttp.ClientSession](https://docs.aiohttp.org/en/stable/client_reference.html)` | `None`  | The [aiohttp](https://docs.aiohttp.org/) client session to enable outbound relay on. Requires Python >= 3.11.         |
+
 
 ## Contributing
 
