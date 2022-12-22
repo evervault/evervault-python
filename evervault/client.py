@@ -61,6 +61,7 @@ class Client(object):
         ignore_domains=[],
         decryption_domains=[],
         enable_outbound_relay=False,
+        client_session=None,
     ):
         if len(decryption_domains) > 0:
             self.cert.setup_decryption_domains(decryption_domains, debug_requests)
@@ -69,6 +70,8 @@ class Client(object):
         else:
             self.cert.setup_ignore_domains(ignore_domains, debug_requests)
         self.cert.setup()
+        if client_session :
+            self.cert.setup_aiohttp(client_session)
 
     def create_run_token(self, cage_name, data):
         return self.post(f"v2/functions/{cage_name}/run-token", data, {})

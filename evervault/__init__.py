@@ -2,6 +2,7 @@
 from .client import Client
 from .errors.evervault_errors import AuthenticationError, UnsupportedCurveError
 import os
+import sys
 from warnings import warn
 
 __version__ = "1.4.0"
@@ -98,14 +99,22 @@ def create_run_token(function_name, data):
     return __client().create_run_token(function_name, data)
 
 
-def enable_outbound_relay(decryption_domains=None, debug_requests=False):
+def enable_outbound_relay(decryption_domains=None, debug_requests=False, client_session=None):
+    if client_session is not None :
+        _warn_if_python_version_unsupported_for_async()
+        
     if decryption_domains is None:
-        __client().enable_outbound_relay(debug_requests, enable_outbound_relay=True)
+        __client().enable_outbound_relay(debug_requests, enable_outbound_relay=True, client_session=client_session)
     else:
         __client().enable_outbound_relay(
             debug_requests, decryption_domains=decryption_domains
         )
 
+def _warn_if_python_version_unsupported_for_async() :
+    if sys.version_info.minor < 11 :
+        warn(
+            "Using Outbound Relay with Asynchronous Python is only supported in Python >= 3.11"
+        )
 
 def __client():
     if not _api_key:
