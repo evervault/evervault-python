@@ -112,7 +112,6 @@ class RequestIntercept(object):
 
         def new_req_func(method, str_or_url, **kwargs):
             domain = hostname_from_str_or_url(str_or_url)
-            print(domain)
             should_proxy = self.should_proxy_domain(domain)
 
             if "headers" not in kwargs:
