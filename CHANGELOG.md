@@ -2,6 +2,17 @@
 
 <!--next-version-placeholder-->
 
+## v1.5.0 (2022-12-22)
+### Feature
+* Support aiohttp requests for outbound relay ([`a059aa7`](https://github.com/evervault/evervault-python/commit/a059aa7dcb58759b24ca1eabd10f2da0262c01fb))
+
+### Fix
+* Remove erroneously included debug print ([`41ce243`](https://github.com/evervault/evervault-python/commit/41ce243296807225a4b2ce61d55545a96a2f4f41))
+
+### Documentation
+* Fix link in table ([`a8345f1`](https://github.com/evervault/evervault-python/commit/a8345f1d792b5553403dfc2bdac3dbb00d27c18a))
+* Mention async python in readme ([`c3f94ef`](https://github.com/evervault/evervault-python/commit/c3f94efde4d2a493104ba114bab055a44d2476d7))
+
 ## v1.4.0 (2022-12-14)
 ### Feature
 * Increase frequency at which the Outbound Relay Config cache is refreshed ([#80](https://github.com/evervault/evervault-python/issues/80)) ([`3d05c58`](https://github.com/evervault/evervault-python/commit/3d05c58d1878b8adc837afc8ade81f7ef926c9bf))
