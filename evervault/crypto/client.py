@@ -48,7 +48,9 @@ class Client(object):
         if self.shared_key is None or type(self.shared_key) != bytes:
             raise InvalidPublicKeyError("Provided EC compressed point is invalid")
 
-        if type(data) == dict or type(data) == list or type(data) == set:
+        if type(data) == bytes or type(data) == bytearray  :
+            return self.__encrypt_file(data)
+        elif type(data) == dict or type(data) == list or type(data) == set:
             return self.__traverse_and_encrypt(data)
         elif self.__encryptable_data(data):
             return self.__encrypt_string(data)
@@ -110,6 +112,24 @@ class Client(object):
             base64.b64encode(self.compressed_public_key).decode("utf"),
             base64.b64encode(encrypted_bytes).decode("utf"),
         )
+    
+    def __encrypt_file(self, data):
+        iv = token_bytes(12)
+        aesgcm = AESGCM(self.shared_key)
+
+        encrypted_bytes = b""
+        if self.curve == SECP256K1 :
+            encrypted_bytes = aesgcm.encrypt(iv, data, None)
+        else:
+            encrypted_bytes = aesgcm.encrypt(
+                iv, data, self.decoded_team_cage_key
+            )
+
+        return self.__format_file(
+            iv,
+            self.compressed_public_key,
+            encrypted_bytes,
+        )
 
     def __coerce_type(self, data):
         if type(data) == bool:
@@ -122,6 +142,14 @@ class Client(object):
     def __format(self, header, iv, public_key, encrypted_payload):
         prefix = f":{header}" if header != "string" else ""
         return f"ev:{self.ev_version}{prefix}:{self.__base_64_remove_padding(iv)}:{self.__base_64_remove_padding(public_key)}:{self.__base_64_remove_padding(encrypted_payload)}:$"
+
+    def __format_file(self, iv, public_key, encrypted_bytes) :
+        encrypted_file_identifier = bytes(b'\x25\x45\x56\x45\x4e\x43')
+        verion_number = bytes(b'\00') if self.curve == SECP256K1 else bytes(b'\01')
+        offset_to_data = bytes([55,00])
+        flags = bytes(b'\00')
+
+        return encrypted_file_identifier + verion_number + offset_to_data + bytes(public_key) + bytes(iv) + flags + bytes(encrypted_bytes)
 
     def __base_64_remove_padding(self, data):
         return data.rstrip("=")
