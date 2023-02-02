@@ -101,17 +101,17 @@ class TestEvervault(unittest.TestCase):
         assert "dict" in encrypted_data
         assert type(encrypted_data["dict"]) == dict
         assert self.__is_evervault_string(encrypted_data["dict"]["subnumber"], "number")
-    
+
     @requests_mock.Mocker()
     def test_encrypt_files(self, mock_request):
         self.mock_fetch_cage_key(mock_request)
 
-        test_payload = b'\00\01\03'
+        test_payload = b"\00\01\03"
         encrypted_data = self.evervault.encrypt(test_payload)
         assert self.__is_evervault_file(encrypted_data)
 
         # Check that curve is set correctly
-        assert encrypted_data[6:7] == b'\00'
+        assert encrypted_data[6:7] == b"\00"
 
         # Check that offset to data is set correctly
         assert encrypted_data[7:9] == bytes([55, 00])
@@ -360,18 +360,18 @@ class TestEvervault(unittest.TestCase):
         assert "dict" in encrypted_data
         assert type(encrypted_data["dict"]) == dict
         assert self.__is_evervault_string(encrypted_data["dict"]["subnumber"], "number")
-    
+
     @requests_mock.Mocker()
     def test_p256_encrypt_files(self, mock_request):
         self.setUp(evervault.Curves.SECP256R1)
         self.mock_fetch_cage_key(mock_request)
 
-        test_payload = b'\00\01\03'
+        test_payload = b"\00\01\03"
         encrypted_data = self.evervault.encrypt(test_payload)
         assert self.__is_evervault_file(encrypted_data)
 
         # Check that curve is set correctly
-        assert encrypted_data[6:7] == b'\01'
+        assert encrypted_data[6:7] == b"\01"
 
         # Check that offset to data is set correctly
         assert encrypted_data[7:9] == bytes([55, 00])
@@ -648,7 +648,7 @@ class TestEvervault(unittest.TestCase):
         elif type != parts[2]:
             return False
         return True
-    
+
     def __is_evervault_file(self, data):
         return data[0:6] == bytes(b"\x25\x45\x56\x45\x4e\x43")
 
