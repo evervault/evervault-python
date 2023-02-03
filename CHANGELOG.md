@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v1.6.0 (2023-02-03)
+### Feature
+* Support file encryption ([`42ac534`](https://github.com/evervault/evervault-python/commit/42ac53427f903c7344f2329e1705aa5816bd927f))
+
 ## v1.5.0 (2022-12-22)
 ### Feature
 * Support aiohttp requests for outbound relay ([`a059aa7`](https://github.com/evervault/evervault-python/commit/a059aa7dcb58759b24ca1eabd10f2da0262c01fb))
