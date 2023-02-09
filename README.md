@@ -45,6 +45,11 @@ result = evervault.run("<YOUR_FUNCTION_NAME>", encrypted)
 # Send the decrypted data to a third-party API
 evervault.enable_outbound_relay()
 requests.post("https://example.com", json = encrypted)
+
+# Send attested requests to a Cage
+attested_session = evervault.cage_requests_session({ 'my-cage': { 'pcr_8': '...' } })
+# Attested TLS directly to the enclave
+attested_session.get('https://my-cage.my-app.cages.evervault.com/hello')
 ```
 
 ## Reference
@@ -59,10 +64,10 @@ The Evervault Python SDK exposes five functions.
 evervault.init(api_key = str[, decryption_domains=[], retry = bool, curve = str])
 ```
 
-| Parameter      | Type        | Description                                                              |
-| -------------- | ----------- | ------------------------------------------------------------------------ |
-| api_key        | `str`       | The API key of your Evervault Team                                       |
-| curve          | `str`       | The elliptic curve used for cryptographic operations. See [Elliptic Curve Support](https://docs.evervault.com/reference/elliptic-curve-support) to learn more. |
+| Parameter | Type  | Description                                                                                                                                                    |
+| --------- | ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| api_key   | `str` | The API key of your Evervault Team                                                                                                                             |
+| curve     | `str` | The elliptic curve used for cryptographic operations. See [Elliptic Curve Support](https://docs.evervault.com/reference/elliptic-curve-support) to learn more. |
 
 ### evervault.encrypt()
 
@@ -84,17 +89,17 @@ evervault.encrypt(data = dict | list | set | str | int | bool)
 evervault.run(function_name = str, data = dict[, options = dict])
 ```
 
-| Parameter     | Type   | Description                                    |
-| ------------- | ------ | ---------------------------------------------- |
-| function_name | `str`  | Name of the Function to be run.                    |
-| data          | `dict` | Payload for the Function.                          |
+| Parameter     | Type   | Description                                            |
+| ------------- | ------ | ------------------------------------------------------ |
+| function_name | `str`  | Name of the Function to be run.                        |
+| data          | `dict` | Payload for the Function.                              |
 | options       | `dict` | [Options for the Function run.](#Function-Run-Options) |
 
 #### Function Run Options
 
-| Option  | Type      | Default | Description                                                                          |
-| ------- | --------- | ------- | ------------------------------------------------------------------------------------ |
-| async   | `Boolean` | `False` | Run your Function in async mode. Async Function runs will be queued for processing.          |
+| Option  | Type      | Default | Description                                                                              |
+| ------- | --------- | ------- | ---------------------------------------------------------------------------------------- |
+| async   | `Boolean` | `False` | Run your Function in async mode. Async Function runs will be queued for processing.      |
 | version | `Integer` | `None`  | Specify the version of your Function to run. By default, the latest version will be run. |
 
 ### evervault.create_run_token()
@@ -112,19 +117,30 @@ evervault.create_run_token(function_name = str, data = dict)
 
 ### evervault.enable_outbound_relay()
 
-`evervault.enable_outbound_relay()` configures your application to proxy HTTP requests using Outbound Relay based on the configuration created in the Evervault dashboard. See [Outbound Relay](https://docs.evervault.com/concepts/outbound-relay/overview) to learn more. 
+`evervault.enable_outbound_relay()` configures your application to proxy HTTP requests using Outbound Relay based on the configuration created in the Evervault dashboard. See [Outbound Relay](https://docs.evervault.com/concepts/outbound-relay/overview) to learn more.
 Asynchronous HTTP requests are supported with [aiohttp](https://docs.aiohttp.org/). Pass in a [aiohttp.ClientSession](https://docs.aiohttp.org/en/stable/client_reference.html) to enable them for that session. Note: Requires Python 3.11+
 
 ```python
 evervault.enable_outbound_relay([decryption_domains = Array, debug_requests = Boolean])
 ```
 
-| Parameter          | Type      | Default | Description                                                                              |
-| ------------------ | --------- | ------- | ---------------------------------------------------------------------------------------- |
-| decryption_domains | `Array`   | `None`  | Requests sent to any of the domains listed will be proxied through Outbound Relay. This will override the configuration created using the Evervault dashboard. |
-| debug_requests     | `Boolean` | `False` | Output request domains and whether they were sent through Outbound Relay.                |
-| client_session     | [aiohttp.ClientSession](https://docs.aiohttp.org/en/stable/client_reference.html) | `None`  | The [aiohttp](https://docs.aiohttp.org/) client session to enable outbound relay on. Requires Python >= 3.11.         |
+| Parameter          | Type                                                                              | Default | Description                                                                                                                                                    |
+| ------------------ | --------------------------------------------------------------------------------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| decryption_domains | `Array`                                                                           | `None`  | Requests sent to any of the domains listed will be proxied through Outbound Relay. This will override the configuration created using the Evervault dashboard. |
+| debug_requests     | `Boolean`                                                                         | `False` | Output request domains and whether they were sent through Outbound Relay.                                                                                      |
+| client_session     | [aiohttp.ClientSession](https://docs.aiohttp.org/en/stable/client_reference.html) | `None`  | The [aiohttp](https://docs.aiohttp.org/) client session to enable outbound relay on. Requires Python >= 3.11.                                                  |
 
+### evervault.cage_requests_session()
+
+`evervault.cage_requests_session()` creates a `requests` `Session` which attests all traffic between your client and the Cage. You can provide the PCRs generated at build time to have even tighter control on the attestation.
+
+```python
+evervault.cage_requests_session([cage_attestation_data = dict])
+```
+
+| Parameter             | Type   | Default | Description                                                                                                                                                                                          |
+| --------------------- | ------ | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| cage_attestation_data | `dict` | `None`  | Provide attestation measures to make assertions about the code running within your enclave. The `cage_attestation_data` dict is a mapping of cage names to their corresponding attestation measures. |
 
 ## Contributing
 
