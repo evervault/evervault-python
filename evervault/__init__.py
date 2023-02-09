@@ -1,6 +1,7 @@
 """Package for the evervault SDK"""
 from .client import Client
 from .errors.evervault_errors import AuthenticationError, UnsupportedCurveError
+from .cages_v2 import CageRequestsSession
 import os
 import sys
 from warnings import warn
@@ -17,6 +18,8 @@ BASE_URL_DEFAULT = "https://api.evervault.com/"
 BASE_RUN_URL_DEFAULT = "https://run.evervault.com/"
 RELAY_URL_DEFAULT = "https://relay.evervault.com:443"
 CA_HOST_DEFAULT = "https://ca.evervault.com"
+CAGES_CA_HOST_DEFAULT = "https://cages-ca.evervault.com"
+CAGES_HOST_DEFAULT = "cages.evervault.com"
 
 SUPPORTED_CURVES = ["SECP256K1", "SECP256R1"]
 
@@ -94,6 +97,13 @@ def cages():
     )
     return __client().cages()
 
+
+def cage_requests_session(cage_attestation_data={}):
+    return CageRequestsSession(
+        cage_attestation_data,
+        os.environ.get("EV_CAGES_CA_HOST", CAGES_CA_HOST_DEFAULT),
+        os.environ.get("EV_CAGES_HOST", CAGES_HOST_DEFAULT),
+    )
 
 def create_run_token(function_name, data):
     return __client().create_run_token(function_name, data)
