@@ -105,6 +105,7 @@ def cage_requests_session(cage_attestation_data={}):
         os.environ.get("EV_CAGES_HOST", CAGES_HOST_DEFAULT),
     )
 
+
 def create_run_token(function_name, data):
     return __client().create_run_token(function_name, data)
 
