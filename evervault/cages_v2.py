@@ -9,7 +9,7 @@ import tempfile
 def get_cage_name_from_cage(cage_url):
     requested_cage_hostname = cage_url
     if "https://" in requested_cage_hostname:
-        requested_cage_hostname = cage_url[len("https://") :] # noqa: E203
+        requested_cage_hostname = cage_url[len("https://") :]  # noqa: E203
     requested_cage_hostname_tokens = requested_cage_hostname.split(".")
     if requested_cage_hostname_tokens[1] == "attest":
         return requested_cage_hostname_tokens[2]
