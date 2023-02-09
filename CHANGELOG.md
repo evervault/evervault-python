@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v1.7.0 (2023-02-09)
+### Feature
+* **cages:** Introduce support for cage attestation by exposing a cage request session builder ([`256d78c`](https://github.com/evervault/evervault-python/commit/256d78ccf667a4637ca96fd9316260a12854848a))
+
 ## v1.6.0 (2023-02-03)
 ### Feature
 * Support file encryption ([`42ac534`](https://github.com/evervault/evervault-python/commit/42ac53427f903c7344f2329e1705aa5816bd927f))
