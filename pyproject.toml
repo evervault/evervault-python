@@ -11,7 +11,7 @@ repository = "https://github.com/evervault/evervault-python"
 [tool.poetry.dependencies]
 python = "^3.6.2"
 requests = "^2.24.0"
-cryptography = "^3.4.8"
+cryptography = "^39.0.1"
 certifi = "*"
 pycryptodome = "^3.10.1"
 pyasn1 = "^0.4.8"
