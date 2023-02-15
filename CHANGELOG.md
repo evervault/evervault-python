@@ -2,6 +2,13 @@
 
 <!--next-version-placeholder-->
 
+## v2.0.0 (2023-02-15)
+### Fix
+* Update version of cryptography dependency to remove soundness vulnerability. BREAKING CHANGE: removes support for OpenSSL < 1.1.0, LibreSSL < 3.5, macOS < 10.12 ([`bbaf58c`](https://github.com/evervault/evervault-python/commit/bbaf58c962ff9780e8573b9577bd08343c865d17))
+
+### Breaking
+* Update version of cryptography dependency to remove soundness vulnerability. BREAKING CHANGE: removes support for OpenSSL < 1.1.0, LibreSSL < 3.5, macOS < 10.12 ([`bbaf58c`](https://github.com/evervault/evervault-python/commit/bbaf58c962ff9780e8573b9577bd08343c865d17))
+
 ## v1.7.0 (2023-02-09)
 ### Feature
 * **cages:** Introduce support for cage attestation by exposing a cage request session builder ([`256d78c`](https://github.com/evervault/evervault-python/commit/256d78ccf667a4637ca96fd9316260a12854848a))
