@@ -109,6 +109,7 @@ def cage_requests_session(cage_attestation_data={}):
 def create_run_token(function_name, data):
     if data is None:  # Allow non pre-approved payloads
         data = {}  # Convert to dictionary to keep encoding consistent
+
     return __client().create_run_token(function_name, data)
 
 
