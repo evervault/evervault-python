@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v2.1.0 (2023-02-21)
+### Feature
+* Allow non preapproved payloads for run tokens ([`4430366`](https://github.com/evervault/evervault-python/commit/4430366a0b78a8aba2800670b0b76193ebc74aba))
+
 ## v2.0.0 (2023-02-15)
 ### Fix
 * Update version of cryptography dependency to remove soundness vulnerability. BREAKING CHANGE: removes support for OpenSSL < 1.1.0, LibreSSL < 3.5, macOS < 10.12 ([`bbaf58c`](https://github.com/evervault/evervault-python/commit/bbaf58c962ff9780e8573b9577bd08343c865d17))
