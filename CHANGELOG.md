@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v2.1.1 (2023-02-21)
+### Fix
+* **create_run_token:** Provide default value for data argument ([`6e9200b`](https://github.com/evervault/evervault-python/commit/6e9200b1daffa813d49c1f3045f585862597fbe8))
+
 ## v2.1.0 (2023-02-21)
 ### Feature
 * Allow non preapproved payloads for run tokens ([`4430366`](https://github.com/evervault/evervault-python/commit/4430366a0b78a8aba2800670b0b76193ebc74aba))
