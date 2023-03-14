@@ -18,6 +18,7 @@ class Client(object):
         ca_host="https://ca.evervault.com",
         retry=False,
         curve="SECP256K1",
+        max_file_size_in_mb=25,
     ):
         self.api_key = api_key
         self.base_url = base_url
@@ -32,7 +33,7 @@ class Client(object):
         self.request_handler = RequestHandler(
             request, base_run_url, base_url, self.cert
         )
-        self.crypto_client = CryptoClient(api_key, curve)
+        self.crypto_client = CryptoClient(api_key, curve, max_file_size_in_mb)
 
     @property
     def _auth(self):

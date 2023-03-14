@@ -3,6 +3,7 @@ from ..errors.evervault_errors import (
     InvalidPublicKeyError,
     MissingTeamEcdhKey,
     UnknownEncryptType,
+    ExceededMaxFileSizeError,
 )
 from ..datatypes.map import map_header_type
 from cryptography.hazmat.primitives.asymmetric import ec
@@ -25,7 +26,7 @@ CURVES = {"SECP256K1": ec.SECP256K1, "SECP256R1": ec.SECP256R1}
 
 
 class Client(object):
-    def __init__(self, api_key=None, curve="SECP256K1"):
+    def __init__(self, api_key=None, curve="SECP256K1", max_file_size_in_mb=25):
         self.curve = curve
         self.public_key = None
         self.team_ecdh_key = None
@@ -38,6 +39,8 @@ class Client(object):
         self.ev_version = self.__base_64_remove_padding(
             base64.b64encode(bytes(VERSION[self.curve], "utf8")).decode("utf")
         )
+        self.max_file_size_in_mb = max_file_size_in_mb
+        self.max_file_size_in_bytes = max_file_size_in_mb * 1024 * 1024
 
     def encrypt_data(self, fetch, data):
         if data is None:
@@ -116,6 +119,10 @@ class Client(object):
         )
 
     def __encrypt_file(self, data):
+        if len(data) > self.max_file_size_in_bytes:
+            raise ExceededMaxFileSizeError(
+                f"File size must be less than {self.max_file_size_in_mb}MB"
+            )
         iv = token_bytes(12)
         aesgcm = AESGCM(self.shared_key)
 

@@ -75,3 +75,7 @@ class ForbiddenIPError(EvervaultError):
 
 class UnsupportedCurveError(EvervaultError):
     pass
+
+
+class ExceededMaxFileSizeError(EvervaultError):
+    pass

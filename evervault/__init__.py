@@ -20,6 +20,7 @@ RELAY_URL_DEFAULT = "https://relay.evervault.com:443"
 CA_HOST_DEFAULT = "https://ca.evervault.com"
 CAGES_CA_HOST_DEFAULT = "https://cages-ca.evervault.com"
 CAGES_HOST_DEFAULT = "cages.evervault.com"
+MAX_FILE_SIZE_IN_MB_DEFAULT = 25
 
 SUPPORTED_CURVES = ["SECP256K1", "SECP256R1"]
 
@@ -142,6 +143,9 @@ def __client():
         raise UnsupportedCurveError(f"The {_curve} curve is not supported.")
     global ev_client
     if not ev_client:
+        max_file_size_in_mb = int(
+            os.environ.get("EV_MAX_FILE_SIZE_IN_MB", MAX_FILE_SIZE_IN_MB_DEFAULT)
+        )
         ev_client = Client(
             api_key=_api_key,
             request_timeout=request_timeout,
@@ -151,6 +155,7 @@ def __client():
             ca_host=os.environ.get("EV_CERT_HOSTNAME", CA_HOST_DEFAULT),
             retry=_retry,
             curve=_curve,
+            max_file_size_in_mb=max_file_size_in_mb,
         )
         return ev_client
     else:

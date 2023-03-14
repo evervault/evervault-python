@@ -2,6 +2,7 @@ from evervault.errors.evervault_errors import (
     UnknownEncryptType,
     ForbiddenIPError,
     AuthenticationError,
+    ExceededMaxFileSizeError,
 )
 import unittest
 from evervault.http.outboundrelayconfig import RelayOutboundConfig
@@ -32,6 +33,7 @@ class TestEvervault(unittest.TestCase):
         self.__del_env_var("EV_CAGE_RUN_URL")
         self.__del_env_var("EV_TUNNEL_HOSTNAME")
         self.__del_env_var("EV_CERT_HOSTNAME")
+        self.__del_env_var("EV_MAX_FILE_SIZE_IN_MB")
 
     @requests_mock.Mocker()
     def test_encrypting_number_generates_ev_number_type(self, mock_request):
@@ -121,6 +123,31 @@ class TestEvervault(unittest.TestCase):
         self.mock_fetch_cage_key(mock_request)
 
         test_payload = bytearray(10)
+        encrypted_data = self.evervault.encrypt(test_payload)
+        assert self.__is_evervault_file(encrypted_data)
+
+        # Check that curve is set correctly
+        assert encrypted_data[6:7] == b"\00"
+
+        # Check that offset to data is set correctly
+        assert encrypted_data[7:9] == bytes([55, 00])
+
+    @requests_mock.Mocker()
+    def test_encrypt_large_files_throws_exception(self, mock_request):
+        self.mock_fetch_cage_key(mock_request)
+
+        test_payload = bytes(bytearray(26 * 1024 * 1024))
+        self.assertRaises(
+            ExceededMaxFileSizeError, self.evervault.encrypt, test_payload
+        )
+
+    @requests_mock.Mocker()
+    def test_encrypt_large_files_succeeds_with_max_size_override(self, mock_request):
+        os.environ["EV_MAX_FILE_SIZE_IN_MB"] = "30"
+        self.setUp()
+        self.mock_fetch_cage_key(mock_request)
+
+        test_payload = bytes(bytearray(26 * 1024 * 1024))
         encrypted_data = self.evervault.encrypt(test_payload)
         assert self.__is_evervault_file(encrypted_data)
 
