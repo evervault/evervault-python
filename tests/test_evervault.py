@@ -117,7 +117,7 @@ class TestEvervault(unittest.TestCase):
         assert encrypted_data[7:9] == bytes([55, 00])
 
     @requests_mock.Mocker()
-    def test_encrypt_files(self, mock_request):
+    def test_encrypt_files_with_bytearray(self, mock_request):
         self.mock_fetch_cage_key(mock_request)
 
         test_payload = bytearray(10)
