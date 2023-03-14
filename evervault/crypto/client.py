@@ -48,8 +48,10 @@ class Client(object):
         if self.shared_key is None or type(self.shared_key) != bytes:
             raise InvalidPublicKeyError("Provided EC compressed point is invalid")
 
-        if type(data) == bytes or type(data) == bytearray:
+        if type(data) == bytes:
             return self.__encrypt_file(data)
+        elif type(data) == bytearray:
+            return self.__encrypt_file(bytes(data))
         elif type(data) == dict or type(data) == list or type(data) == set:
             return self.__traverse_and_encrypt(data)
         elif self.__encryptable_data(data):
