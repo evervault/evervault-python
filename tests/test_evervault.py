@@ -117,6 +117,20 @@ class TestEvervault(unittest.TestCase):
         assert encrypted_data[7:9] == bytes([55, 00])
 
     @requests_mock.Mocker()
+    def test_encrypt_files(self, mock_request):
+        self.mock_fetch_cage_key(mock_request)
+
+        test_payload = bytearray(10)
+        encrypted_data = self.evervault.encrypt(test_payload)
+        assert self.__is_evervault_file(encrypted_data)
+
+        # Check that curve is set correctly
+        assert encrypted_data[6:7] == b"\00"
+
+        # Check that offset to data is set correctly
+        assert encrypted_data[7:9] == bytes([55, 00])
+
+    @requests_mock.Mocker()
     def test_encrypt_with_unsupported_type_throws_exception(self, mock_request):
         self.mock_fetch_cage_key(mock_request)
 
