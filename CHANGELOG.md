@@ -2,6 +2,13 @@
 
 <!--next-version-placeholder-->
 
+## v2.2.0 (2023-03-14)
+### Feature
+* Throw error on file size too large ([`c9ce0ce`](https://github.com/evervault/evervault-python/commit/c9ce0ce204c6705bfda1eb99ad1f24ae5d9707d1))
+
+### Fix
+* Allow encryption of bytearrays ([`1e43f52`](https://github.com/evervault/evervault-python/commit/1e43f52488a97a0b4e04635259de0e02ded2ab07))
+
 ## v2.1.1 (2023-02-21)
 ### Fix
 * **create_run_token:** Provide default value for data argument ([`6e9200b`](https://github.com/evervault/evervault-python/commit/6e9200b1daffa813d49c1f3045f585862597fbe8))
