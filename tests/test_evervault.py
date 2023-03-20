@@ -13,6 +13,7 @@ import evervault
 import os
 import requests
 import importlib
+import binascii
 
 
 class TestEvervault(unittest.TestCase):
@@ -111,10 +112,14 @@ class TestEvervault(unittest.TestCase):
         assert self.__is_evervault_file(encrypted_data)
 
         # Check that curve is set correctly
-        assert encrypted_data[6:7] == b"\00"
+        assert encrypted_data[6:7] == b"\02"
 
         # Check that offset to data is set correctly
         assert encrypted_data[7:9] == bytes([55, 00])
+
+        # Re-calculate the crc32 and ensure it matches
+        crc32 = binascii.crc32(encrypted_data[:-4])
+        assert encrypted_data[-4:] == crc32.to_bytes(4, byteorder="little")
 
     @requests_mock.Mocker()
     def test_encrypt_with_unsupported_type_throws_exception(self, mock_request):
@@ -371,10 +376,14 @@ class TestEvervault(unittest.TestCase):
         assert self.__is_evervault_file(encrypted_data)
 
         # Check that curve is set correctly
-        assert encrypted_data[6:7] == b"\01"
+        assert encrypted_data[6:7] == b"\03"
 
         # Check that offset to data is set correctly
         assert encrypted_data[7:9] == bytes([55, 00])
+
+        # Re-calculate the crc32 and ensure it matches
+        crc32 = binascii.crc32(encrypted_data[:-4])
+        assert encrypted_data[-4:] == crc32.to_bytes(4, byteorder="little")
 
     @requests_mock.Mocker()
     def test_p256_encrypt_with_unsupported_type_throws_exception(self, mock_request):
