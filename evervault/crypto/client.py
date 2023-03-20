@@ -176,11 +176,7 @@ class Client(object):
 
     def __fetch_cage_key(self, fetch):
         if self.team_ecdh_key is None:
-            # resp = fetch.get("cages/key")
-            resp = {
-                "ecdhKey": "Aw9aPPL6XhmvEXkM6Lb0A/mXLVEb5Vs5WeuHTtvQBAi7",
-                "ecdhP256Key": "Al1/Mo85D7t/XvC3I+YYpJvP+OsSyxIbSrhtDhg1SClQ",
-            }
+            resp = fetch.get("cages/key")
             key_name = "ecdhKey" if self.curve == "SECP256K1" else "ecdhP256Key"
             self.decoded_team_cage_key = base64.b64decode(resp[key_name])
             self.team_ecdh_key = EllipticCurvePublicKey.from_encoded_point(
