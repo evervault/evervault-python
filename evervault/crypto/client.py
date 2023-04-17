@@ -14,6 +14,7 @@ from cryptography.hazmat.primitives import hashes
 from secrets import token_bytes
 import base64
 import time
+import binascii
 from .version import VERSION
 from .curves.p256 import P256PublicKey
 
@@ -152,11 +153,11 @@ class Client(object):
 
     def __format_file(self, iv, public_key, encrypted_bytes):
         encrypted_file_identifier = bytes(b"\x25\x45\x56\x45\x4e\x43")
-        verion_number = bytes(b"\00") if self.curve == SECP256K1 else bytes(b"\01")
+        verion_number = bytes(b"\02") if self.curve == SECP256K1 else bytes(b"\03")
         offset_to_data = bytes([55, 00])
         flags = bytes(b"\00")
 
-        return (
+        file_bytes = (
             encrypted_file_identifier
             + verion_number
             + offset_to_data
@@ -165,6 +166,11 @@ class Client(object):
             + flags
             + bytes(encrypted_bytes)
         )
+
+        file_crc32 = binascii.crc32(file_bytes)
+        crc32_bytes = file_crc32.to_bytes(4, byteorder="little")
+
+        return file_bytes + crc32_bytes
 
     def __base_64_remove_padding(self, data):
         return data.rstrip("=")
