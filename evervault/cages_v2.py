@@ -38,15 +38,23 @@ class CageHTTPAdapter(requests.adapters.HTTPAdapter):
         return conn
 
     def add_attestation_check_to_conn_validation(self, conn, cage_name):
-        expected_pcrs = evervault_attestation_bindings.PCRs.empty()
+        expected_pcrs = []
         if cage_name in self.attestation_data:
             given_pcrs = self.attestation_data[cage_name]
-            expected_pcrs = evervault_attestation_bindings.PCRs(
-                given_pcrs.get("pcr_0"),
-                given_pcrs.get("pcr_1"),
-                given_pcrs.get("pcr_2"),
-                given_pcrs.get("pcr_8"),
-            )
+            # if the user only supplied a single set of PCRs, convert it to a list
+            if not isinstance(given_pcrs, list):
+                given_pcrs = [given_pcrs]
+
+            for pcrs in given_pcrs:
+                expected_pcrs.append(
+                    evervault_attestation_bindings.PCRs(
+                        pcrs.get("pcr_0"),
+                        pcrs.get("pcr_1"),
+                        pcrs.get("pcr_2"),
+                        pcrs.get("pcr_8"),
+                    )
+                )
+
         original_validate_conn = (
             urllib3.connectionpool.HTTPSConnectionPool._validate_conn
         )
