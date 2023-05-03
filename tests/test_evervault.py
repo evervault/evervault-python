@@ -132,7 +132,7 @@ class TestEvervault(unittest.TestCase):
         assert self.__is_evervault_file(encrypted_data)
 
         # Check that curve is set correctly
-        assert encrypted_data[6:7] == b"\00"
+        assert encrypted_data[6:7] == b"\02"
 
         # Check that offset to data is set correctly
         assert encrypted_data[7:9] == bytes([55, 00])
@@ -157,7 +157,7 @@ class TestEvervault(unittest.TestCase):
         assert self.__is_evervault_file(encrypted_data)
 
         # Check that curve is set correctly
-        assert encrypted_data[6:7] == b"\00"
+        assert encrypted_data[6:7] == b"\02"
 
         # Check that offset to data is set correctly
         assert encrypted_data[7:9] == bytes([55, 00])
