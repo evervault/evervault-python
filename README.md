@@ -138,9 +138,9 @@ evervault.enable_outbound_relay([decryption_domains = Array, debug_requests = Bo
 evervault.cage_requests_session([cage_attestation_data = dict])
 ```
 
-| Parameter             | Type   | Default | Description                                                                                                                                                                                          |
-| --------------------- | ------ | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| cage_attestation_data | `dict` | `None`  | Provide attestation measures to make assertions about the code running within your enclave. The `cage_attestation_data` dict is a mapping of cage names to their corresponding attestation measures. |
+| Parameter             | Type           | Default | Description                                                                                                                                                                                          |
+| --------------------- | -------------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| cage_attestation_data | `dict`, `list` | `None`  | Provide attestation measures to make assertions about the code running within your enclave. The `cage_attestation_data` dict is a mapping of cage names to their corresponding attestation measures. A list of dicts can also be used passed, if you want to allow roll-over between different sets of PCRs |
 
 ## Contributing
 
