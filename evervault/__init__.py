@@ -10,6 +10,7 @@ __version__ = "2.2.0"
 
 ev_client = None
 _api_key = None
+_app_uuid = None
 request_timeout = 30
 _retry = False
 _curve = None
@@ -32,6 +33,7 @@ class Curves(object):
 
 def init(
     api_key,
+    app_uuid,
     decryption_domains=[],
     intercept=False,
     ignore_domains=[],
@@ -41,10 +43,12 @@ def init(
     enable_outbound_relay=False,
 ):
     global _api_key
+    global _app_uuid
     global _retry
     global _curve
 
     _api_key = api_key
+    _app_uuid = app_uuid
     _retry = retry
     _curve = curve
 
@@ -137,7 +141,11 @@ def _warn_if_python_version_unsupported_for_async():
 def __client():
     if not _api_key:
         raise AuthenticationError(
-            "Your Team's API Key must be entered using evervault.init('<API-KEY>')"
+            "Your App's API Key must be entered using evervault.init('<API-KEY>', '<APP-UUID>')"
+        )
+    if not _app_uuid:
+        raise AuthenticationError(
+            "Your App's App UUID must be entered using evervault.init('<API-KEY>', '<APP-UUID>')"
         )
     if _curve not in SUPPORTED_CURVES:
         raise UnsupportedCurveError(f"The {_curve} curve is not supported.")
@@ -148,6 +156,7 @@ def __client():
         )
         ev_client = Client(
             api_key=_api_key,
+            app_uuid=_app_uuid,
             request_timeout=request_timeout,
             base_url=os.environ.get("EV_API_URL", BASE_URL_DEFAULT),
             base_run_url=os.environ.get("EV_CAGE_RUN_URL", BASE_RUN_URL_DEFAULT),

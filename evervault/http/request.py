@@ -4,6 +4,7 @@ import requests
 import certifi
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
+import base64
 
 retry_strategy = Retry(
     total=3,
@@ -15,10 +16,11 @@ adapter = HTTPAdapter(max_retries=retry_strategy)
 
 
 class Request(object):
-    def __init__(self, api_key, timeout=30, retry=False):
+    def __init__(self, api_key, app_uuid, timeout=30, retry=False):
         self.http_session = requests.Session()
         self.timeout = timeout
         self.api_key = api_key
+        self.app_uuid = app_uuid
         self.retry = retry
 
     def make_request(self, method, url, params=None, optional_headers={}, _is_ca=False):
@@ -50,12 +52,15 @@ class Request(object):
 
     def __build_headers(self, method, params, optional_headers, version):
         req_params = {}
+        auth_value = f"{self.app_uuid}:{self.api_key}"
+        encoded_auth_value_bytes = base64.b64encode(auth_value.encode("ascii"))
+        basic_auth_str = f"Basic {encoded_auth_value_bytes.decode('utf-8')}"
         headers = {
             "User-Agent": "evervault-python/" + version,
             "Accept-Encoding": "gzip, deflate",
             "Accept": "application/json",
             "Content-Type": "application/json",
-            "Api-Key": self.api_key,
+            "Authorization": basic_auth_str,
         }
         headers.update(optional_headers)
         if method in ("POST", "PUT", "DELETE"):

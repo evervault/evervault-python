@@ -24,7 +24,7 @@ class TestEvervault(unittest.TestCase):
         self.curve = curve
         importlib.reload(evervault)
         self.evervault = evervault
-        self.evervault.init("testing", curve=curve)
+        self.evervault.init("testing", "testAppUuid", curve=curve)
         self.public_key = self.build_keys()
 
     def tearDown(self):
@@ -182,7 +182,7 @@ class TestEvervault(unittest.TestCase):
         request = mock_request.post(
             "https://run.evervault.com/testing-cage",
             json={"result": "there was an attempt"},
-            request_headers={"Api-Key": "testing"},
+            request_headers={"Authorization": "Basic dGVzdEFwcFV1aWQ6dGVzdGluZw=="},
         )
         resp = self.evervault.run("testing-cage", {"name": "testing"})
         assert request.called
@@ -195,7 +195,7 @@ class TestEvervault(unittest.TestCase):
             "https://run.evervault.com/testing-cage",
             json={"status": "queued"},
             request_headers={
-                "Api-Key": "testing",
+                "Authorization": "Basic dGVzdEFwcFV1aWQ6dGVzdGluZw==",
                 "x-version-id": "2",
                 "x-async": "true",
             },
@@ -216,7 +216,7 @@ class TestEvervault(unittest.TestCase):
         request = mock_request.post(
             "https://run.evervault.com/testing-cage",
             json={"result": "there was an attempt"},
-            request_headers={"Api-Key": "testing"},
+            request_headers={"Authorization": "Basic dGVzdEFwcFV1aWQ6dGVzdGluZw=="},
         )
         resp = self.evervault.encrypt_and_run("testing-cage", {"name": "testing"})
         assert request.called
@@ -231,7 +231,7 @@ class TestEvervault(unittest.TestCase):
         request = mock_request.post(
             "https://run.evervault.com/testing-cage",
             json={"error": "An error occurred"},
-            request_headers={"Api-Key": "testing"},
+            request_headers={"Authorization": "Basic dGVzdEFwcFV1aWQ6dGVzdGluZw=="},
             headers={"x-evervault-error-code": "forbidden-ip-error"},
             status_code=403,
         )
@@ -250,7 +250,7 @@ class TestEvervault(unittest.TestCase):
         request = mock_request.post(
             "https://run.evervault.com/testing-cage",
             json={"error": "An error occurred"},
-            request_headers={"Api-Key": "testing"},
+            request_headers={"Authorization": "Basic dGVzdEFwcFV1aWQ6dGVzdGluZw=="},
             headers={},
             status_code=403,
         )
@@ -268,7 +268,7 @@ class TestEvervault(unittest.TestCase):
             "https://run.evervault.com/testing-cage",
             json={"status": "queued"},
             request_headers={
-                "Api-Key": "testing",
+                "Authorization": "Basic dGVzdEFwcFV1aWQ6dGVzdGluZw==",
                 "x-version-id": "2",
                 "x-async": "true",
             },
@@ -290,7 +290,7 @@ class TestEvervault(unittest.TestCase):
         mock_request.get("https://ca.url.com", {})
 
         # Test default values
-        self.evervault.init("testing", intercept=True)
+        self.evervault.init("testing", "testAppUuid", intercept=True)
         assert self.evervault.ev_client.base_url == "https://api.evervault.com/"
         assert self.evervault.ev_client.base_run_url == "https://run.evervault.com/"
         assert self.evervault.ev_client.relay_url == "https://relay.evervault.com:443"
@@ -304,7 +304,7 @@ class TestEvervault(unittest.TestCase):
 
         # Force client to reinit
         self.evervault.ev_client = None
-        self.evervault.init("testing")
+        self.evervault.init("testing", "testAppUuid")
 
         assert self.evervault.ev_client.base_url == "https://custom.url.com"
         assert self.evervault.ev_client.base_run_url == "https://custom.run.url.com"
@@ -316,7 +316,7 @@ class TestEvervault(unittest.TestCase):
         request = mock_request.post(
             "https://api.evervault.com/v2/functions/testing-cage/run-token",
             json={"result": "there was an attempt"},
-            request_headers={"Api-Key": "testing"},
+            request_headers={"Authorization": "Basic dGVzdEFwcFV1aWQ6dGVzdGluZw=="},
         )
         resp = self.evervault.create_run_token("testing-cage", {"name": "testing"})
         assert request.called
@@ -450,7 +450,7 @@ class TestEvervault(unittest.TestCase):
         request = mock_request.post(
             "https://run.evervault.com/testing-cage",
             json={"result": "there was an attempt"},
-            request_headers={"Api-Key": "testing"},
+            request_headers={"Authorization": "Basic dGVzdEFwcFV1aWQ6dGVzdGluZw=="},
         )
         resp = self.evervault.run("testing-cage", {"name": "testing"})
         assert request.called
@@ -465,7 +465,7 @@ class TestEvervault(unittest.TestCase):
             "https://run.evervault.com/testing-cage",
             json={"status": "queued"},
             request_headers={
-                "Api-Key": "testing",
+                "Authorization": "Basic dGVzdEFwcFV1aWQ6dGVzdGluZw==",
                 "x-version-id": "2",
                 "x-async": "true",
             },
@@ -488,7 +488,7 @@ class TestEvervault(unittest.TestCase):
         request = mock_request.post(
             "https://run.evervault.com/testing-cage",
             json={"result": "there was an attempt"},
-            request_headers={"Api-Key": "testing"},
+            request_headers={"Authorization": "Basic dGVzdEFwcFV1aWQ6dGVzdGluZw=="},
         )
         resp = self.evervault.encrypt_and_run("testing-cage", {"name": "testing"})
         assert request.called
@@ -504,7 +504,7 @@ class TestEvervault(unittest.TestCase):
             "https://run.evervault.com/testing-cage",
             json={"status": "queued"},
             request_headers={
-                "Api-Key": "testing",
+                "Authorization": "Basic dGVzdEFwcFV1aWQ6dGVzdGluZw==",
                 "x-version-id": "2",
                 "x-async": "true",
             },
@@ -524,7 +524,7 @@ class TestEvervault(unittest.TestCase):
     def test_run_with_intercept_domain(self, mock_request):
         self.__mock_cert(mock_request)
 
-        evervault.init("testing", intercept=True)
+        evervault.init("testing", "testAppUuid", intercept=True)
 
         request = mock_request.get("https://test2.com/hello")
         requests.get("https://test2.com/hello")
@@ -537,7 +537,7 @@ class TestEvervault(unittest.TestCase):
         self.__mock_cert(mock_request)
 
         request = mock_request.get("https://run.evervault.com/hello")
-        evervault.init("testing", intercept=True)
+        evervault.init("testing", "testAppUuid", intercept=True)
 
         requests.get("https://run.evervault.com/hello")
 
@@ -551,7 +551,7 @@ class TestEvervault(unittest.TestCase):
     def test_run_with_decryption_domain_constructor(self, mock_request):
         self.__mock_cert(mock_request)
 
-        evervault.init("testing", decryption_domains=["test2.com"])
+        evervault.init("testing", "testAppUuid", decryption_domains=["test2.com"])
 
         request = mock_request.get("https://test2.com/hello")
         requests.get("https://test2.com/hello")
@@ -563,7 +563,7 @@ class TestEvervault(unittest.TestCase):
     def test_run_with_decryption_domain(self, mock_request):
         self.__mock_cert(mock_request)
 
-        evervault.init("testing")
+        evervault.init("testing", "testAppUuid")
         evervault.enable_outbound_relay(decryption_domains=["test2.com"])
 
         request = mock_request.get("https://test2.com/hello")
@@ -576,7 +576,7 @@ class TestEvervault(unittest.TestCase):
     def test_run_with_wildcard_decryption_domain(self, mock_request):
         self.__mock_cert(mock_request)
 
-        evervault.init("testing", decryption_domains=["*.test2.com"])
+        evervault.init("testing", "testAppUuid", decryption_domains=["*.test2.com"])
 
         request = mock_request.get("https://test.test2.com/hello")
         requests.get("https://test.test2.com/hello")
@@ -590,7 +590,7 @@ class TestEvervault(unittest.TestCase):
     ):
         self.__mock_cert(mock_request)
 
-        evervault.init("testing", decryption_domains=["test-other.com"])
+        evervault.init("testing", "testAppUuid", decryption_domains=["test-other.com"])
 
         request = mock_request.get("https://www.test2.com/hello")
         requests.get("https://www.test2.com/hello")
@@ -607,7 +607,7 @@ class TestEvervault(unittest.TestCase):
     ):
         self.__mock_cert(mock_request)
 
-        evervault.init("testing")
+        evervault.init("testing", "testAppUuid")
         evervault.enable_outbound_relay(decryption_domains=["test-other.com"])
 
         request = mock_request.get("https://www.test2.com/hello")
@@ -624,7 +624,7 @@ class TestEvervault(unittest.TestCase):
         self.__mock_cert(mock_request)
 
         request = mock_request.get("https://testing.com/hello")
-        evervault.init("testing", intercept=True)
+        evervault.init("testing", "testAppUuid", intercept=True)
 
         requests.get("https://testing.com/hello")
 
@@ -638,7 +638,7 @@ class TestEvervault(unittest.TestCase):
         self.__mock_relay_outbound_config(mock_request)
 
         request = mock_request.get("https://test-one.destinations.com/hello")
-        evervault.init("testing", enable_outbound_relay=True)
+        evervault.init("testing", "testAppUuid", enable_outbound_relay=True)
         requests.get("https://test-one.destinations.com/hello")
 
         assert request.last_request.headers["Proxy-Authorization"] == "testing"
@@ -650,7 +650,7 @@ class TestEvervault(unittest.TestCase):
         self.__mock_relay_outbound_config(mock_request)
 
         request = mock_request.get("https://test-one.destinations.com/hello")
-        evervault.init("testing")
+        evervault.init("testing", "testAppUuid")
         evervault.enable_outbound_relay()
         requests.get("https://test-one.destinations.com/hello")
 
@@ -714,7 +714,7 @@ class TestEvervault(unittest.TestCase):
         if self.evervault.ev_client.cert.relay_outbound_config is not None:
             self.evervault.ev_client.cert.relay_outbound_config.clear_cache()
         self.evervault.ev_client = None
-        self.evervault.init("testing")
+        self.evervault.init("testing", "testAppUuid")
         RelayOutboundConfig.clear_cache()
         RelayOutboundConfig.disable_polling()
 
