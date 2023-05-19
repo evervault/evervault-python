@@ -61,6 +61,7 @@ class Request(object):
             "Accept": "application/json",
             "Content-Type": "application/json",
             "Authorization": basic_auth_str,
+            "Api-Key": self.api_key,
         }
         headers.update(optional_headers)
         if method in ("POST", "PUT", "DELETE"):

@@ -182,7 +182,10 @@ class TestEvervault(unittest.TestCase):
         request = mock_request.post(
             "https://run.evervault.com/testing-cage",
             json={"result": "there was an attempt"},
-            request_headers={"Authorization": "Basic dGVzdEFwcFV1aWQ6dGVzdGluZw=="},
+            request_headers={
+                "Authorization": "Basic dGVzdEFwcFV1aWQ6dGVzdGluZw==",
+                "Api-Key": "testing",
+            },
         )
         resp = self.evervault.run("testing-cage", {"name": "testing"})
         assert request.called
@@ -196,6 +199,7 @@ class TestEvervault(unittest.TestCase):
             json={"status": "queued"},
             request_headers={
                 "Authorization": "Basic dGVzdEFwcFV1aWQ6dGVzdGluZw==",
+                "Api-Key": "testing",
                 "x-version-id": "2",
                 "x-async": "true",
             },
@@ -216,7 +220,10 @@ class TestEvervault(unittest.TestCase):
         request = mock_request.post(
             "https://run.evervault.com/testing-cage",
             json={"result": "there was an attempt"},
-            request_headers={"Authorization": "Basic dGVzdEFwcFV1aWQ6dGVzdGluZw=="},
+            request_headers={
+                "Authorization": "Basic dGVzdEFwcFV1aWQ6dGVzdGluZw==",
+                "Api-Key": "testing",
+            },
         )
         resp = self.evervault.encrypt_and_run("testing-cage", {"name": "testing"})
         assert request.called
@@ -231,7 +238,10 @@ class TestEvervault(unittest.TestCase):
         request = mock_request.post(
             "https://run.evervault.com/testing-cage",
             json={"error": "An error occurred"},
-            request_headers={"Authorization": "Basic dGVzdEFwcFV1aWQ6dGVzdGluZw=="},
+            request_headers={
+                "Authorization": "Basic dGVzdEFwcFV1aWQ6dGVzdGluZw==",
+                "Api-Key": "testing",
+            },
             headers={"x-evervault-error-code": "forbidden-ip-error"},
             status_code=403,
         )
@@ -250,7 +260,10 @@ class TestEvervault(unittest.TestCase):
         request = mock_request.post(
             "https://run.evervault.com/testing-cage",
             json={"error": "An error occurred"},
-            request_headers={"Authorization": "Basic dGVzdEFwcFV1aWQ6dGVzdGluZw=="},
+            request_headers={
+                "Authorization": "Basic dGVzdEFwcFV1aWQ6dGVzdGluZw==",
+                "Api-Key": "testing",
+            },
             headers={},
             status_code=403,
         )
@@ -269,6 +282,7 @@ class TestEvervault(unittest.TestCase):
             json={"status": "queued"},
             request_headers={
                 "Authorization": "Basic dGVzdEFwcFV1aWQ6dGVzdGluZw==",
+                "Api-Key": "testing",
                 "x-version-id": "2",
                 "x-async": "true",
             },
@@ -316,7 +330,10 @@ class TestEvervault(unittest.TestCase):
         request = mock_request.post(
             "https://api.evervault.com/v2/functions/testing-cage/run-token",
             json={"result": "there was an attempt"},
-            request_headers={"Authorization": "Basic dGVzdEFwcFV1aWQ6dGVzdGluZw=="},
+            request_headers={
+                "Authorization": "Basic dGVzdEFwcFV1aWQ6dGVzdGluZw==",
+                "Api-Key": "testing",
+            },
         )
         resp = self.evervault.create_run_token("testing-cage", {"name": "testing"})
         assert request.called
@@ -450,7 +467,10 @@ class TestEvervault(unittest.TestCase):
         request = mock_request.post(
             "https://run.evervault.com/testing-cage",
             json={"result": "there was an attempt"},
-            request_headers={"Authorization": "Basic dGVzdEFwcFV1aWQ6dGVzdGluZw=="},
+            request_headers={
+                "Authorization": "Basic dGVzdEFwcFV1aWQ6dGVzdGluZw==",
+                "Api-Key": "testing",
+            },
         )
         resp = self.evervault.run("testing-cage", {"name": "testing"})
         assert request.called
@@ -466,6 +486,7 @@ class TestEvervault(unittest.TestCase):
             json={"status": "queued"},
             request_headers={
                 "Authorization": "Basic dGVzdEFwcFV1aWQ6dGVzdGluZw==",
+                "Api-Key": "testing",
                 "x-version-id": "2",
                 "x-async": "true",
             },
@@ -488,7 +509,10 @@ class TestEvervault(unittest.TestCase):
         request = mock_request.post(
             "https://run.evervault.com/testing-cage",
             json={"result": "there was an attempt"},
-            request_headers={"Authorization": "Basic dGVzdEFwcFV1aWQ6dGVzdGluZw=="},
+            request_headers={
+                "Authorization": "Basic dGVzdEFwcFV1aWQ6dGVzdGluZw==",
+                "Api-Key": "testing",
+            },
         )
         resp = self.evervault.encrypt_and_run("testing-cage", {"name": "testing"})
         assert request.called
@@ -505,6 +529,7 @@ class TestEvervault(unittest.TestCase):
             json={"status": "queued"},
             request_headers={
                 "Authorization": "Basic dGVzdEFwcFV1aWQ6dGVzdGluZw==",
+                "Api-Key": "testing",
                 "x-version-id": "2",
                 "x-async": "true",
             },
