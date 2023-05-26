@@ -80,6 +80,8 @@ def init(
 def run(function_name, data, options={"async": False, "version": None}):
     return __client().run(function_name, data, options)
 
+def decrypt(data, options={"async": False}):
+    return __client().decrypt(data, options)
 
 def encrypt(data):
     return __client().encrypt(data)

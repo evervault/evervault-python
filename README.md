@@ -33,14 +33,17 @@ To make Evervault available for use in your app:
 ```python
 import evervault
 
-# Initialize the client with your team’s API key
-evervault.init("<YOUR_API_KEY>")
+# Initialize the client with your App’s API key and App's UUID
+evervault.init("<YOUR_API_KEY>", "<APP_ID>")
 
 # Encrypt your data
 encrypted = evervault.encrypt({ "name": "Claude" })
 
 # Process the encrypted data in a Function
 result = evervault.run("<YOUR_FUNCTION_NAME>", encrypted)
+
+# Decrypt data
+result = evervault.decrypt(encrypted)
 
 # Send the decrypted data to a third-party API
 evervault.enable_outbound_relay()
@@ -61,12 +64,13 @@ The Evervault Python SDK exposes five functions.
 `evervault.init()` initializes the SDK with your API key. Configurations for the interception of outbound requests may also be passed in this function.
 
 ```python
-evervault.init(api_key = str[, decryption_domains=[], retry = bool, curve = str])
+evervault.init(api_key = str, app_uuid = str[, decryption_domains=[], retry = bool, curve = str])
 ```
 
 | Parameter | Type  | Description                                                                                                                                                    |
 | --------- | ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| api_key   | `str` | The API key of your Evervault Team                                                                                                                             |
+| api_key   | `str` | The API key of your Evervault App                                                                                                                             |
+| app_uuid   | `str` | The UUID of your Evervault App                                                                                                                             |
 | curve     | `str` | The elliptic curve used for cryptographic operations. See [Elliptic Curve Support](https://docs.evervault.com/reference/elliptic-curve-support) to learn more. |
 
 ### evervault.encrypt()
@@ -80,6 +84,18 @@ evervault.encrypt(data = dict | list | set | str | int | bool)
 | Parameter | Type                                        | Description          |
 | --------- | ------------------------------------------- | -------------------- |
 | data      | `dict`, `list`, `set`, `str`, `int`, `bool` | Data to be encrypted |
+
+### evervault.decrypt()
+
+`evervault.decerypt()` decrypts the data previously encrypted with the `encrypt()` function or through Relay.
+
+```python
+evervault.decrypt(data = dict | str | bytes | bytearray)
+```
+
+| Parameter | Type                                | Description          |
+| --------- | ----------------------------------- |--------------------- |
+| data      | `dict`, `str`, `bytes`, `bytearray` | Data to be decrypted |
 
 ### evervault.run()
 

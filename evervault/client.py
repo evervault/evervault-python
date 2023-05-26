@@ -5,6 +5,10 @@ from .crypto.client import Client as CryptoClient
 from .models.cage_list import CageList
 from .datatypes.map import ensure_is_integer
 from .services.timeservice import TimeService
+from .errors.evervault_errors import (
+    UndefinedDataError,
+    DecryptionError
+)
 
 
 class Client(object):
@@ -43,6 +47,14 @@ class Client(object):
 
     def encrypt(self, data):
         return self.crypto_client.encrypt_data(self, data)
+
+    def decrypt(self, data, options={"async": False}):
+        if data is None:
+            raise UndefinedDataError("Data is not defined")
+        elif type(data) != bytes and type(data) != dict:
+            raise DecryptionError("data must be of type `dict` or `bytes`")
+        headers = self.__build_decrypt_headers(type(data), options)
+        return self.post("decrypt", data, headers, False)
 
     def run(self, cage_name, data, options={"async": False, "version": None}):
         optional_headers = self.__build_cage_run_headers(options)
@@ -92,6 +104,21 @@ class Client(object):
 
     def delete(self, path, params):
         return self.request_handler.delete(path, params).parsed_body
+
+    def __build_decrypt_headers(self, data_type, options):
+        headers = {}
+        headers["Content-Type"] = "application/json"
+        if data_type == bytes:
+            headers["Content-Type"] = "application/octet-stream"
+        
+        if options is None:
+            return headers
+
+        if "async" in options:
+            if options["async"]:
+                headers["x-async"] = "true"
+            options.pop("async", None)
+        return headers
 
     def __build_cage_run_headers(self, options):
         if options is None:

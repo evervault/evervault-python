@@ -178,6 +178,40 @@ class TestEvervault(unittest.TestCase):
         self.assertRaises(UnknownEncryptType, self.evervault.encrypt, level_2_list)
 
     @requests_mock.Mocker()
+    def test_decrypt(self, mock_request):
+        request = mock_request.post(
+            "https://api.evervault.com/decrypt",
+            json={"encrypted": "testString"},
+            request_headers={
+                "Authorization": "Basic dGVzdEFwcFV1aWQ6dGVzdGluZw==",
+                "Api-Key": "testing",
+                "Content-Type": "application/json"
+            },
+        )
+        resp = self.evervault.decrypt({"encrypted": "ev:abc123"})
+        assert request.called
+        assert resp["encrypted"] == "testString"
+        assert request.last_request.json() == {"encrypted": "ev:abc123"}
+
+    @requests_mock.Mocker()
+    def test_decrypt_with_options(self, mock_request):
+        request = mock_request.post(
+            "https://api.evervault.com/decrypt",
+            json={"status": "queued"},
+            request_headers={
+                "Authorization": "Basic dGVzdEFwcFV1aWQ6dGVzdGluZw==",
+                "Api-Key": "testing",
+                "Content-Type": "application/json",
+                "x-async": "true"
+            },
+        )
+        resp = self.evervault.decrypt({"encrypted": "ev:abc123"}, options={"async": True})
+        assert request.called
+        assert resp["status"] == "queued"
+        assert request.last_request.json() == {"encrypted": "ev:abc123"}
+        assert request.last_request.headers["x-async"] == "true"
+
+    @requests_mock.Mocker()
     def test_run(self, mock_request):
         request = mock_request.post(
             "https://run.evervault.com/testing-cage",
