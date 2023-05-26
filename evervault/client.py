@@ -5,10 +5,7 @@ from .crypto.client import Client as CryptoClient
 from .models.cage_list import CageList
 from .datatypes.map import ensure_is_integer
 from .services.timeservice import TimeService
-from .errors.evervault_errors import (
-    UndefinedDataError,
-    DecryptionError
-)
+from .errors.evervault_errors import UndefinedDataError, DecryptionError
 
 
 class Client(object):
@@ -110,7 +107,7 @@ class Client(object):
         headers["Content-Type"] = "application/json"
         if data_type == bytes:
             headers["Content-Type"] = "application/octet-stream"
-        
+
         if options is None:
             return headers
 

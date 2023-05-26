@@ -185,7 +185,7 @@ class TestEvervault(unittest.TestCase):
             request_headers={
                 "Authorization": "Basic dGVzdEFwcFV1aWQ6dGVzdGluZw==",
                 "Api-Key": "testing",
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
             },
         )
         resp = self.evervault.decrypt({"encrypted": "ev:abc123"})
@@ -202,10 +202,12 @@ class TestEvervault(unittest.TestCase):
                 "Authorization": "Basic dGVzdEFwcFV1aWQ6dGVzdGluZw==",
                 "Api-Key": "testing",
                 "Content-Type": "application/json",
-                "x-async": "true"
+                "x-async": "true",
             },
         )
-        resp = self.evervault.decrypt({"encrypted": "ev:abc123"}, options={"async": True})
+        resp = self.evervault.decrypt(
+            {"encrypted": "ev:abc123"}, options={"async": True}
+        )
         assert request.called
         assert resp["status"] == "queued"
         assert request.last_request.json() == {"encrypted": "ev:abc123"}
