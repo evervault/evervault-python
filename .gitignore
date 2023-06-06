@@ -13,7 +13,5 @@ dist/
 # Ignore Interpreted Python
 *.pyc
 
-poetry.lock
-
 # Vitual Environment
 venv/
