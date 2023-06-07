@@ -23,7 +23,7 @@ pytest-socket = "^0.4.1"
 requests-mock = "^1.9.3"
 python-semantic-release = "^7.19.2"
 flake8 = "^3.9.2"
-black = "^21.8b0"
+black = "^22.3.0"
 
 [pytest]
 testpath = "tests"
