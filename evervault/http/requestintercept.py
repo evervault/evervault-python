@@ -14,13 +14,12 @@ EVERVAULT_DOMAINS = ["evervault.com", "evervault.io", "evervault.test"]
 old_request_func = requests.Session.request
 
 
-def is_ignore_domain(domain, decryption_domains, always_ignore_domains):
+def is_ignore_domain(domain, decryption_domain_regexes, always_ignore_domains):
     if domain in always_ignore_domains:
         return False
     return any(
-        domain == decryption_domain
-        or (decryption_domain[0] == "*" and domain.endswith(decryption_domain[1:]))
-        for decryption_domain in decryption_domains
+        decryption_domain_regex.match(domain)
+        for decryption_domain_regex in decryption_domain_regexes
     )
 
 
@@ -73,8 +72,12 @@ class RequestIntercept(object):
     def setup_decryption_domains(self, decryption_domains, debug_requests=False):
         self.debug_requests = debug_requests
         always_ignore_domains = self.get_always_ignore_domains()
+        decryption_domain_regexes = [
+            RelayOutboundConfig.build_domain_regex_from_pattern(domain)
+            for domain in decryption_domains
+        ]
         self.should_proxy_domain = lambda host: is_ignore_domain(
-            host, decryption_domains, always_ignore_domains
+            host, decryption_domain_regexes, always_ignore_domains
         )
 
     def setup_ignore_domains(self, ignore_domains, debug_requests=False):
@@ -98,7 +101,9 @@ class RequestIntercept(object):
         RelayOutboundConfig.init(self.request, self.base_url, self.debug_requests)
         always_ignore_domains = self.get_always_ignore_domains()
         self.should_proxy_domain = lambda host: is_ignore_domain(
-            host, RelayOutboundConfig.get_decryption_domains(), always_ignore_domains
+            host,
+            RelayOutboundConfig.get_decryption_domain_regexes(),
+            always_ignore_domains,
         )
 
     def setup_aiohttp(self, client_session):

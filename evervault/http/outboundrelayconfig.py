@@ -1,4 +1,5 @@
 import logging
+import re
 from evervault.threading.repeatedtimer import RepeatedTimer
 
 DEFAULT_POLL_INTERVAL = 5
@@ -7,11 +8,11 @@ logger = logging.getLogger(__name__)
 
 
 class RelayOutboundConfig:
-
     request = None
     base_url = None
     debug_requests = False
     config_cache = None
+    destination_domain_regex_cache = None
     repeated_timer = None
     poll_interval = None
 
@@ -30,8 +31,22 @@ class RelayOutboundConfig:
                 RelayOutboundConfig.__get_relay_outbound_config,
             )
 
+    def build_domain_regex_from_pattern(pattern: str) -> re.Pattern:
+        # Replace globstars with their new equivalent
+        pattern = re.sub(r"(?<!\*)\*\*+\.", r"*", pattern)
+        # Escape dots
+        pattern = re.sub(r"\.", r"\.", pattern)
+        # Turn stars into regexes
+        pattern = re.sub(r"(?<!\*)\*+", r".*", pattern)
+        # Convert *domain patterns to match subdomains and the domain itself
+        pattern = re.sub(r"(\.\*)([^\\*.])", r"\1(^|\\.)\2", pattern)
+        return re.compile(f"^{pattern}$", flags=re.IGNORECASE)
+
     def get_decryption_domains() -> list:
         return RelayOutboundConfig.config_cache
+
+    def get_decryption_domain_regexes() -> list:
+        return RelayOutboundConfig.destination_domain_regex_cache
 
     def get_poll_interval() -> list:
         return RelayOutboundConfig.repeated_timer.get_interval()
@@ -60,5 +75,11 @@ class RelayOutboundConfig:
             map(
                 lambda destination: destination["destinationDomain"],
                 res.parsed_body["outboundDestinations"].values(),
+            )
+        )
+        RelayOutboundConfig.destination_domain_regex_cache = list(
+            map(
+                RelayOutboundConfig.build_domain_regex_from_pattern,
+                RelayOutboundConfig.config_cache,
             )
         )

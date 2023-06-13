@@ -533,6 +533,62 @@ class TestEvervault(unittest.TestCase):
         self.__reinit_client()
 
     @requests_mock.Mocker()
+    def test_run_with_wildard_for_domain_and_subdomains_to_match_self(
+        self, mock_request
+    ):
+        self.__mock_cert(mock_request)
+
+        evervault.init("testing", intercept=True, decryption_domains=["*example.com"])
+
+        request = mock_request.get("https://example.com/hello")
+        requests.get("https://example.com/hello")
+        assert request.last_request.headers["Proxy-Authorization"] == "testing"
+
+        self.__reinit_client()
+
+    @requests_mock.Mocker()
+    def test_run_with_wildcard_for_domain_and_subdomains_to_match_subdomain(
+        self, mock_request
+    ):
+        self.__mock_cert(mock_request)
+
+        evervault.init("testing", intercept=True, decryption_domains=["*example.com"])
+
+        request = mock_request.get("https://test.example.com/hello")
+        requests.get("https://test.example.com/hello")
+        assert request.last_request.headers["Proxy-Authorization"] == "testing"
+
+        self.__reinit_client()
+
+    @requests_mock.Mocker()
+    def test_run_with_wildcard_for_domain_and_subdomains_to_ignore_malicious_domain(
+        self, mock_request
+    ):
+        self.__mock_cert(mock_request)
+
+        evervault.init("testing", intercept=True, decryption_domains=["*example.com"])
+
+        request = mock_request.get("https://malicious_example.com/hello")
+        requests.get("https://malicious_example.com/hello")
+        self.assertRaises(
+            KeyError, lambda: request.last_request.headers["Proxy-Authorization"]
+        )
+
+        self.__reinit_client()
+
+    @requests_mock.Mocker()
+    def test_run_with_mixed_case_intercept_domain(self, mock_request):
+        self.__mock_cert(mock_request)
+
+        evervault.init("testing", intercept=True)
+
+        request = mock_request.get("https://tEsT2.COM/hello")
+        requests.get("https://test2.com/hello")
+        assert request.last_request.headers["Proxy-Authorization"] == "testing"
+
+        self.__reinit_client()
+
+    @requests_mock.Mocker()
     def test_run_with_intercept_cage_domain_ignored(self, mock_request):
         self.__mock_cert(mock_request)
 
