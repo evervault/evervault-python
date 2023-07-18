@@ -45,7 +45,8 @@ class Request(object):
             error_handler.raise_errors_on_failure(resp, resp.content)
             return resp
         else:
-            parsed_body = self.__parse_body(resp, req_params)
+            should_parse = req_params["headers"] and req_params["headers"]["Content-Type"] != "application/octet-stream"
+            parsed_body = self.__parse_body(resp, should_parse)
             error_handler.raise_errors_on_failure(resp, parsed_body)
             resp.parsed_body = parsed_body
             return resp
@@ -86,12 +87,12 @@ class Request(object):
             **req_params,
         )
 
-    def __parse_body(self, resp, req_params=None):
+    def __parse_body(self, resp, should_parse=True):
         if resp.content and resp.content.strip():
             try:
                 decoded_body = resp.content.decode(
                     resp.encoding or resp.apparent_encoding
                 )
-                return decoded_body if req_params and req_params["headers"]["Content-Type"] == "application/octet-stream" else json.loads(decoded_body)
+                return json.loads(decoded_body) if should_parse else decoded_body
             except ValueError:
                 error_handler.raise_errors_on_failure(resp)
