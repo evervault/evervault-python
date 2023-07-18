@@ -45,7 +45,7 @@ class Request(object):
             error_handler.raise_errors_on_failure(resp, resp.content)
             return resp
         else:
-            parsed_body = self.__parse_body(resp)
+            parsed_body = self.__parse_body(resp, req_params)
             error_handler.raise_errors_on_failure(resp, parsed_body)
             resp.parsed_body = parsed_body
             return resp
@@ -65,7 +65,11 @@ class Request(object):
         }
         headers.update(optional_headers)
         if method in ("POST", "PUT", "DELETE"):
-            req_params["data"] = json.dumps(params, cls=json.JSONEncoder)
+            if type(params) == bytes:
+                req_params["data"] = params
+            else:
+                req_params["data"] = json.dumps(params, cls=json.JSONEncoder)
+
         elif method == "GET":
             req_params["params"] = params
 
@@ -82,12 +86,12 @@ class Request(object):
             **req_params,
         )
 
-    def __parse_body(self, resp):
+    def __parse_body(self, resp, req_params=None):
         if resp.content and resp.content.strip():
             try:
                 decoded_body = resp.content.decode(
                     resp.encoding or resp.apparent_encoding
                 )
-                return json.loads(decoded_body)
+                return decoded_body if req_params and req_params["headers"]["Content-Type"] == "application/octet-stream" else json.loads(decoded_body)
             except ValueError:
                 error_handler.raise_errors_on_failure(resp)
