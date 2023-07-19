@@ -36,7 +36,9 @@ class Request(object):
         """
         from evervault import __version__
 
-        req_params = self.__build_headers(method, params, url, optional_headers, __version__)
+        req_params = self.__build_headers(
+            method, params, url, optional_headers, __version__
+        )
 
         request_object = requests if self.http_session is None else self.http_session
         if self.retry:
@@ -58,7 +60,7 @@ class Request(object):
 
     def __build_headers(self, method, params, url, optional_headers, version):
         req_params = {}
-        
+
         headers = {
             "User-Agent": "evervault-python/" + version,
             "Accept-Encoding": "gzip, deflate",
@@ -74,7 +76,7 @@ class Request(object):
             headers["Authorization"] = basic_auth_str
         else:
             headers["Api-Key"] = self.api_key
-             
+
         headers.update(optional_headers)
         if method in ("POST", "PUT", "DELETE"):
             if type(params) == bytes:
