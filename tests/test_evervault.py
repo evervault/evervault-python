@@ -184,7 +184,6 @@ class TestEvervault(unittest.TestCase):
             json={"encrypted": "testString"},
             request_headers={
                 "Authorization": "Basic dGVzdEFwcFV1aWQ6dGVzdGluZw==",
-                "Api-Key": "testing",
                 "Content-Type": "application/json",
             },
         )
@@ -200,7 +199,6 @@ class TestEvervault(unittest.TestCase):
             json={"status": "queued"},
             request_headers={
                 "Authorization": "Basic dGVzdEFwcFV1aWQ6dGVzdGluZw==",
-                "Api-Key": "testing",
                 "Content-Type": "application/json",
                 "x-async": "true",
             },
@@ -219,7 +217,6 @@ class TestEvervault(unittest.TestCase):
             "https://run.evervault.com/testing-cage",
             json={"result": "there was an attempt"},
             request_headers={
-                "Authorization": "Basic dGVzdEFwcFV1aWQ6dGVzdGluZw==",
                 "Api-Key": "testing",
             },
         )
@@ -234,7 +231,6 @@ class TestEvervault(unittest.TestCase):
             "https://run.evervault.com/testing-cage",
             json={"status": "queued"},
             request_headers={
-                "Authorization": "Basic dGVzdEFwcFV1aWQ6dGVzdGluZw==",
                 "Api-Key": "testing",
                 "x-version-id": "2",
                 "x-async": "true",
@@ -257,7 +253,6 @@ class TestEvervault(unittest.TestCase):
             "https://run.evervault.com/testing-cage",
             json={"result": "there was an attempt"},
             request_headers={
-                "Authorization": "Basic dGVzdEFwcFV1aWQ6dGVzdGluZw==",
                 "Api-Key": "testing",
             },
         )
@@ -275,7 +270,6 @@ class TestEvervault(unittest.TestCase):
             "https://run.evervault.com/testing-cage",
             json={"error": "An error occurred"},
             request_headers={
-                "Authorization": "Basic dGVzdEFwcFV1aWQ6dGVzdGluZw==",
                 "Api-Key": "testing",
             },
             headers={"x-evervault-error-code": "forbidden-ip-error"},
@@ -297,7 +291,6 @@ class TestEvervault(unittest.TestCase):
             "https://run.evervault.com/testing-cage",
             json={"error": "An error occurred"},
             request_headers={
-                "Authorization": "Basic dGVzdEFwcFV1aWQ6dGVzdGluZw==",
                 "Api-Key": "testing",
             },
             headers={},
@@ -317,7 +310,6 @@ class TestEvervault(unittest.TestCase):
             "https://run.evervault.com/testing-cage",
             json={"status": "queued"},
             request_headers={
-                "Authorization": "Basic dGVzdEFwcFV1aWQ6dGVzdGluZw==",
                 "Api-Key": "testing",
                 "x-version-id": "2",
                 "x-async": "true",
@@ -564,7 +556,6 @@ class TestEvervault(unittest.TestCase):
             "https://run.evervault.com/testing-cage",
             json={"status": "queued"},
             request_headers={
-                "Authorization": "Basic dGVzdEFwcFV1aWQ6dGVzdGluZw==",
                 "Api-Key": "testing",
                 "x-version-id": "2",
                 "x-async": "true",
