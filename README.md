@@ -64,13 +64,13 @@ The Evervault Python SDK exposes five functions.
 `evervault.init()` initializes the SDK with your API key. Configurations for the interception of outbound requests may also be passed in this function.
 
 ```python
-evervault.init(api_key = str, app_uuid = str[, decryption_domains=[], retry = bool, curve = str])
+evervault.init(app_uuid = str, api_key = str[, decryption_domains=[], retry = bool, curve = str])
 ```
 
 | Parameter | Type  | Description                                                                                                                                                    |
 | --------- | ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| api_key   | `str` | The API key of your Evervault App                                                                                                                             |
-| app_uuid   | `str` | The ID of your Evervault App                                                                                                                             |
+| app_uuid   | `str` | The ID of your Evervault App |
+| api_key   | `str` | The API key of your Evervault App |
 | curve     | `str` | The elliptic curve used for cryptographic operations. See [Elliptic Curve Support](https://docs.evervault.com/reference/elliptic-curve-support) to learn more. |
 
 ### evervault.encrypt()

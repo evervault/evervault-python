@@ -9,8 +9,8 @@ from warnings import warn
 __version__ = "2.2.0"
 
 ev_client = None
-_api_key = None
 _app_uuid = None
+_api_key = None
 request_timeout = 30
 _retry = False
 _curve = None
@@ -32,8 +32,8 @@ class Curves(object):
 
 
 def init(
-    api_key,
     app_uuid,
+    api_key,
     decryption_domains=[],
     intercept=False,
     ignore_domains=[],
@@ -42,13 +42,13 @@ def init(
     debug_requests=False,
     enable_outbound_relay=False,
 ):
-    global _api_key
     global _app_uuid
+    global _api_key
     global _retry
     global _curve
 
-    _api_key = api_key
     _app_uuid = app_uuid
+    _api_key = api_key
     _retry = retry
     _curve = curve
 
@@ -143,13 +143,13 @@ def _warn_if_python_version_unsupported_for_async():
 
 
 def __client():
-    if not _api_key:
-        raise AuthenticationError(
-            "Your App's API Key must be entered using evervault.init('<API-KEY>', '<APP-UUID>')"
-        )
     if not _app_uuid:
         raise AuthenticationError(
             "Your App's App UUID must be entered using evervault.init('<API-KEY>', '<APP-UUID>')"
+        )
+    if not _api_key:
+        raise AuthenticationError(
+            "Your App's API Key must be entered using evervault.init('<API-KEY>', '<APP-UUID>')"
         )
     if _curve not in SUPPORTED_CURVES:
         raise UnsupportedCurveError(f"The {_curve} curve is not supported.")

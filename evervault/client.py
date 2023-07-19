@@ -11,8 +11,8 @@ from .errors.evervault_errors import UndefinedDataError, DecryptionError
 class Client(object):
     def __init__(
         self,
-        api_key=None,
         app_uuid=None,
+        api_key=None,
         request_timeout=30,
         base_url="https://api.evervault.com/",
         base_run_url="https://run.evervault.com/",
@@ -22,13 +22,13 @@ class Client(object):
         curve="SECP256K1",
         max_file_size_in_mb=25,
     ):
-        self.api_key = api_key
         self.app_uuid = app_uuid
+        self.api_key = api_key
         self.base_url = base_url
         self.base_run_url = base_run_url
         self.relay_url = relay_url
         self.ca_host = ca_host
-        request = Request(self.api_key, self.app_uuid, request_timeout, retry)
+        request = Request(self.app_uuid, self.api_key, request_timeout, retry)
         time_service = TimeService()
         self.cert = RequestIntercept(
             request, ca_host, base_run_url, base_url, api_key, relay_url, time_service
