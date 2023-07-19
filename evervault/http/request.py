@@ -45,7 +45,10 @@ class Request(object):
             error_handler.raise_errors_on_failure(resp, resp.content)
             return resp
         else:
-            should_parse = req_params["headers"] and req_params["headers"]["Content-Type"] != "application/octet-stream"
+            should_parse = (
+                req_params["headers"]
+                and req_params["headers"]["Content-Type"] != "application/octet-stream"
+            )
             parsed_body = self.__parse_body(resp, should_parse)
             error_handler.raise_errors_on_failure(resp, parsed_body)
             resp.parsed_body = parsed_body

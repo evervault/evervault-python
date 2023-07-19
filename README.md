@@ -33,7 +33,7 @@ To make Evervault available for use in your app:
 ```python
 import evervault
 
-# Initialize the client with your App’s API key and App's UUID
+# Initialize the client with your App’s API key and App's ID
 evervault.init("<YOUR_API_KEY>", "<APP_ID>")
 
 # Encrypt your data
@@ -70,7 +70,7 @@ evervault.init(api_key = str, app_uuid = str[, decryption_domains=[], retry = bo
 | Parameter | Type  | Description                                                                                                                                                    |
 | --------- | ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | api_key   | `str` | The API key of your Evervault App                                                                                                                             |
-| app_uuid   | `str` | The UUID of your Evervault App                                                                                                                             |
+| app_uuid   | `str` | The ID of your Evervault App                                                                                                                             |
 | curve     | `str` | The elliptic curve used for cryptographic operations. See [Elliptic Curve Support](https://docs.evervault.com/reference/elliptic-curve-support) to learn more. |
 
 ### evervault.encrypt()
