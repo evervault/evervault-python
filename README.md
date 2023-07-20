@@ -91,12 +91,12 @@ evervault.encrypt(data = dict | list | set | str | int | bool)
 An API Key with the `decrypt` permission must be used to perform this operation.
 
 ```python
-evervault.decrypt(data = dict | str | bytes | bytearray)
+evervault.decrypt(data =  str | dict | list | bytes | bytearray)
 ```
 
-| Parameter | Type                                | Description          |
-| --------- | ----------------------------------- |--------------------- |
-| data      | `dict`, `str`, `bytes`, `bytearray` | Data to be decrypted |
+| Parameter | Type                                        | Description          |
+| --------- | ------------------------------------------- |--------------------- |
+| data      | `str`, `dict`, `list`, `bytes`, `bytearray` | Data to be decrypted |
 
 ### evervault.run()
 
