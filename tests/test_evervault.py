@@ -208,6 +208,21 @@ class TestEvervault(unittest.TestCase):
         assert request.last_request.json() == {"data": "ev:abc123"}
 
     @requests_mock.Mocker()
+    def test_decrypt_bool(self, mock_request):
+        request = mock_request.post(
+            "https://api.evervault.com/decrypt",
+            json={"data": True},
+            request_headers={
+                "Authorization": "Basic dGVzdEFwcFV1aWQ6dGVzdGluZw==",
+                "Content-Type": "application/json",
+            },
+        )
+        resp = self.evervault.decrypt("ev:abc123")
+        assert request.called
+        assert resp
+        assert request.last_request.json() == {"data": "ev:abc123"}
+
+    @requests_mock.Mocker()
     def test_run(self, mock_request):
         request = mock_request.post(
             "https://run.evervault.com/testing-cage",

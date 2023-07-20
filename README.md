@@ -33,7 +33,7 @@ To make Evervault available for use in your app:
 ```python
 import evervault
 
-# Initialize the client with your App’s API key and App's ID
+# Initialize the client with your App's ID and App’s API key
 evervault.init("<APP_ID>", "<YOUR_API_KEY>")
 
 # Encrypt your data
