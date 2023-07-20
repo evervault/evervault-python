@@ -49,7 +49,9 @@ class Client(object):
         if data is None:
             raise UndefinedDataError("Data is not defined")
         elif not isinstance(data, (str, dict, list, bytes)):
-            raise DecryptionError("data must be of type `str`, `dict`, `list` or `bytes`")
+            raise DecryptionError(
+                "data must be of type `str`, `dict`, `list` or `bytes`"
+            )
         headers = self.__build_decrypt_headers(type(data))
 
         if type(data) == bytes:
