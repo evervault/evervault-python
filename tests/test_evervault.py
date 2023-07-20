@@ -178,10 +178,10 @@ class TestEvervault(unittest.TestCase):
         self.assertRaises(UnknownEncryptType, self.evervault.encrypt, level_2_list)
 
     @requests_mock.Mocker()
-    def test_decrypt(self, mock_request):
+    def test_decrypt_dict(self, mock_request):
         request = mock_request.post(
             "https://api.evervault.com/decrypt",
-            json={"encrypted": "testString"},
+            json={"data": { "encrypted": "testString" }},
             request_headers={
                 "Authorization": "Basic dGVzdEFwcFV1aWQ6dGVzdGluZw==",
                 "Content-Type": "application/json",
@@ -190,26 +190,22 @@ class TestEvervault(unittest.TestCase):
         resp = self.evervault.decrypt({"encrypted": "ev:abc123"})
         assert request.called
         assert resp["encrypted"] == "testString"
-        assert request.last_request.json() == {"encrypted": "ev:abc123"}
+        assert request.last_request.json() == {"data": { "encrypted": "ev:abc123"}}
 
     @requests_mock.Mocker()
-    def test_decrypt_with_options(self, mock_request):
+    def test_decrypt_str(self, mock_request):
         request = mock_request.post(
             "https://api.evervault.com/decrypt",
-            json={"status": "queued"},
+            json={"data": "testString"},
             request_headers={
                 "Authorization": "Basic dGVzdEFwcFV1aWQ6dGVzdGluZw==",
                 "Content-Type": "application/json",
-                "x-async": "true",
             },
         )
-        resp = self.evervault.decrypt(
-            {"encrypted": "ev:abc123"}, options={"async": True}
-        )
+        resp = self.evervault.decrypt("ev:abc123")
         assert request.called
-        assert resp["status"] == "queued"
-        assert request.last_request.json() == {"encrypted": "ev:abc123"}
-        assert request.last_request.headers["x-async"] == "true"
+        assert resp == "testString"
+        assert request.last_request.json() == {"data": "ev:abc123"}
 
     @requests_mock.Mocker()
     def test_run(self, mock_request):

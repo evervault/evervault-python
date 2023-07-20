@@ -32,7 +32,7 @@ class Curves(object):
 
 
 def init(
-    app_uuid,
+    app_id,
     api_key,
     decryption_domains=[],
     intercept=False,
@@ -47,7 +47,7 @@ def init(
     global _retry
     global _curve
 
-    _app_uuid = app_uuid
+    _app_uuid = app_id
     _api_key = api_key
     _retry = retry
     _curve = curve
@@ -81,8 +81,8 @@ def run(function_name, data, options={"async": False, "version": None}):
     return __client().run(function_name, data, options)
 
 
-def decrypt(data, options={"async": False}):
-    return __client().decrypt(data, options)
+def decrypt(data):
+    return __client().decrypt(data)
 
 
 def encrypt(data):
@@ -145,11 +145,11 @@ def _warn_if_python_version_unsupported_for_async():
 def __client():
     if not _app_uuid:
         raise AuthenticationError(
-            "Your App's App UUID must be entered using evervault.init('<API-KEY>', '<APP-UUID>')"
+            "Your App's App UUID must be entered using evervault.init('<APP-ID>', '<API-KEY>')"
         )
     if not _api_key:
         raise AuthenticationError(
-            "Your App's API Key must be entered using evervault.init('<API-KEY>', '<APP-UUID>')"
+            "Your App's API Key must be entered using evervault.init('<APP-ID>', '<API-KEY>')"
         )
     if _curve not in SUPPORTED_CURVES:
         raise UnsupportedCurveError(f"The {_curve} curve is not supported.")

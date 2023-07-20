@@ -34,7 +34,7 @@ To make Evervault available for use in your app:
 import evervault
 
 # Initialize the client with your App’s API key and App's ID
-evervault.init("<YOUR_API_KEY>", "<APP_ID>")
+evervault.init("<APP_ID>", "<YOUR_API_KEY>")
 
 # Encrypt your data
 encrypted = evervault.encrypt({ "name": "Claude" })
@@ -64,12 +64,12 @@ The Evervault Python SDK exposes five functions.
 `evervault.init()` initializes the SDK with your API key. Configurations for the interception of outbound requests may also be passed in this function.
 
 ```python
-evervault.init(app_uuid = str, api_key = str[, decryption_domains=[], retry = bool, curve = str])
+evervault.init(app_id = str, api_key = str[, decryption_domains=[], retry = bool, curve = str])
 ```
 
 | Parameter | Type  | Description                                                                                                                                                    |
 | --------- | ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| app_uuid   | `str` | The ID of your Evervault App |
+| app_id   | `str` | The ID of your Evervault App |
 | api_key   | `str` | The API key of your Evervault App |
 | curve     | `str` | The elliptic curve used for cryptographic operations. See [Elliptic Curve Support](https://docs.evervault.com/reference/elliptic-curve-support) to learn more. |
 
@@ -87,7 +87,8 @@ evervault.encrypt(data = dict | list | set | str | int | bool)
 
 ### evervault.decrypt()
 
-`evervault.decerypt()` decrypts the data previously encrypted with the `encrypt()` function or through Relay.
+`evervault.decrypt()` decrypts data previously encrypted with the `encrypt()` function or through Evervault's Relay (Evervault's encryption proxy).
+An API Key with the `decrypt` permission must be used to perform this operation.
 
 ```python
 evervault.decrypt(data = dict | str | bytes | bytearray)
@@ -100,6 +101,7 @@ evervault.decrypt(data = dict | str | bytes | bytearray)
 ### evervault.run()
 
 `evervault.run()` invokes a Function with a given payload.
+An API Key with the `run function` permission must be used to perform this operation.
 
 ```python
 evervault.run(function_name = str, data = dict[, options = dict])
@@ -121,6 +123,7 @@ evervault.run(function_name = str, data = dict[, options = dict])
 ### evervault.create_run_token()
 
 `evervault.create_run_token()` creates a single use, time bound token for invoking a function.
+An API Key with the `create Run Token` permission must be used to perform this operation.
 
 ```python
 evervault.create_run_token(function_name = str, data = dict)
