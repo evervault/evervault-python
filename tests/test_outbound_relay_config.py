@@ -9,7 +9,7 @@ from evervault.http.request import Request
 
 class TestOutboundRelayConfig(unittest.TestCase):
     def setUp(self):
-        self.request = Request("testing")
+        self.request = Request("testing", "testAppUuid")
         self.base_url = "https://api.evervault.com/"
 
     @pytest.fixture(autouse=True)

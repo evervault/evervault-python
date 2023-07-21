@@ -141,7 +141,7 @@ class Client(object):
 
     def __coerce_type(self, data):
         if type(data) == bool:
-            return str(int(data))
+            return "true" if data else "false"
         elif type(data) == int or type(data) == float:
             return str(data)
         else:

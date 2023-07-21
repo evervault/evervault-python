@@ -26,7 +26,7 @@ class TestHandlingRequests(unittest.TestCase):
             "https://run.anyaddress.com/testing-cage",
             {"status": "queued"},
             {
-                "Api-Key": "testing",
+                "Authorization": "Basic YXBwVXVpZDphcGlLZXk=",
                 "x-version-id": "2",
                 "x-async": "true",
             },

@@ -4,6 +4,7 @@ import requests
 import certifi
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
+import base64
 
 retry_strategy = Retry(
     total=3,
@@ -15,9 +16,12 @@ adapter = HTTPAdapter(max_retries=retry_strategy)
 
 
 class Request(object):
-    def __init__(self, api_key, timeout=30, retry=False):
+    decrypt_path = "/decrypt"
+
+    def __init__(self, app_uuid, api_key, timeout=30, retry=False):
         self.http_session = requests.Session()
         self.timeout = timeout
+        self.app_uuid = app_uuid
         self.api_key = api_key
         self.retry = retry
 
@@ -32,7 +36,9 @@ class Request(object):
         """
         from evervault import __version__
 
-        req_params = self.__build_headers(method, params, optional_headers, __version__)
+        req_params = self.__build_headers(
+            method, params, url, optional_headers, __version__
+        )
 
         request_object = requests if self.http_session is None else self.http_session
         if self.retry:
@@ -43,23 +49,41 @@ class Request(object):
             error_handler.raise_errors_on_failure(resp, resp.content)
             return resp
         else:
-            parsed_body = self.__parse_body(resp)
+            should_parse = (
+                req_params["headers"]
+                and req_params["headers"]["Content-Type"] != "application/octet-stream"
+            )
+            parsed_body = self.__parse_body(resp, should_parse)
             error_handler.raise_errors_on_failure(resp, parsed_body)
             resp.parsed_body = parsed_body
             return resp
 
-    def __build_headers(self, method, params, optional_headers, version):
+    def __build_headers(self, method, params, url, optional_headers, version):
         req_params = {}
+
         headers = {
             "User-Agent": "evervault-python/" + version,
             "Accept-Encoding": "gzip, deflate",
             "Accept": "application/json",
             "Content-Type": "application/json",
-            "Api-Key": self.api_key,
         }
+
+        # Set correct auth header
+        if Request.decrypt_path in url:
+            auth_value = f"{self.app_uuid}:{self.api_key}"
+            encoded_auth_value_bytes = base64.b64encode(auth_value.encode("ascii"))
+            basic_auth_str = f"Basic {encoded_auth_value_bytes.decode('utf-8')}"
+            headers["Authorization"] = basic_auth_str
+        else:
+            headers["Api-Key"] = self.api_key
+
         headers.update(optional_headers)
         if method in ("POST", "PUT", "DELETE"):
-            req_params["data"] = json.dumps(params, cls=json.JSONEncoder)
+            if type(params) == bytes:
+                req_params["data"] = params
+            else:
+                req_params["data"] = json.dumps(params, cls=json.JSONEncoder)
+
         elif method == "GET":
             req_params["params"] = params
 
@@ -76,12 +100,12 @@ class Request(object):
             **req_params,
         )
 
-    def __parse_body(self, resp):
+    def __parse_body(self, resp, should_parse=True):
         if resp.content and resp.content.strip():
             try:
                 decoded_body = resp.content.decode(
                     resp.encoding or resp.apparent_encoding
                 )
-                return json.loads(decoded_body)
+                return json.loads(decoded_body) if should_parse else decoded_body
             except ValueError:
                 error_handler.raise_errors_on_failure(resp)

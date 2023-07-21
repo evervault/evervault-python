@@ -5,11 +5,13 @@ from .crypto.client import Client as CryptoClient
 from .models.cage_list import CageList
 from .datatypes.map import ensure_is_integer
 from .services.timeservice import TimeService
+from .errors.evervault_errors import UndefinedDataError, DecryptionError
 
 
 class Client(object):
     def __init__(
         self,
+        app_uuid=None,
         api_key=None,
         request_timeout=30,
         base_url="https://api.evervault.com/",
@@ -20,12 +22,13 @@ class Client(object):
         curve="SECP256K1",
         max_file_size_in_mb=25,
     ):
+        self.app_uuid = app_uuid
         self.api_key = api_key
         self.base_url = base_url
         self.base_run_url = base_run_url
         self.relay_url = relay_url
         self.ca_host = ca_host
-        request = Request(self.api_key, request_timeout, retry)
+        request = Request(self.app_uuid, self.api_key, request_timeout, retry)
         time_service = TimeService()
         self.cert = RequestIntercept(
             request, ca_host, base_run_url, base_url, api_key, relay_url, time_service
@@ -41,6 +44,22 @@ class Client(object):
 
     def encrypt(self, data):
         return self.crypto_client.encrypt_data(self, data)
+
+    def decrypt(self, data):
+        if data is None:
+            raise UndefinedDataError("Data is not defined")
+        elif not isinstance(data, (str, dict, list, bytes)):
+            raise DecryptionError(
+                "data must be of type `str`, `dict`, `list` or `bytes`"
+            )
+        headers = self.__build_decrypt_headers(type(data))
+
+        if type(data) == bytes:
+            return self.post("decrypt", data, headers, False)
+        else:
+            payload = {"data": data}
+            response = self.post("decrypt", payload, headers, False)
+            return response["data"]
 
     def run(self, cage_name, data, options={"async": False, "version": None}):
         optional_headers = self.__build_cage_run_headers(options)
@@ -90,6 +109,13 @@ class Client(object):
 
     def delete(self, path, params):
         return self.request_handler.delete(path, params).parsed_body
+
+    def __build_decrypt_headers(self, data_type):
+        headers = {}
+        headers["Content-Type"] = "application/json"
+        if data_type == bytes:
+            headers["Content-Type"] = "application/octet-stream"
+        return headers
 
     def __build_cage_run_headers(self, options):
         if options is None:

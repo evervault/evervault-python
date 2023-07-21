@@ -40,9 +40,10 @@ class TestHandlingCerts(unittest.TestCase):
         base_run_url_default = "https://run.evervault.com/"
         ca_host_default = "https://ca.evervault.com"
 
+        app_uuid = "testapp"
         api_key = "testing"
 
-        request = Request(api_key, 30, False)
+        request = Request(app_uuid, api_key, 30, False)
         time_service = TimeService()
 
         cert = RequestIntercept(
@@ -66,9 +67,10 @@ class TestHandlingCerts(unittest.TestCase):
         base_run_url_default = "https://run.evervault.com/"
         ca_host_default = "https://ca.evervault.com"
 
+        app_uuid = "testapp"
         api_key = "testing"
 
-        request = Request(api_key, 30, False)
+        request = Request(app_uuid, api_key, 30, False)
 
         time_service = TimeService()
 
@@ -116,9 +118,10 @@ class TestHandlingCerts(unittest.TestCase):
         base_run_url_default = "https://run.evervault.com/"
         ca_host_default = "https://ca.evervault.com"
 
+        app_uuid = "testapp"
         api_key = "testing"
 
-        request = Request(api_key, 30, False)
+        request = Request(app_uuid, api_key, 30, False)
 
         time_service = TimeService()
 
@@ -200,9 +203,10 @@ class TestHandlingCerts(unittest.TestCase):
         base_run_url_default = "https://run.evervault.com/"
         ca_host_default = "https://ca.evervault.com"
 
+        app_uuid = "testapp"
         api_key = "testing"
 
-        request = Request(api_key, 30, False)
+        request = Request(app_uuid, api_key, 30, False)
 
         time_service.get_datetime_now.return_value = 1171894763
 

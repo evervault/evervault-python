@@ -24,7 +24,7 @@ class TestEvervault(unittest.TestCase):
         self.curve = curve
         importlib.reload(evervault)
         self.evervault = evervault
-        self.evervault.init("testing", curve=curve)
+        self.evervault.init("testAppUuid", "testing", curve=curve)
         self.public_key = self.build_keys()
 
     def tearDown(self):
@@ -178,11 +178,58 @@ class TestEvervault(unittest.TestCase):
         self.assertRaises(UnknownEncryptType, self.evervault.encrypt, level_2_list)
 
     @requests_mock.Mocker()
+    def test_decrypt_dict(self, mock_request):
+        request = mock_request.post(
+            "https://api.evervault.com/decrypt",
+            json={"data": {"encrypted": "testString"}},
+            request_headers={
+                "Authorization": "Basic dGVzdEFwcFV1aWQ6dGVzdGluZw==",
+                "Content-Type": "application/json",
+            },
+        )
+        resp = self.evervault.decrypt({"encrypted": "ev:abc123"})
+        assert request.called
+        assert resp["encrypted"] == "testString"
+        assert request.last_request.json() == {"data": {"encrypted": "ev:abc123"}}
+
+    @requests_mock.Mocker()
+    def test_decrypt_str(self, mock_request):
+        request = mock_request.post(
+            "https://api.evervault.com/decrypt",
+            json={"data": "testString"},
+            request_headers={
+                "Authorization": "Basic dGVzdEFwcFV1aWQ6dGVzdGluZw==",
+                "Content-Type": "application/json",
+            },
+        )
+        resp = self.evervault.decrypt("ev:abc123")
+        assert request.called
+        assert resp == "testString"
+        assert request.last_request.json() == {"data": "ev:abc123"}
+
+    @requests_mock.Mocker()
+    def test_decrypt_bool(self, mock_request):
+        request = mock_request.post(
+            "https://api.evervault.com/decrypt",
+            json={"data": True},
+            request_headers={
+                "Authorization": "Basic dGVzdEFwcFV1aWQ6dGVzdGluZw==",
+                "Content-Type": "application/json",
+            },
+        )
+        resp = self.evervault.decrypt("ev:abc123")
+        assert request.called
+        assert resp
+        assert request.last_request.json() == {"data": "ev:abc123"}
+
+    @requests_mock.Mocker()
     def test_run(self, mock_request):
         request = mock_request.post(
             "https://run.evervault.com/testing-cage",
             json={"result": "there was an attempt"},
-            request_headers={"Api-Key": "testing"},
+            request_headers={
+                "Api-Key": "testing",
+            },
         )
         resp = self.evervault.run("testing-cage", {"name": "testing"})
         assert request.called
@@ -216,7 +263,9 @@ class TestEvervault(unittest.TestCase):
         request = mock_request.post(
             "https://run.evervault.com/testing-cage",
             json={"result": "there was an attempt"},
-            request_headers={"Api-Key": "testing"},
+            request_headers={
+                "Api-Key": "testing",
+            },
         )
         resp = self.evervault.encrypt_and_run("testing-cage", {"name": "testing"})
         assert request.called
@@ -231,7 +280,9 @@ class TestEvervault(unittest.TestCase):
         request = mock_request.post(
             "https://run.evervault.com/testing-cage",
             json={"error": "An error occurred"},
-            request_headers={"Api-Key": "testing"},
+            request_headers={
+                "Api-Key": "testing",
+            },
             headers={"x-evervault-error-code": "forbidden-ip-error"},
             status_code=403,
         )
@@ -250,7 +301,9 @@ class TestEvervault(unittest.TestCase):
         request = mock_request.post(
             "https://run.evervault.com/testing-cage",
             json={"error": "An error occurred"},
-            request_headers={"Api-Key": "testing"},
+            request_headers={
+                "Api-Key": "testing",
+            },
             headers={},
             status_code=403,
         )
@@ -290,7 +343,7 @@ class TestEvervault(unittest.TestCase):
         mock_request.get("https://ca.url.com", {})
 
         # Test default values
-        self.evervault.init("testing", intercept=True)
+        self.evervault.init("testAppUuid", "testing", intercept=True)
         assert self.evervault.ev_client.base_url == "https://api.evervault.com/"
         assert self.evervault.ev_client.base_run_url == "https://run.evervault.com/"
         assert self.evervault.ev_client.relay_url == "https://relay.evervault.com:443"
@@ -304,7 +357,7 @@ class TestEvervault(unittest.TestCase):
 
         # Force client to reinit
         self.evervault.ev_client = None
-        self.evervault.init("testing")
+        self.evervault.init("testAppUuid", "testing")
 
         assert self.evervault.ev_client.base_url == "https://custom.url.com"
         assert self.evervault.ev_client.base_run_url == "https://custom.run.url.com"
@@ -316,7 +369,9 @@ class TestEvervault(unittest.TestCase):
         request = mock_request.post(
             "https://api.evervault.com/v2/functions/testing-cage/run-token",
             json={"result": "there was an attempt"},
-            request_headers={"Api-Key": "testing"},
+            request_headers={
+                "Api-Key": "testing",
+            },
         )
         resp = self.evervault.create_run_token("testing-cage", {"name": "testing"})
         assert request.called
@@ -450,7 +505,9 @@ class TestEvervault(unittest.TestCase):
         request = mock_request.post(
             "https://run.evervault.com/testing-cage",
             json={"result": "there was an attempt"},
-            request_headers={"Api-Key": "testing"},
+            request_headers={
+                "Api-Key": "testing",
+            },
         )
         resp = self.evervault.run("testing-cage", {"name": "testing"})
         assert request.called
@@ -488,7 +545,9 @@ class TestEvervault(unittest.TestCase):
         request = mock_request.post(
             "https://run.evervault.com/testing-cage",
             json={"result": "there was an attempt"},
-            request_headers={"Api-Key": "testing"},
+            request_headers={
+                "Api-Key": "testing",
+            },
         )
         resp = self.evervault.encrypt_and_run("testing-cage", {"name": "testing"})
         assert request.called
@@ -524,7 +583,7 @@ class TestEvervault(unittest.TestCase):
     def test_run_with_intercept_domain(self, mock_request):
         self.__mock_cert(mock_request)
 
-        evervault.init("testing", intercept=True)
+        evervault.init("testAppUuid", "testing", intercept=True)
 
         request = mock_request.get("https://test2.com/hello")
         requests.get("https://test2.com/hello")
@@ -537,7 +596,7 @@ class TestEvervault(unittest.TestCase):
         self.__mock_cert(mock_request)
 
         request = mock_request.get("https://run.evervault.com/hello")
-        evervault.init("testing", intercept=True)
+        evervault.init("testAppUuid", "testing", intercept=True)
 
         requests.get("https://run.evervault.com/hello")
 
@@ -551,7 +610,7 @@ class TestEvervault(unittest.TestCase):
     def test_run_with_decryption_domain_constructor(self, mock_request):
         self.__mock_cert(mock_request)
 
-        evervault.init("testing", decryption_domains=["test2.com"])
+        evervault.init("testAppUuid", "testing", decryption_domains=["test2.com"])
 
         request = mock_request.get("https://test2.com/hello")
         requests.get("https://test2.com/hello")
@@ -563,7 +622,7 @@ class TestEvervault(unittest.TestCase):
     def test_run_with_decryption_domain(self, mock_request):
         self.__mock_cert(mock_request)
 
-        evervault.init("testing")
+        evervault.init("testAppUuid", "testing")
         evervault.enable_outbound_relay(decryption_domains=["test2.com"])
 
         request = mock_request.get("https://test2.com/hello")
@@ -576,7 +635,7 @@ class TestEvervault(unittest.TestCase):
     def test_run_with_wildcard_decryption_domain(self, mock_request):
         self.__mock_cert(mock_request)
 
-        evervault.init("testing", decryption_domains=["*.test2.com"])
+        evervault.init("testAppUuid", "testing", decryption_domains=["*.test2.com"])
 
         request = mock_request.get("https://test.test2.com/hello")
         requests.get("https://test.test2.com/hello")
@@ -590,7 +649,7 @@ class TestEvervault(unittest.TestCase):
     ):
         self.__mock_cert(mock_request)
 
-        evervault.init("testing", decryption_domains=["test-other.com"])
+        evervault.init("testAppUuid", "testing", decryption_domains=["test-other.com"])
 
         request = mock_request.get("https://www.test2.com/hello")
         requests.get("https://www.test2.com/hello")
@@ -607,7 +666,7 @@ class TestEvervault(unittest.TestCase):
     ):
         self.__mock_cert(mock_request)
 
-        evervault.init("testing")
+        evervault.init("testAppUuid", "testing")
         evervault.enable_outbound_relay(decryption_domains=["test-other.com"])
 
         request = mock_request.get("https://www.test2.com/hello")
@@ -624,7 +683,7 @@ class TestEvervault(unittest.TestCase):
         self.__mock_cert(mock_request)
 
         request = mock_request.get("https://testing.com/hello")
-        evervault.init("testing", intercept=True)
+        evervault.init("testAppUuid", "testing", intercept=True)
 
         requests.get("https://testing.com/hello")
 
@@ -638,7 +697,7 @@ class TestEvervault(unittest.TestCase):
         self.__mock_relay_outbound_config(mock_request)
 
         request = mock_request.get("https://test-one.destinations.com/hello")
-        evervault.init("testing", enable_outbound_relay=True)
+        evervault.init("testAppUuid", "testing", enable_outbound_relay=True)
         requests.get("https://test-one.destinations.com/hello")
 
         assert request.last_request.headers["Proxy-Authorization"] == "testing"
@@ -650,7 +709,7 @@ class TestEvervault(unittest.TestCase):
         self.__mock_relay_outbound_config(mock_request)
 
         request = mock_request.get("https://test-one.destinations.com/hello")
-        evervault.init("testing")
+        evervault.init("testAppUuid", "testing")
         evervault.enable_outbound_relay()
         requests.get("https://test-one.destinations.com/hello")
 
@@ -714,7 +773,7 @@ class TestEvervault(unittest.TestCase):
         if self.evervault.ev_client.cert.relay_outbound_config is not None:
             self.evervault.ev_client.cert.relay_outbound_config.clear_cache()
         self.evervault.ev_client = None
-        self.evervault.init("testing")
+        self.evervault.init("testAppUuid", "testing")
         RelayOutboundConfig.clear_cache()
         RelayOutboundConfig.disable_polling()
 
