@@ -6,7 +6,7 @@ import os
 import sys
 from warnings import warn
 
-__version__ = "2.2.0"
+__version__ = "3.0.0"
 
 ev_client = None
 _app_uuid = None
