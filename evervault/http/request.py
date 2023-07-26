@@ -103,9 +103,10 @@ class Request(object):
     def __parse_body(self, resp, should_parse=True):
         if resp.content and resp.content.strip():
             try:
-                decoded_body = resp.content.decode(
-                    resp.encoding or resp.apparent_encoding
-                )
+                encoding = resp.encoding or resp.apparent_encoding
+                if encoding is None:
+                    return resp.content
+                decoded_body = resp.content.decode(encoding)
                 return json.loads(decoded_body) if should_parse else decoded_body
             except ValueError:
                 error_handler.raise_errors_on_failure(resp)
