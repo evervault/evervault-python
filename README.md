@@ -120,6 +120,29 @@ evervault.run(function_name = str, data = dict[, options = dict])
 | async   | `Boolean` | `False` | Run your Function in async mode. Async Function runs will be queued for processing.      |
 | version | `Integer` | `None`  | Specify the version of your Function to run. By default, the latest version will be run. |
 
+### evervault.create_client_side_decrypt_token()
+
+`evervault.create_client_side_token()` creates a time-bound token for use in front end applications for decrypting data previously encrypted with Evervault.
+
+A payload of encrypted data must be provided to perform this operation. The payload ensures that the generated token will only be able to be used to decrypt this specific payload
+
+The expiry is the time at which the token will expire. The maximum expiry is 10 minutes in the future. If not provided, it defaults to 5 minutes in the future.
+
+```python
+from datetime import datetime, timedelta
+
+encrypted_data = evervault.encrypt("something sensitive")
+
+now = datetime.now()
+time_in_five_minutes = now + timedelta(minutes=5)
+token = evervault.create_client_side_decrypt_token(encrypted_data, time_in_five_minutes)
+```
+
+| Parameter     | Type                                        | Description                                                                                                |
+| ------------- | ------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| data          | `str`, `dict`, `list`, `bytes`, `bytearray` | The payload ensures that the generated token will only be able to be used to decrypt this specific payload |
+| expiry        | `datetime`                                  | The time the token should expire. Max value is 10 minutes in the future, defaults to 5 minutes if `None`   |
+
 ### evervault.create_run_token()
 
 `evervault.create_run_token()` creates a single use, time bound token for invoking a function.

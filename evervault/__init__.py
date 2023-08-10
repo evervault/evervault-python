@@ -84,6 +84,8 @@ def run(function_name, data, options={"async": False, "version": None}):
 def decrypt(data):
     return __client().decrypt(data)
 
+def create_client_side_decrypt_token(payload, expiry=None):
+    return __client().create_token("decrypt:api", payload, expiry)
 
 def encrypt(data):
     return __client().encrypt(data)
