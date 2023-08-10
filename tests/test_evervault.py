@@ -18,6 +18,7 @@ import importlib
 import binascii
 import datetime
 
+
 class TestEvervault(unittest.TestCase):
     CURVES = {"SECP256K1": ec.SECP256K1, "SECP256R1": ec.SECP256R1}
 
@@ -182,33 +183,47 @@ class TestEvervault(unittest.TestCase):
     def test_create_decrypt_token_without_expiry(self, mock_request):
         request = mock_request.post(
             "https://api.evervault.com/client-side-tokens",
-            json={ "token": "token123", "expiry": 1234567890 },
+            json={"token": "token123", "expiry": 1234567890},
             request_headers={
                 "Authorization": "Basic dGVzdEFwcFV1aWQ6dGVzdGluZw==",
                 "Content-Type": "application/json",
             },
         )
-        resp = self.evervault.create_client_side_decrypt_token({"data": "ev:abc123"}, None)
+        resp = self.evervault.create_client_side_decrypt_token(
+            {"data": "ev:abc123"}, None
+        )
         assert request.called
-        assert resp == { "token": "token123", "expiry": 1234567890 }
-        assert request.last_request.json() == {"payload": {"data": "ev:abc123"}, "expiry": None, "action": "decrypt:api" }
+        assert resp == {"token": "token123", "expiry": 1234567890}
+        assert request.last_request.json() == {
+            "payload": {"data": "ev:abc123"},
+            "expiry": None,
+            "action": "decrypt:api",
+        }
 
     @requests_mock.Mocker()
     def test_create_decrypt_token_with_expiry(self, mock_request):
         request = mock_request.post(
             "https://api.evervault.com/client-side-tokens",
-            json={ "token": "token123", "expiry": 1234567890 },
+            json={"token": "token123", "expiry": 1234567890},
             request_headers={
                 "Authorization": "Basic dGVzdEFwcFV1aWQ6dGVzdGluZw==",
                 "Content-Type": "application/json",
             },
         )
         now = datetime.datetime.now()
-        expected_datetime_in_request = (now - datetime.datetime.utcfromtimestamp(0)).total_seconds() * 1000.0
-        resp = self.evervault.create_client_side_decrypt_token({"data": "ev:abc123"}, now)
+        expected_datetime_in_request = (
+            now - datetime.datetime.utcfromtimestamp(0)
+        ).total_seconds() * 1000.0
+        resp = self.evervault.create_client_side_decrypt_token(
+            {"data": "ev:abc123"}, now
+        )
         assert request.called
-        assert resp == { "token": "token123", "expiry": 1234567890 }
-        assert request.last_request.json() == {"payload": {"data": "ev:abc123"}, "expiry": expected_datetime_in_request, "action": "decrypt:api" }
+        assert resp == {"token": "token123", "expiry": 1234567890}
+        assert request.last_request.json() == {
+            "payload": {"data": "ev:abc123"},
+            "expiry": expected_datetime_in_request,
+            "action": "decrypt:api",
+        }
 
     @requests_mock.Mocker()
     def test_create_decrypt_token_without_payload_throws(self, mock_request):
@@ -216,7 +231,7 @@ class TestEvervault(unittest.TestCase):
             UndefinedDataError,
             self.evervault.create_client_side_decrypt_token,
             None,
-            None
+            None,
         )
 
     @requests_mock.Mocker()
