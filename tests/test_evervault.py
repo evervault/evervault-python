@@ -197,7 +197,7 @@ class TestEvervault(unittest.TestCase):
         assert request.last_request.json() == {
             "payload": {"data": "ev:abc123"},
             "expiry": None,
-            "action": "decrypt:api",
+            "action": "api:decrypt",
         }
 
     @requests_mock.Mocker()
@@ -222,7 +222,7 @@ class TestEvervault(unittest.TestCase):
         assert request.last_request.json() == {
             "payload": {"data": "ev:abc123"},
             "expiry": expected_datetime_in_request,
-            "action": "decrypt:api",
+            "action": "api:decrypt",
         }
 
     @requests_mock.Mocker()

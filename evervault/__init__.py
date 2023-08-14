@@ -86,7 +86,7 @@ def decrypt(data):
 
 
 def create_client_side_decrypt_token(payload, expiry=None):
-    return __client().create_token("decrypt:api", payload, expiry)
+    return __client().create_token("api:decrypt", payload, expiry)
 
 
 def encrypt(data):
