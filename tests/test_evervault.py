@@ -211,9 +211,7 @@ class TestEvervault(unittest.TestCase):
             },
         )
         now = datetime.datetime.now()
-        expected_datetime_in_request = (
-            now - datetime.datetime.utcfromtimestamp(0)
-        ).total_seconds() * 1000.0
+        expected_datetime_in_request = int(now.timestamp() * 1000)
         resp = self.evervault.create_client_side_decrypt_token(
             {"data": "ev:abc123"}, now
         )

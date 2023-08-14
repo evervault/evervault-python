@@ -64,12 +64,13 @@ class Client(object):
 
     def create_token(self, action, payload, expiry=None):
         if payload is None:
-            raise UndefinedDataError("Payload must be defined")
+            raise UndefinedDataError(
+                "Payload must be defined. It ensures that the generated token will only be able to be used to decrypt this specific payload"
+            )
         if expiry and not isinstance(expiry, datetime):
             raise UndefinedDataError("expiry must be an instance of `datetime`")
         if expiry and isinstance(expiry, datetime):
-            epoch = datetime.utcfromtimestamp(0)
-            expiry = (expiry - epoch).total_seconds() * 1000.0
+            expiry = int(expiry.timestamp() * 1000)
         data = {
             "payload": payload,
             "expiry": expiry,
