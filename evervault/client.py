@@ -1,3 +1,4 @@
+from datetime import datetime
 from .http.requestintercept import RequestIntercept
 from .http.requesthandler import RequestHandler
 from .http.request import Request
@@ -60,6 +61,25 @@ class Client(object):
             payload = {"data": data}
             response = self.post("decrypt", payload, headers, False)
             return response["data"]
+
+    def create_token(self, action, payload, expiry=None):
+        if payload is None:
+            raise UndefinedDataError(
+                "Payload must be defined. It ensures that the generated token will only be able to be used to decrypt this specific payload"
+            )
+        if expiry and not isinstance(expiry, datetime):
+            raise UndefinedDataError("expiry must be an instance of `datetime`")
+        if expiry and isinstance(expiry, datetime):
+            expiry = int(expiry.timestamp() * 1000)
+        data = {
+            "payload": payload,
+            "expiry": expiry,
+            "action": action,
+        }
+        headers = {
+            "Content-Type": "application/json",
+        }
+        return self.post("client-side-tokens", data, headers, False)
 
     def run(self, cage_name, data, options={"async": False, "version": None}):
         optional_headers = self.__build_cage_run_headers(options)

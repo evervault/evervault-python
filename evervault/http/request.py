@@ -16,7 +16,7 @@ adapter = HTTPAdapter(max_retries=retry_strategy)
 
 
 class Request(object):
-    decrypt_path = "/decrypt"
+    auth_header_paths = ["/decrypt", "/client-side-tokens"]
 
     def __init__(self, app_uuid, api_key, timeout=30, retry=False):
         self.http_session = requests.Session()
@@ -69,7 +69,7 @@ class Request(object):
         }
 
         # Set correct auth header
-        if Request.decrypt_path in url:
+        if any(map(url.__contains__, Request.auth_header_paths)):
             auth_value = f"{self.app_uuid}:{self.api_key}"
             encoded_auth_value_bytes = base64.b64encode(auth_value.encode("ascii"))
             basic_auth_str = f"Basic {encoded_auth_value_bytes.decode('utf-8')}"
