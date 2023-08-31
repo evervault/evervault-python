@@ -1,7 +1,12 @@
-import evervault, os, importlib, unittest, requests, json
+import evervault
+import os
+import importlib
+import unittest
+import requests
+import json
+
 
 class EndToEndTestCase(unittest.TestCase):
-    
     def setUp(self):
         super(EndToEndTestCase, self).setUp()
         importlib.reload(evervault)
@@ -21,7 +26,7 @@ class EndToEndTestCase(unittest.TestCase):
         self.__del_env_var("EV_MAX_FILE_SIZE_IN_MB")
 
     def make_request(self, url, headers, payload):
-        resp = requests.post(url, json = payload, headers = headers)
+        resp = requests.post(url, json=payload, headers=headers)
         return json.loads(resp.content)
 
     def __del_env_var(self, var):

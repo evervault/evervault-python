@@ -1,5 +1,5 @@
 from .e2e_test_case import EndToEndTestCase
-import unittest
+
 
 class EncryptTest(EndToEndTestCase):
     def test_encrypt_str(self):
@@ -25,7 +25,7 @@ class EncryptTest(EndToEndTestCase):
         encrypted = self.evervault.encrypt(integer)
         decrypted = self.evervault.decrypt(encrypted)
         assert integer == decrypted
-    
+
     def test_encrypt_float(self):
         flt = 3.14
         encrypted = self.evervault.encrypt(flt)
@@ -43,4 +43,3 @@ class EncryptTest(EndToEndTestCase):
         encrypted = self.evervault.encrypt(dictionary)
         decrypted = self.evervault.decrypt(encrypted)
         assert dictionary == decrypted
-
