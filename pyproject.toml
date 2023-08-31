@@ -25,8 +25,8 @@ python-semantic-release = "^7.19.2"
 flake8 = "^5.0.4"
 black = "^22.3.0"
 
-[pytest]
-testpath = "tests"
+[tool.pytest.ini_options]
+testpaths = ["tests"]
 
 [tool.black]
 line-length = 88
