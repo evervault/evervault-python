@@ -19,7 +19,7 @@ class OutboundRelayTest(EndToEndTestCase):
         response = self.make_request(
             OutboundRelayTest.SYNTHETIC_ENDPOINT_URL, headers, payload
         )
-        print(response)
+
         self.assertEqual(response["request"]["string"], True)
         self.assertEqual(response["request"]["number"], True)
         self.assertEqual(response["request"]["boolean"], True)
