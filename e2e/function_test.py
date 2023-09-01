@@ -6,21 +6,13 @@ class FunctionTest(EndToEndTestCase):
     FUNCTION_NAME = os.getenv("EV_FUNCTION_NAME")
 
     def test_function_run(self):
-        data = {
-            "name": "John Doe",
-            "age": 42,
-            "isAlive": True
-        }
+        data = {"name": "John Doe", "age": 42, "isAlive": True}
         encrypted = self.evervault.encrypt(data)
         function_response = self.evervault.run(FunctionTest.FUNCTION_NAME, encrypted)
         assert function_response["result"]["message"] == "OK"
 
     def test_function_run_async(self):
-        data = {
-            "name": "John Doe",
-            "age": 42,
-            "isAlive": True
-        }
+        data = {"name": "John Doe", "age": 42, "isAlive": True}
         encrypted = self.evervault.encrypt(data)
         function_response = self.evervault.run(
             FunctionTest.FUNCTION_NAME, encrypted, {"async": True}
@@ -28,11 +20,7 @@ class FunctionTest(EndToEndTestCase):
         self.assertEqual(function_response, None)
 
     def test_create_function_run_token(self):
-        data = {
-            "name": "John Doe",
-            "age": 42,
-            "isAlive": True
-        }
+        data = {"name": "John Doe", "age": 42, "isAlive": True}
         encrypted = self.evervault.encrypt(data)
         function_response = self.evervault.create_run_token(
             FunctionTest.FUNCTION_NAME, encrypted
