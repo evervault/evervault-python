@@ -3,8 +3,6 @@ import os
 
 
 class OutboundRelayTest(EndToEndTestCase):
-    SYNTHETIC_ENDPOINT_URL = os.getenv("EV_SYNTHETIC_ENDPOINT_URL")
-
     def test_enable_outbound_relay(self):
         self.evervault.enable_outbound_relay()
 
@@ -16,7 +14,7 @@ class OutboundRelayTest(EndToEndTestCase):
         headers = {"Content-Type": "application/json"}
 
         response = self.make_request(
-            OutboundRelayTest.SYNTHETIC_ENDPOINT_URL, headers, payload
+            self.syntheticEndpointurl, headers, payload
         )
         print(response)
         self.assertEqual(response["request"]["string"], False)

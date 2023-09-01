@@ -13,6 +13,7 @@ class EndToEndTestCase(unittest.TestCase):
         self.evervault = evervault
         self.app_uuid = os.getenv("EV_APP_UUID")
         self.api_key = os.getenv("EV_API_KEY")
+        self.syntheticEndpointurl = os.getenv("EV_SYNTHETIC_ENDPOINT_URL")
         self.evervault.init(self.app_uuid, self.api_key, curve=curve)
 
     def tearDown(self):
