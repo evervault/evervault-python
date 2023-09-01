@@ -1,5 +1,4 @@
 from .e2e_test_case import EndToEndTestCase
-import os
 
 
 class OutboundRelayTest(EndToEndTestCase):
@@ -13,9 +12,7 @@ class OutboundRelayTest(EndToEndTestCase):
         }
         headers = {"Content-Type": "application/json"}
 
-        response = self.make_request(
-            self.syntheticEndpointurl, headers, payload
-        )
+        response = self.make_request(self.syntheticEndpointurl, headers, payload)
         print(response)
         self.assertEqual(response["request"]["string"], False)
         self.assertEqual(response["request"]["number"], False)
