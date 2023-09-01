@@ -1,5 +1,5 @@
 from .e2e_test_case import EndToEndTestCase
-from cryptography.hazmat.primitives.asymmetric import ec
+
 
 class EncryptTest(EndToEndTestCase):
     def test_encrypt_str(self):

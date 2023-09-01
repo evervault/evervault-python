@@ -1,6 +1,7 @@
 from .e2e_test_case import EndToEndTestCase
 import os
 
+
 class OutboundRelayTest(EndToEndTestCase):
     SYNTHETIC_ENDPOINT_URL = os.getenv("EV_SYNTHETIC_ENDPOINT_URL")
 
