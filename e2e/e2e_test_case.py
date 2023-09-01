@@ -7,13 +7,13 @@ import json
 
 
 class EndToEndTestCase(unittest.TestCase):
-    def setUp(self):
+    def setUp(self, curve="SECP256K1"):
         super(EndToEndTestCase, self).setUp()
         importlib.reload(evervault)
         self.evervault = evervault
         self.app_uuid = os.getenv("EV_APP_UUID")
         self.api_key = os.getenv("EV_API_KEY")
-        self.evervault.init(self.app_uuid, self.api_key)
+        self.evervault.init(self.app_uuid, self.api_key, curve=curve)
 
     def tearDown(self):
         super(EndToEndTestCase, self).tearDown()
