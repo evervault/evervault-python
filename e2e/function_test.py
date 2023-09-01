@@ -11,7 +11,7 @@ class FunctionTest(EndToEndTestCase):
         function_response = self.evervault.run(FunctionTest.FUNCTION_NAME, encrypted)
         assert (
             function_response["result"]["message"]
-            == "Hello from a Function! It seems you have 4 letters in your name"
+            == "OK"
         )
 
     def test_function_run_async(self):
@@ -35,7 +35,7 @@ class FunctionTest(EndToEndTestCase):
         )
         assert (
             run_response["result"]["message"]
-            == "Hello from a Function! It seems you have 4 letters in your name"
+            == "OK"
         )
 
     def __run_function_with_token(self, token, function_name, payload):
