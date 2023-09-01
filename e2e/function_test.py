@@ -9,10 +9,7 @@ class FunctionTest(EndToEndTestCase):
         data = {"name": "test"}
         encrypted = self.evervault.encrypt(data)
         function_response = self.evervault.run(FunctionTest.FUNCTION_NAME, encrypted)
-        assert (
-            function_response["result"]["message"]
-            == "OK"
-        )
+        assert function_response["result"]["message"] == "OK"
 
     def test_function_run_async(self):
         data = {"name": "test"}
@@ -33,10 +30,7 @@ class FunctionTest(EndToEndTestCase):
         run_response = self.__run_function_with_token(
             function_response["token"], FunctionTest.FUNCTION_NAME, encrypted
         )
-        assert (
-            run_response["result"]["message"]
-            == "OK"
-        )
+        assert run_response["result"]["message"] == "OK"
 
     def __run_function_with_token(self, token, function_name, payload):
         url = f"https://run.evervault.com/{function_name}"
