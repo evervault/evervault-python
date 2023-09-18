@@ -79,3 +79,7 @@ class UnsupportedCurveError(EvervaultError):
 
 class ExceededMaxFileSizeError(EvervaultError):
     pass
+
+
+class AttestationDocCacheError(EvervaultError):
+    pass

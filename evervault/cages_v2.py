@@ -4,6 +4,7 @@ import evervault_attestation_bindings
 from types import MethodType
 from evervault.errors.evervault_errors import CertDownloadError
 import tempfile
+import base64
 
 
 def get_cage_name_from_cage(cage_url):
@@ -23,7 +24,8 @@ class CageVerificationException(Exception):
         super().__init__(message)
 
 
-class CageHTTPAdapter(requests.adapters.HTTPAdapter):
+# DEPRECATED: TO BE REMOVED IN NEXT MAJOR RELEASE
+class CageHTTPAdapterBeta(requests.adapters.HTTPAdapter):
     def __init__(self, cage_attestation_data, cages_host):
         self.attestation_data = cage_attestation_data
         self.cages_host = cages_host
@@ -72,10 +74,65 @@ class CageHTTPAdapter(requests.adapters.HTTPAdapter):
         return conn
 
 
-class CageRequestsSession(requests.Session):
+class CageHTTPAdapter(requests.adapters.HTTPAdapter):
+    def __init__(self, cage_attestation_data, cages_host, cache):
+        self.attestation_data = cage_attestation_data
+        self.cages_host = cages_host
+        self.cache = cache
+        super().__init__()
+
+    def get_connection(self, url, proxies=None):
+        conn = super().get_connection(url, proxies)
+        if self.cages_host in url:
+            cage_name = get_cage_name_from_cage(url)
+            # we patch the urllib3.connectionpool.HTTPSConnectionPool object to perform extra validation on its connection before transmitting any data
+            conn = self.add_attestation_check_to_conn_validation(conn, cage_name)
+        return conn
+
+    def add_attestation_check_to_conn_validation(self, conn, cage_name):
+        cache = self.cache
+        expected_pcrs = []
+        if cage_name in self.attestation_data:
+            given_pcrs = self.attestation_data[cage_name]
+            # if the user only supplied a single set of PCRs, convert it to a list
+            if not isinstance(given_pcrs, list):
+                given_pcrs = [given_pcrs]
+
+            for pcrs in given_pcrs:
+                expected_pcrs.append(
+                    evervault_attestation_bindings.PCRs(
+                        pcrs.get("pcr_0"),
+                        pcrs.get("pcr_1"),
+                        pcrs.get("pcr_2"),
+                        pcrs.get("pcr_8"),
+                    )
+                )
+        original_validate_conn = (
+            urllib3.connectionpool.HTTPSConnectionPool._validate_conn
+        )
+
+        def _validate_conn_override(self, conn):
+            conn.connect()
+            cert = conn.sock.getpeercert(binary_form=True)
+            try:
+                attestation_doc = cache.get("synthetic-cage")
+                attestation_doc_bytes = base64.b64decode(attestation_doc)
+                attest_result = evervault_attestation_bindings.attest_cage(
+                    cert, expected_pcrs, attestation_doc_bytes
+                )
+            except Exception as err:
+                raise CageVerificationException(err)
+            return original_validate_conn(self, conn)
+
+        conn._validate_conn = MethodType(_validate_conn_override, conn)
+        return conn
+
+
+# DEPRECATED: TO BE REMOVED IN NEXT MAJOR RELEASE
+class CageRequestsSessionBeta(requests.Session):
     def __init__(self, cage_attestation_data, cage_ca_host, cages_host):
         super().__init__()
-        self.mount("https://", CageHTTPAdapter(cage_attestation_data, cages_host))
+        self.mount("https://", CageHTTPAdapterBeta(cage_attestation_data, cages_host))
         self.ca_host = cage_ca_host
 
         ca_content = None
@@ -107,3 +164,14 @@ class CageRequestsSession(requests.Session):
 
     def request(self, *args, headers={}, **kwargs):
         return super().request(*args, headers=headers, **kwargs, verify=self.cert_path)
+
+
+class CageRequestsSession(requests.Session):
+    def __init__(self, cage_attestation_data, cages_host, cache):
+        super().__init__()
+        self.mount(
+            "https://", CageHTTPAdapter(cage_attestation_data, cages_host, cache)
+        )
+
+    def request(self, *args, headers={}, **kwargs):
+        return super().request(*args, headers=headers, **kwargs)

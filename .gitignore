@@ -3,6 +3,7 @@
 
 # VSCode
 .vscode/
+.metals/
 
 # Setup.py
 *.egg-info
