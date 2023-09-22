@@ -54,14 +54,21 @@ class AttestationDoc:
 
     def __get_attestation_docs(self):
         logger.debug("EVERVAULT :: Retrieving attestation doc from Cage")
-        docs = dict(list(map(self.__get_attestation_doc, self.cage_names)))
+        test = list(map(self.__get_attestation_doc, self.cage_names))
+        print("WWWWW ", test)
+        docs = dict(test)
         self.update_cache(docs)
 
     def __get_attestation_doc(self, cage_name):
         try:
             url = f"https://{cage_name}.{self.app_uuid}.{self.cage_host}/.well-known/attestation"
+            print("GETTING ", url)
             res = requests.get(url)
+            print("GETTING 3 ", requests.get(url))
             body = res.json()
-            return (cage_name, body["attestation_doc"])
+            print("GETTING 4 ")
+            res = (cage_name, body["attestation_doc"])
+            print("::::::: ", res, url)
+            return res
         except Exception as e:
             warnings.warn(f"Could not retrieve attestation doc from {url} {e}")

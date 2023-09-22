@@ -115,7 +115,7 @@ class CageHTTPAdapter(requests.adapters.HTTPAdapter):
             conn.connect()
             cert = conn.sock.getpeercert(binary_form=True)
             try:
-                attestation_doc = cache.get("synthetic-cage")
+                attestation_doc = cache.get(cage_name)
                 attestation_doc_bytes = base64.b64decode(attestation_doc)
                 evervault_attestation_bindings.attest_cage(
                     cert, expected_pcrs, attestation_doc_bytes
