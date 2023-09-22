@@ -1,10 +1,7 @@
 import unittest
 from evervault.http.attestationdoc import AttestationDoc
-from unittest.mock import patch
-import pytest
 import requests_mock
 import time
-from evervault.errors.evervault_errors import AttestationDocCacheError
 import responses
 
 

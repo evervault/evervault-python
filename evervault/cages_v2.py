@@ -117,7 +117,7 @@ class CageHTTPAdapter(requests.adapters.HTTPAdapter):
             try:
                 attestation_doc = cache.get("synthetic-cage")
                 attestation_doc_bytes = base64.b64decode(attestation_doc)
-                attest_result = evervault_attestation_bindings.attest_cage(
+                evervault_attestation_bindings.attest_cage(
                     cert, expected_pcrs, attestation_doc_bytes
                 )
             except Exception as err:

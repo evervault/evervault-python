@@ -2,7 +2,6 @@ import logging
 from evervault.threading.repeatedtimer import RepeatedTimer
 import requests
 import threading
-from evervault.errors.evervault_errors import AttestationDocCacheError
 import warnings
 
 

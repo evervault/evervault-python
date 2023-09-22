@@ -1,10 +1,7 @@
 import unittest
-import time
-import os
 import pytest
 import importlib
 import evervault
-import json
 
 from evervault.cages_v2 import CageVerificationException
 
