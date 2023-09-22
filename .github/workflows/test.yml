@@ -7,18 +7,50 @@ on:
       - "!master"
 
 jobs:
+  # Python 3.7 has compatibilities with openssl 3 so need to be run on an older ubuntu image with openssl 1.1.1
+  # https://github.com/dask/distributed/issues/5607#issuecomment-997090869
+  run-tests-3-dot-7:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Python 3.7
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.7
+
+      - name: Check OpenSSL Version
+        run: openssl version
+
+      - name: Setup Poetry
+        uses: abatilo/actions-poetry@v2.1.2
+        with:
+          poetry-version: 1.4.2
+      - name: Install Dependencies
+        run: |
+          poetry install
+      - name: Run Lints
+        run: |
+          poetry run black -v --check .
+          poetry run flake8 -v --ignore=E501,W503,E722
+      - name: Run Tests
+        run: |
+          poetry run pytest -v 
+
   run-tests:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.7, 3.8, 3.9, 3.10.9, 3.11]
-
+        python-version: [3.8, 3.9, 3.10.9, 3.11]
     steps:
       - uses: actions/checkout@v2
       - name: Setup Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: ${{ matrix.python-version }}    
+
+      - name: Check OpenSSL Version
+        run: openssl version
+
       - name: Setup Poetry
         uses: abatilo/actions-poetry@v2.1.2
         with:

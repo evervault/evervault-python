@@ -111,17 +111,24 @@ class CageHTTPAdapter(requests.adapters.HTTPAdapter):
             urllib3.connectionpool.HTTPSConnectionPool._validate_conn
         )
 
+        def attest_cage(cage_name, cache, cert, expected_pcrs):
+            attestation_doc = cache.get(cage_name)
+            attestation_doc_bytes = base64.b64decode(attestation_doc)
+            evervault_attestation_bindings.attest_cage(
+                cert, expected_pcrs, attestation_doc_bytes
+            )
+
         def _validate_conn_override(self, conn):
             conn.connect()
             cert = conn.sock.getpeercert(binary_form=True)
             try:
-                attestation_doc = cache.get(cage_name)
-                attestation_doc_bytes = base64.b64decode(attestation_doc)
-                evervault_attestation_bindings.attest_cage(
-                    cert, expected_pcrs, attestation_doc_bytes
-                )
-            except Exception as err:
-                raise CageVerificationException(err)
+                attest_cage(cage_name, cache, cert, expected_pcrs)
+            except Exception:
+                try:
+                    cache.load_doc(cage_name)
+                    attest_cage(cage_name, cache, cert, expected_pcrs)
+                except Exception as err:
+                    raise CageVerificationException(err)
             return original_validate_conn(self, conn)
 
         conn._validate_conn = MethodType(_validate_conn_override, conn)
