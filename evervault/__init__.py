@@ -7,6 +7,7 @@ import sys
 from warnings import warn
 import warnings
 from evervault.http.attestationdoc import AttestationDoc
+
 try:
     from importlib import metadata
 except ImportError:
