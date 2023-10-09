@@ -16,3 +16,6 @@ dist/
 
 # Vitual Environment
 venv/
+
+# Node modules
+node_modules/

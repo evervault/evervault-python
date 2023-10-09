@@ -9,14 +9,20 @@ jobs:
   run-tests:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
         with:
           fetch-depth: 0
           token: ${{ secrets.GH_TOKEN }}
+
+      - name: Get tags
+        run: git fetch --tags origin
+  
       - name: Setup Python 3.9
         uses: actions/setup-python@v2
         with:
           python-version: 3.9
+
       - name: Setup Poetry
         uses: abatilo/actions-poetry@v2.1.2
         with:
@@ -25,15 +31,49 @@ jobs:
       - name: Install Dependencies
         run: |
           poetry install
+
       - name: Run Lints
         run: |
           poetry run black -v --check .
           poetry run flake8 -v --ignore=E501,W503,E722
+
       - name: Run Tests
         run: |
           poetry run pytest -v
-      - name: Semantic Release
-        uses: python-semantic-release/python-semantic-release@v7.34.6
+    
+      - name: Create Release Pull Request
+        id: changesets
+        uses: changesets/action@v1
         with:
-          github_token: ${{ secrets.GH_TOKEN }}
-          pypi_token: ${{ secrets.PYPI_TOKEN_PROD }}
+          title: 'New Release'
+          commit: 'Release new version'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+    
+      - name: Create new release
+        if: steps.changesets.outputs.hasChangesets == 'false'
+        run: |
+          npx changeset tag && git push origin --tags
+          COMMIT_TAG=$(git tag --points-at HEAD)
+          if [ -n "$COMMIT_TAG" ]; then
+            echo "A tag is attached to HEAD. Creating a new release..."
+            echo "${{ secrets.GH_TOKEN }}" | gh auth login --with-token
+            CHANGELOG=$(awk '
+              BEGIN { recording=0; }
+              /^## / {
+                  if(recording) { exit; }
+                  recording=1;
+                  next;
+              }
+              recording {
+                  print;
+              }
+            ' CHANGELOG.md)
+            gh release create $COMMIT_TAG -t "$COMMIT_TAG" -n "$CHANGELOG"
+            PACKAGE_VERSION=$(node -p "require('./package.json').version")
+            poetry version $PACKAGE_VERSION
+            poetry config pypi-token.pypi ${{ secrets.PYPI_TOKEN_PROD }}
+            poetry publish --build
+          else
+            echo "No tag attached to HEAD. No new release needed."
+          fi

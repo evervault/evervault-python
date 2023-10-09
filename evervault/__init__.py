@@ -7,8 +7,9 @@ import sys
 from warnings import warn
 import warnings
 from evervault.http.attestationdoc import AttestationDoc
+import importlib.metadata
 
-__version__ = "3.1.0"
+__version__ = importlib.metadata.version(__package__ or __name__)
 
 ev_client = None
 _app_uuid = None
