@@ -8,7 +8,13 @@ from warnings import warn
 import warnings
 from evervault.http.attestationdoc import AttestationDoc
 
-__version__ = "3.1.0"
+try:
+    from importlib import metadata
+except ImportError:
+    # For Python 3.7
+    import importlib_metadata as metadata
+
+__version__ = metadata.version(__package__ or __name__)
 
 ev_client = None
 _app_uuid = None
