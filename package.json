@@ -2,7 +2,10 @@
   "name": "evervault-python",
   "private": true,
   "version": "3.1.0",
-  "devDependencies": {
+  "scripts": {
+    "version": "changeset version && PACKAGE_VERSION=$(node -p \"require('./package.json').version\") && poetry version $PACKAGE_VERSION"
+  },
+  "dependencies": {
     "@changesets/cli": "^2.26.2"
   }
 }

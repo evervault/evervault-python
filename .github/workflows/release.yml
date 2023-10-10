@@ -31,6 +31,7 @@ jobs:
       - name: Install Dependencies
         run: |
           poetry install
+          npm install
 
       - name: Run Lints
         run: |
@@ -47,6 +48,7 @@ jobs:
         with:
           title: 'New Release'
           commit: 'Release new version'
+          version: npm run version
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
     
@@ -70,8 +72,6 @@ jobs:
               }
             ' CHANGELOG.md)
             gh release create $COMMIT_TAG -t "$COMMIT_TAG" -n "$CHANGELOG"
-            PACKAGE_VERSION=$(node -p "require('./package.json').version")
-            poetry version $PACKAGE_VERSION
             poetry config pypi-token.pypi ${{ secrets.PYPI_TOKEN_PROD }}
             poetry publish --build
           else
