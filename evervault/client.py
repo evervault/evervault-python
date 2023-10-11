@@ -1,6 +1,10 @@
 from datetime import datetime
 
-from evervault.errors.error_handler import raise_errors_on_failure, raise_errors_on_function_run_failure, raise_errors_on_function_run_request_failure
+from evervault.errors.error_handler import (
+    raise_errors_on_failure,
+    raise_errors_on_function_run_failure,
+    raise_errors_on_function_run_request_failure,
+)
 from .http.requestintercept import RequestIntercept
 from .http.requesthandler import RequestHandler
 from .http.request import Request
@@ -33,9 +37,7 @@ class Client(object):
         self.cert = RequestIntercept(
             request, ca_host, base_url, api_key, relay_url, time_service
         )
-        self.request_handler = RequestHandler(
-            request, base_url, self.cert
-        )
+        self.request_handler = RequestHandler(request, base_url, self.cert)
         self.crypto_client = CryptoClient(api_key, curve, max_file_size_in_mb)
 
     @property
@@ -81,9 +83,13 @@ class Client(object):
         return self.post("client-side-tokens", data, headers)
 
     def run(self, function_name, data):
-        response = self.post(f"functions/{function_name}/runs", {"payload": data}, error_handler=raise_errors_on_function_run_request_failure)
+        response = self.post(
+            f"functions/{function_name}/runs",
+            {"payload": data},
+            error_handler=raise_errors_on_function_run_request_failure,
+        )
 
-        if response.get('status') == "success":
+        if response.get("status") == "success":
             return response
         raise_errors_on_function_run_failure(response)
 
@@ -111,7 +117,9 @@ class Client(object):
     def get(self, path, params={}):
         return self.request_handler.get(path, params).parsed_body
 
-    def post(self, path, params, optional_headers = {}, error_handler=raise_errors_on_failure):
+    def post(
+        self, path, params, optional_headers={}, error_handler=raise_errors_on_failure
+    ):
         return self.request_handler.post(
             path, params, optional_headers, error_handler
         ).parsed_body

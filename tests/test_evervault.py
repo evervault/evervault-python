@@ -22,7 +22,8 @@ import datetime
 DEFAULT_HEADERS = {
     "Authorization": "Basic dGVzdEFwcFV1aWQ6dGVzdGluZw==",
     "Content-Type": "application/json",
-} 
+}
+
 
 class TestEvervault(unittest.TestCase):
     CURVES = {"SECP256K1": ec.SECP256K1, "SECP256R1": ec.SECP256R1}
@@ -271,15 +272,15 @@ class TestEvervault(unittest.TestCase):
         request = mock_request.post(
             "https://api.evervault.com/functions/testing-function/runs",
             json={
-                'id': 'func_run_b470a269a369',
-                'result': { 'test': 'data' },
-                'status': 'success',
+                "id": "func_run_b470a269a369",
+                "result": {"test": "data"},
+                "status": "success",
             },
             request_headers=DEFAULT_HEADERS,
         )
         resp = self.evervault.run("testing-function", {"test": "data"})
         assert request.called
-        assert resp["result"] == { 'test': 'data' }
+        assert resp["result"] == {"test": "data"}
         assert request.last_request.json() == {"payload": {"test": "data"}}
 
     @requests_mock.Mocker()
@@ -287,9 +288,9 @@ class TestEvervault(unittest.TestCase):
         mock_request.post(
             "https://api.evervault.com/functions/testing-function/runs",
             json={
-                'error': { 'message': 'Uh oh!', 'stack': 'Error: Uh oh!...' },
-                'id': 'func_run_e4f1d8d83ec0',
-                'status': 'failure',
+                "error": {"message": "Uh oh!", "stack": "Error: Uh oh!..."},
+                "id": "func_run_e4f1d8d83ec0",
+                "status": "failure",
             },
             request_headers=DEFAULT_HEADERS,
         )
@@ -306,12 +307,12 @@ class TestEvervault(unittest.TestCase):
         mock_request.post(
             "https://api.evervault.com/functions/testing-function/runs",
             json={
-                'error': {
-                    'message': 'The function failed to initialize...',
-                    'stack': 'JavaScript Error',
+                "error": {
+                    "message": "The function failed to initialize...",
+                    "stack": "JavaScript Error",
                 },
-                'id': 'func_run_8c70a47efcb4',
-                'status': 'failure',
+                "id": "func_run_8c70a47efcb4",
+                "status": "failure",
             },
             request_headers=DEFAULT_HEADERS,
         )
@@ -328,11 +329,10 @@ class TestEvervault(unittest.TestCase):
         mock_request.post(
             "https://api.evervault.com/functions/testing-function/runs",
             json={
-                'status': 401,
-                'code': 'unauthorized',
-                'title': 'Unauthorized',
-                'detail':
-                'The request cannot be authenticated. The request does not contain valid credentials. Please retry with a valid API key.',
+                "status": 401,
+                "code": "unauthorized",
+                "title": "Unauthorized",
+                "detail": "The request cannot be authenticated. The request does not contain valid credentials. Please retry with a valid API key.",
             },
             request_headers=DEFAULT_HEADERS,
             status_code=401,
@@ -341,7 +341,10 @@ class TestEvervault(unittest.TestCase):
         with self.assertRaises(AuthenticationError) as cm:
             self.evervault.run("testing-function", {"test": "data"})
 
-        self.assertEqual(str(cm.exception), 'The request cannot be authenticated. The request does not contain valid credentials. Please retry with a valid API key.')
+        self.assertEqual(
+            str(cm.exception),
+            "The request cannot be authenticated. The request does not contain valid credentials. Please retry with a valid API key.",
+        )
 
     @requests_mock.Mocker()
     def test_endpoint_overrides(self, mock_request):
@@ -508,15 +511,15 @@ class TestEvervault(unittest.TestCase):
         request = mock_request.post(
             "https://api.evervault.com/functions/testing-function/runs",
             json={
-                'id': 'func_run_b470a269a369',
-                'result': { 'test': 'data' },
-                'status': 'success',
+                "id": "func_run_b470a269a369",
+                "result": {"test": "data"},
+                "status": "success",
             },
             request_headers=DEFAULT_HEADERS,
         )
         resp = self.evervault.run("testing-function", {"test": "data"})
         assert request.called
-        assert resp["result"] == { 'test': 'data' }
+        assert resp["result"] == {"test": "data"}
         assert request.last_request.json() == {"payload": {"test": "data"}}
 
     @requests_mock.Mocker()

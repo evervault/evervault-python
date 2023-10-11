@@ -3,14 +3,16 @@ from . import evervault_errors as errors
 
 def raise_errors_on_function_run_failure(function_body):
     error = function_body.get("error")
-    if (error):
+    if error:
         message = error.get("message")
         stack = error.get("stack")
         id = function_body.get("id")
-        if ('The function failed to initialize.' in message):
+        if "The function failed to initialize." in message:
             raise errors.FunctionInitializationError(message, stack, id)
         raise errors.FunctionRuntimeError(message, stack, id)
-    raise errors.UnexpectedError("An unexpected error occurred. Please contact Evervault support")
+    raise errors.UnexpectedError(
+        "An unexpected error occurred. Please contact Evervault support"
+    )
 
 
 def raise_errors_on_function_run_request_failure(resp, function_body):
@@ -19,21 +21,21 @@ def raise_errors_on_function_run_request_failure(resp, function_body):
     code = function_body.get("code")
     detail = function_body.get("detail")
 
-    if code == 'unauthorized':
+    if code == "unauthorized":
         raise errors.AuthenticationError(detail)
-    if code == 'forbidden':
+    if code == "forbidden":
         raise errors.ForbiddenError(detail)
-    if code == 'resource-not-found':
+    if code == "resource-not-found":
         raise errors.FunctionNotFoundError(detail)
-    if code == 'request-timeout':
+    if code == "request-timeout":
         raise errors.FunctionTimeoutError(detail)
-    if code == 'function-not-ready':
+    if code == "function-not-ready":
         raise errors.FunctionNotReadyError(detail)
-    if code == 'invalid-request':
+    if code == "invalid-request":
         raise errors.BadRequestError(detail)
-    if code == 'unprocessable-content':
+    if code == "unprocessable-content":
         raise errors.DecryptionError(detail)
-    if code == 'function/forbidden-ip':
+    if code == "function/forbidden-ip":
         raise errors.ForbiddenIPError(detail)
     raise errors.UnexpectedError(detail)
 

@@ -17,7 +17,11 @@ adapter = HTTPAdapter(max_retries=retry_strategy)
 
 
 class Request(object):
-    auth_header_regexes = [".*/decrypt.*", ".*/client-side-tokens.*", ".*/functions/.*/runs.*"]
+    auth_header_regexes = [
+        ".*/decrypt.*",
+        ".*/client-side-tokens.*",
+        ".*/functions/.*/runs.*",
+    ]
 
     def __init__(self, app_uuid, api_key, timeout=30, retry=False):
         self.http_session = requests.Session()
@@ -26,7 +30,15 @@ class Request(object):
         self.api_key = api_key
         self.retry = retry
 
-    def make_request(self, method, url, params=None, optional_headers={}, error_handler=error_handler.raise_errors_on_failure, _is_ca=False):
+    def make_request(
+        self,
+        method,
+        url,
+        params=None,
+        optional_headers={},
+        error_handler=error_handler.raise_errors_on_failure,
+        _is_ca=False,
+    ):
         """
         Make a request.
 

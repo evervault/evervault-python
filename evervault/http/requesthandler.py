@@ -12,7 +12,13 @@ class RequestHandler(object):
             self.cert.setup()
         return self.request.make_request("GET", self.__url(path), params)
 
-    def post(self, path, params, optional_headers, error_handler=error_handler.raise_errors_on_failure):
+    def post(
+        self,
+        path,
+        params,
+        optional_headers,
+        error_handler=error_handler.raise_errors_on_failure,
+    ):
         if self.cert.is_certificate_expired():
             self.cert.setup()
         return self.request.make_request(
