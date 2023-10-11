@@ -9,7 +9,6 @@ from .http.requestintercept import RequestIntercept
 from .http.requesthandler import RequestHandler
 from .http.request import Request
 from .crypto.client import Client as CryptoClient
-from .datatypes.map import ensure_is_integer
 from .services.timeservice import TimeService
 from .errors.evervault_errors import UndefinedDataError, DecryptionError
 

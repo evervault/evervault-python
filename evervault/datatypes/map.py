@@ -6,12 +6,3 @@ def map_header_type(data):
         return "number"
     elif isinstance(data, str):
         return "string"
-
-
-def ensure_is_integer(data):
-    try:
-        float(data)
-    except TypeError:
-        return False
-    else:
-        return float(data).is_integer()
