@@ -5,6 +5,7 @@ import certifi
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 import base64
+import re
 
 retry_strategy = Retry(
     total=3,
@@ -16,7 +17,7 @@ adapter = HTTPAdapter(max_retries=retry_strategy)
 
 
 class Request(object):
-    auth_header_paths = ["/decrypt", "/client-side-tokens"]
+    auth_header_regexes = [".*/decrypt.*", ".*/client-side-tokens.*", ".*/functions/.*/runs.*"]
 
     def __init__(self, app_uuid, api_key, timeout=30, retry=False):
         self.http_session = requests.Session()
@@ -25,13 +26,14 @@ class Request(object):
         self.api_key = api_key
         self.retry = retry
 
-    def make_request(self, method, url, params=None, optional_headers={}, _is_ca=False):
+    def make_request(self, method, url, params=None, optional_headers={}, error_handler=error_handler.raise_errors_on_failure, _is_ca=False):
         """
         Make a request.
 
         Keyword arguments:
         params -- The parameters of the request (default None)
         optional_headers -- Optional headers for the request (default {})
+        error_handler -- The error handler to use (default error_handler.raise_errors_on_failure)
         _is_ca -- If the request is for a certificate don't parse the response body (default False)
         """
         from evervault import __version__
@@ -46,7 +48,7 @@ class Request(object):
             request_object.mount("http://", adapter)
         resp = self.__execute_request(request_object, method, url, req_params)
         if _is_ca:
-            error_handler.raise_errors_on_failure(resp, resp.content)
+            error_handler(resp, resp.content)
             return resp
         else:
             should_parse = (
@@ -54,7 +56,7 @@ class Request(object):
                 and req_params["headers"]["Content-Type"] != "application/octet-stream"
             )
             parsed_body = self.__parse_body(resp, should_parse)
-            error_handler.raise_errors_on_failure(resp, parsed_body)
+            error_handler(resp, parsed_body)
             resp.parsed_body = parsed_body
             return resp
 
@@ -69,7 +71,7 @@ class Request(object):
         }
 
         # Set correct auth header
-        if any(map(url.__contains__, Request.auth_header_paths)):
+        if any(re.match(regex, url) for regex in Request.auth_header_regexes):
             auth_value = f"{self.app_uuid}:{self.api_key}"
             encoded_auth_value_bytes = base64.b64encode(auth_value.encode("ascii"))
             basic_auth_str = f"Basic {encoded_auth_value_bytes.decode('utf-8')}"
@@ -100,7 +102,7 @@ class Request(object):
             **req_params,
         )
 
-    def __parse_body(self, resp, should_parse=True):
+    def __parse_body(self, resp, should_parse=True, should_raise_error_on_failure=True):
         if resp.content and resp.content.strip():
             try:
                 encoding = resp.encoding or resp.apparent_encoding
@@ -109,4 +111,4 @@ class Request(object):
                 decoded_body = resp.content.decode(encoding)
                 return json.loads(decoded_body) if should_parse else decoded_body
             except ValueError:
-                error_handler.raise_errors_on_failure(resp)
+                error_handler(resp, resp.content)

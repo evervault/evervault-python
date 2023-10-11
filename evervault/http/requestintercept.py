@@ -36,7 +36,6 @@ class RequestIntercept(object):
         self,
         request,
         ca_host,
-        base_run_url,
         base_url,
         api_key,
         relay_url,
@@ -46,7 +45,6 @@ class RequestIntercept(object):
         self.relay_url = relay_url
         self.api_key = api_key
         self.base_url = base_url
-        self.base_run_url = base_run_url
         self.request = request
         self.ca_host = ca_host
         self.expire_date = None
@@ -65,7 +63,6 @@ class RequestIntercept(object):
 
     def get_always_ignore_domains(self):
         return [
-            urlparse(self.base_run_url).netloc,
             urlparse(self.base_url).netloc,
             urlparse(self.ca_host).netloc,
         ]

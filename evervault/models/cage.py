@@ -6,6 +6,3 @@ class Cage(object):
 
     def run(self, data):
         return self.client.run(self.name, data)
-
-    def encrypt_and_run(self, data):
-        return self.client.encrypt_and_run(self.name, data)

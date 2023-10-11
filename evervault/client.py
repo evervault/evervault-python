@@ -1,9 +1,10 @@
 from datetime import datetime
+
+from evervault.errors.error_handler import raise_errors_on_failure, raise_errors_on_function_run_failure, raise_errors_on_function_run_request_failure
 from .http.requestintercept import RequestIntercept
 from .http.requesthandler import RequestHandler
 from .http.request import Request
 from .crypto.client import Client as CryptoClient
-from .models.cage_list import CageList
 from .datatypes.map import ensure_is_integer
 from .services.timeservice import TimeService
 from .errors.evervault_errors import UndefinedDataError, DecryptionError
@@ -16,7 +17,6 @@ class Client(object):
         api_key=None,
         request_timeout=30,
         base_url="https://api.evervault.com/",
-        base_run_url="https://run.evervault.com/",
         relay_url="https://relay.evervault.com:443",
         ca_host="https://ca.evervault.com",
         retry=False,
@@ -26,16 +26,15 @@ class Client(object):
         self.app_uuid = app_uuid
         self.api_key = api_key
         self.base_url = base_url
-        self.base_run_url = base_run_url
         self.relay_url = relay_url
         self.ca_host = ca_host
         request = Request(self.app_uuid, self.api_key, request_timeout, retry)
         time_service = TimeService()
         self.cert = RequestIntercept(
-            request, ca_host, base_run_url, base_url, api_key, relay_url, time_service
+            request, ca_host, base_url, api_key, relay_url, time_service
         )
         self.request_handler = RequestHandler(
-            request, base_run_url, base_url, self.cert
+            request, base_url, self.cert
         )
         self.crypto_client = CryptoClient(api_key, curve, max_file_size_in_mb)
 
@@ -56,10 +55,10 @@ class Client(object):
         headers = self.__build_decrypt_headers(type(data))
 
         if type(data) == bytes:
-            return self.post("decrypt", data, headers, False)
+            return self.post("decrypt", data, headers)
         else:
             payload = {"data": data}
-            response = self.post("decrypt", payload, headers, False)
+            response = self.post("decrypt", payload, headers)
             return response["data"]
 
     def create_token(self, action, payload, expiry=None):
@@ -79,21 +78,14 @@ class Client(object):
         headers = {
             "Content-Type": "application/json",
         }
-        return self.post("client-side-tokens", data, headers, False)
+        return self.post("client-side-tokens", data, headers)
 
-    def run(self, cage_name, data, options={"async": False, "version": None}):
-        optional_headers = self.__build_cage_run_headers(options)
-        return self.post(cage_name, data, optional_headers, True)
+    def run(self, function_name, data):
+        response = self.post(f"functions/{function_name}/runs", {"payload": data}, error_handler=raise_errors_on_function_run_request_failure)
 
-    def encrypt_and_run(
-        self, cage_name, data, options={"async": False, "version": None}
-    ):
-        encrypted_data = self.encrypt(data)
-        return self.run(cage_name, encrypted_data, options)
-
-    def cages(self):
-        cages = self.get("cages")["cages"]
-        return CageList(cages, self).cages
+        if response.get('status') == "success":
+            return response
+        raise_errors_on_function_run_failure(response)
 
     def enable_outbound_relay(
         self,
@@ -113,15 +105,15 @@ class Client(object):
         if client_session:
             self.cert.setup_aiohttp(client_session)
 
-    def create_run_token(self, cage_name, data):
-        return self.post(f"v2/functions/{cage_name}/run-token", data, {})
+    def create_run_token(self, function_name, data):
+        return self.post(f"v2/functions/{function_name}/run-token", data, {})
 
     def get(self, path, params={}):
         return self.request_handler.get(path, params).parsed_body
 
-    def post(self, path, params, optional_headers, cage_run=False):
+    def post(self, path, params, optional_headers = {}, error_handler=raise_errors_on_failure):
         return self.request_handler.post(
-            path, params, optional_headers, cage_run
+            path, params, optional_headers, error_handler
         ).parsed_body
 
     def put(self, path, params):
@@ -136,18 +128,3 @@ class Client(object):
         if data_type == bytes:
             headers["Content-Type"] = "application/octet-stream"
         return headers
-
-    def __build_cage_run_headers(self, options):
-        if options is None:
-            return {}
-        cage_run_headers = {}
-        if "async" in options:
-            if options["async"]:
-                cage_run_headers["x-async"] = "true"
-            options.pop("async", None)
-        if "version" in options:
-            if ensure_is_integer(options["version"]):
-                cage_run_headers["x-version-id"] = str(int(float(options["version"])))
-            options.pop("version", None)
-        cage_run_headers.update(options)
-        return cage_run_headers

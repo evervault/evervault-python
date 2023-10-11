@@ -79,3 +79,33 @@ class UnsupportedCurveError(EvervaultError):
 
 class ExceededMaxFileSizeError(EvervaultError):
     pass
+
+
+class ForbiddenError(EvervaultError):
+    pass
+
+
+class FunctionNotFoundError(EvervaultError):
+    pass
+
+
+class FunctionTimeoutError(EvervaultError):
+    pass
+
+
+class FunctionNotReadyError(EvervaultError):
+    pass
+
+
+class FunctionInitializationError(EvervaultError):
+    def __init__(self, message, stack, id):
+        super(EvervaultError, self).__init__(message)
+        self.stack = stack
+        self.id = id
+
+
+class FunctionRuntimeError(EvervaultError):
+    def __init__(self, message, stack, id):
+        super(EvervaultError, self).__init__(message)
+        self.stack = stack
+        self.id = id
