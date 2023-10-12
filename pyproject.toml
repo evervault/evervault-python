@@ -27,8 +27,8 @@ black = "^22.3.0"
 [tool.poetry.group.dev.dependencies]
 responses = "^0.23.3"
 
-[pytest]
-testpath = "tests"
+[tool.pytest.ini_options]
+testpaths = ["tests"]
 
 [tool.black]
 line-length = 88
