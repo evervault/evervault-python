@@ -6,10 +6,7 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/everva
 
 ## Getting Started
 
-To make life easier, this module features a code formatter/linter and also a commit formatter/linter, so that our
-releases will be compatible with [semantic release](https://semantic-release.gitbook.io/semantic-release/).
-
-We also use [poetry](https://python-poetry.org/) to make dependency management and general development easier. Once you have poetry installed, you can install the dependencies using
+We use [poetry](https://python-poetry.org/) to make dependency management and general development easier. Once you have poetry installed, you can install the dependencies using
 
 ```shell
 poetry install
@@ -18,7 +15,7 @@ poetry install
 From there, you are able to run python using
 
 ```shell
-poetry run python you_file.py
+poetry run python your_file.py
 ```
 
 ## Testing and Code Formatting
@@ -40,6 +37,10 @@ All of these are run using a GitHub action on pull-requests, so please ensure th
 
 ## Commit Formatting & Releases
 
-To maintain compatibility with [semantic versioning](https://semver.org/), we use a combination of commit formatting and [semantic release](https://github.com/semantic-release/semantic-release).
+We use [changesets](https://github.com/changesets/changesets) to version manage in this repo.
 
-We use the commit style specified in [conventional commits](https://www.conventionalcommits.org/). Please ensure that all commits meet this format so that releases can be generated correctly.
+When creating a pr that needs to be rolled into a version release, do `npx changeset`, select the level of the version bump required and describe the changes for the change logs. DO NOT select major for releasing breaking changes without team approval.
+
+To release:
+
+Merge the version PR that the changeset bot created to bump the version numbers. This will bump the versions of the packages, create a git tag for the release, and release the new version to npm.

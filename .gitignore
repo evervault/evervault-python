@@ -3,6 +3,7 @@
 
 # VSCode
 .vscode/
+.metals/
 
 # Setup.py
 *.egg-info
@@ -15,3 +16,7 @@ dist/
 
 # Vitual Environment
 venv/
+
+# Node modules
+node_modules/
+package-lock.json

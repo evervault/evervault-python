@@ -1,12 +1,20 @@
 """Package for the evervault SDK"""
 from .client import Client
 from .errors.evervault_errors import AuthenticationError, UnsupportedCurveError
-from .cages_v2 import CageRequestsSession
+from .cages_v2 import CageRequestsSessionBeta, CageRequestsSession
 import os
 import sys
 from warnings import warn
+import warnings
+from evervault.http.attestationdoc import AttestationDoc
 
-__version__ = "3.1.0"
+try:
+    from importlib import metadata
+except ImportError:
+    # For Python 3.7
+    import importlib_metadata as metadata
+
+__version__ = metadata.version(__package__ or __name__)
 
 ev_client = None
 _app_uuid = None
@@ -20,7 +28,8 @@ BASE_RUN_URL_DEFAULT = "https://run.evervault.com/"
 RELAY_URL_DEFAULT = "https://relay.evervault.com:443"
 CA_HOST_DEFAULT = "https://ca.evervault.com"
 CAGES_CA_HOST_DEFAULT = "https://cages-ca.evervault.com"
-CAGES_HOST_DEFAULT = "cages.evervault.com"
+CAGES_BETA_HOST_DEFAULT = "cages.evervault.com"
+CAGES_GA_HOST_DEFAULT = "cage.evervault.com"
 MAX_FILE_SIZE_IN_MB_DEFAULT = 25
 
 SUPPORTED_CURVES = ["SECP256K1", "SECP256R1"]
@@ -112,11 +121,21 @@ def cages():
 
 
 def cage_requests_session(cage_attestation_data={}):
-    return CageRequestsSession(
+    warnings.warn(
+        "cage_requests_session() is deprecated and will be removed in future versions. Use cage_attestable_session() instead.",
+        DeprecationWarning,
+    )
+    return CageRequestsSessionBeta(
         cage_attestation_data,
         os.environ.get("EV_CAGES_CA_HOST", CAGES_CA_HOST_DEFAULT),
-        os.environ.get("EV_CAGES_HOST", CAGES_HOST_DEFAULT),
+        os.environ.get("EV_CAGES_HOST", CAGES_BETA_HOST_DEFAULT),
     )
+
+
+def attestable_cage_session(cage_attestation_data={}):
+    cage_host = os.environ.get("EV_CAGES_HOST_GA", CAGES_GA_HOST_DEFAULT)
+    cache = AttestationDoc(_app_uuid, cage_attestation_data.keys(), cage_host)
+    return CageRequestsSession(cage_attestation_data, cage_host, cache)
 
 
 def create_run_token(function_name, data={}):
