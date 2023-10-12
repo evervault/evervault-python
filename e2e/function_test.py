@@ -1,3 +1,4 @@
+from evervault.errors.evervault_errors import FunctionRuntimeError
 from .e2e_test_case import EndToEndTestCase
 import os
 
@@ -5,23 +6,43 @@ import os
 class FunctionTest(EndToEndTestCase):
     FUNCTION_NAME = os.getenv("EV_FUNCTION_NAME")
 
-    def test_function_run(self):
-        data = {"name": "John Doe", "age": 42, "isAlive": True}
-        encrypted = self.evervault.encrypt(data)
-        function_response = self.evervault.run(FunctionTest.FUNCTION_NAME, encrypted)
-        assert function_response["result"]["message"] == "OK"
+    PAYLOAD = {
+        'string': 'hello',
+        'integer': 1,
+        'float': 1.5,
+        'true': True,
+        'false': False,
+        'array': ['hello', 1, 1.5, True, False],
+        'obj': {
+            'hello': 'world',
+        },
+    }
 
-    def test_function_run_async(self):
-        data = {"name": "John Doe", "age": 42, "isAlive": True}
-        encrypted = self.evervault.encrypt(data)
-        function_response = self.evervault.run(
-            FunctionTest.FUNCTION_NAME, encrypted, {"async": True}
-        )
-        self.assertEqual(function_response, None)
+    EXPECTED_RESPONSE = {
+        'string': 'string',
+        'integer': 'number',
+        'float': 'number',
+        'true': 'boolean',
+        'false': 'boolean',
+        'array': { '0': 'string', '1': 'number', '2': 'number', '3': 'boolean', '4': 'boolean' },
+        'obj': { 'hello': 'string' },
+    };
+
+    def test_function_run(self):
+        encrypted = self.evervault.encrypt(FunctionTest.PAYLOAD)
+        function_response = self.evervault.run(FunctionTest.FUNCTION_NAME, encrypted)
+        for key, value in FunctionTest.EXPECTED_RESPONSE.items():
+            assert function_response["result"][key] == value
+
+    def test_function_run_with_error(self):
+        encrypted = self.evervault.encrypt({ "shouldError": True})
+        try:
+            self.evervault.run(FunctionTest.FUNCTION_NAME, encrypted)
+        except FunctionRuntimeError as e:
+            assert str(e) == "User threw an error"
 
     def test_create_function_run_token(self):
-        data = {"name": "John Doe", "age": 42, "isAlive": True}
-        encrypted = self.evervault.encrypt(data)
+        encrypted = self.evervault.encrypt(FunctionTest.PAYLOAD)
         function_response = self.evervault.create_run_token(
             FunctionTest.FUNCTION_NAME, encrypted
         )
@@ -30,12 +51,12 @@ class FunctionTest(EndToEndTestCase):
         run_response = self.__run_function_with_token(
             function_response["token"], FunctionTest.FUNCTION_NAME, encrypted
         )
-        assert run_response["result"]["message"] == "OK"
+        assert run_response["result"] == FunctionTest.EXPECTED_RESPONSE
 
-    def __run_function_with_token(self, token, function_name, payload):
-        url = f"https://run.evervault.com/{function_name}"
+    def __run_function_with_token(self, token, function_name, encrypted_payload):
+        url = f"https://api.evervault.com/functions/{function_name}/runs"
         headers = {
-            "Authorization": f"Bearer {token}",
+            "Authorization": f"RunToken {token}",
             "Content-Type": "application/json",
         }
-        return self.make_request(url, headers, payload)
+        return self.make_request(url, headers, { 'payload': encrypted_payload }) 

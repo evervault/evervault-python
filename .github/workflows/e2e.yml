@@ -29,7 +29,7 @@ jobs:
       - name: Run Tests
         run: poetry run pytest ./e2e -v
         env:
-          EV_APP_UUID: ${{ secrets.EV_APP_UUID }}
-          EV_API_KEY: ${{ secrets.EV_API_KEY }}
-          EV_FUNCTION_NAME: ${{ secrets.EV_FUNCTION_NAME }}
+          EV_APP_UUID: ${{ secrets.EV_APP_UUID_V4 }}
+          EV_API_KEY: ${{ secrets.EV_API_KEY_V4 }}
+          EV_FUNCTION_NAME: ${{ secrets.EV_FUNCTION_NAME_V4 }}
           EV_SYNTHETIC_ENDPOINT_URL: ${{ secrets.EV_SYNTHETIC_ENDPOINT_URL }}
