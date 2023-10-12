@@ -7,26 +7,32 @@ class FunctionTest(EndToEndTestCase):
     FUNCTION_NAME = os.getenv("EV_FUNCTION_NAME")
 
     PAYLOAD = {
-        'string': 'hello',
-        'integer': 1,
-        'float': 1.5,
-        'true': True,
-        'false': False,
-        'array': ['hello', 1, 1.5, True, False],
-        'obj': {
-            'hello': 'world',
+        "string": "hello",
+        "integer": 1,
+        "float": 1.5,
+        "true": True,
+        "false": False,
+        "array": ["hello", 1, 1.5, True, False],
+        "obj": {
+            "hello": "world",
         },
     }
 
     EXPECTED_RESPONSE = {
-        'string': 'string',
-        'integer': 'number',
-        'float': 'number',
-        'true': 'boolean',
-        'false': 'boolean',
-        'array': { '0': 'string', '1': 'number', '2': 'number', '3': 'boolean', '4': 'boolean' },
-        'obj': { 'hello': 'string' },
-    };
+        "string": "string",
+        "integer": "number",
+        "float": "number",
+        "true": "boolean",
+        "false": "boolean",
+        "array": {
+            "0": "string",
+            "1": "number",
+            "2": "number",
+            "3": "boolean",
+            "4": "boolean",
+        },
+        "obj": {"hello": "string"},
+    }
 
     def test_function_run(self):
         encrypted = self.evervault.encrypt(FunctionTest.PAYLOAD)
@@ -35,7 +41,7 @@ class FunctionTest(EndToEndTestCase):
             assert function_response["result"][key] == value
 
     def test_function_run_with_error(self):
-        encrypted = self.evervault.encrypt({ "shouldError": True})
+        encrypted = self.evervault.encrypt({"shouldError": True})
         try:
             self.evervault.run(FunctionTest.FUNCTION_NAME, encrypted)
         except FunctionRuntimeError as e:
@@ -59,4 +65,4 @@ class FunctionTest(EndToEndTestCase):
             "Authorization": f"RunToken {token}",
             "Content-Type": "application/json",
         }
-        return self.make_request(url, headers, { 'payload': encrypted_payload }) 
+        return self.make_request(url, headers, {"payload": encrypted_payload})
