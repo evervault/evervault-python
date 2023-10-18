@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 3.3.0
+
+### Minor Changes
+
+- 17354d8: Update attestation doc library version to pull in arm linux compatible wheel files
+
 ## 3.2.0
 
 ### Minor Changes
