@@ -1,5 +1,4 @@
 from evervault.errors.evervault_errors import (
-    FunctionInitializationError,
     FunctionRuntimeError,
     AuthenticationError,
     UnknownEncryptType,
@@ -318,7 +317,7 @@ class TestEvervault(unittest.TestCase):
         )
 
         self.assertRaises(
-            FunctionInitializationError,
+            FunctionRuntimeError,
             self.evervault.run,
             "testing-function",
             {"test": "data"},
