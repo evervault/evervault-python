@@ -92,6 +92,7 @@ class FunctionTimeoutError(EvervaultError):
 class FunctionNotReadyError(EvervaultError):
     pass
 
+
 class FunctionRuntimeError(EvervaultError):
     def __init__(self, message, stack, id):
         super(EvervaultError, self).__init__(message)
