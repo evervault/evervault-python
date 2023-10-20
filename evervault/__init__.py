@@ -19,7 +19,7 @@ __version__ = metadata.version(__package__ or __name__)
 ev_client = None
 _app_uuid = None
 _api_key = None
-request_timeout = 30
+_request_timeout = None
 _retry = False
 _curve = None
 
@@ -50,16 +50,19 @@ def init(
     curve=Curves.SECP256K1,
     debug_requests=False,
     enable_outbound_relay=False,
+    request_timeout=30,
 ):
     global _app_uuid
     global _api_key
     global _retry
     global _curve
+    global _request_timeout
 
     _app_uuid = app_id
     _api_key = api_key
     _retry = retry
     _curve = curve
+    _request_timeout = request_timeout
 
     if intercept or len(ignore_domains) > 0 or len(decryption_domains) > 0:
         warn(
@@ -184,7 +187,7 @@ def __client():
         ev_client = Client(
             api_key=_api_key,
             app_uuid=_app_uuid,
-            request_timeout=request_timeout,
+            request_timeout=_request_timeout,
             base_url=os.environ.get("EV_API_URL", BASE_URL_DEFAULT),
             base_run_url=os.environ.get("EV_CAGE_RUN_URL", BASE_RUN_URL_DEFAULT),
             relay_url=os.environ.get("EV_TUNNEL_HOSTNAME", RELAY_URL_DEFAULT),
