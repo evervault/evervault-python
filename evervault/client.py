@@ -59,8 +59,12 @@ class Client(object):
             return self.post("decrypt", data, headers)
         else:
             payload = {"data": data}
-            response = self.post("decrypt", payload, headers,
-            error_handler=raise_errors_on_api_error,)
+            response = self.post(
+                "decrypt",
+                payload,
+                headers,
+                error_handler=raise_errors_on_api_error,
+            )
             return response["data"]
 
     def create_token(self, action, payload, expiry=None):
@@ -80,8 +84,12 @@ class Client(object):
         headers = {
             "Content-Type": "application/json",
         }
-        return self.post("client-side-tokens", data, headers,
-            error_handler=raise_errors_on_api_error,)
+        return self.post(
+            "client-side-tokens",
+            data,
+            headers,
+            error_handler=raise_errors_on_api_error,
+        )
 
     def run(self, function_name, data):
         response = self.post(
@@ -119,7 +127,11 @@ class Client(object):
         return self.request_handler.get(path, params).parsed_body
 
     def post(
-        self, path, params, optional_headers={}, error_handler=raise_error_using_status_code
+        self,
+        path,
+        params,
+        optional_headers={},
+        error_handler=raise_error_using_status_code,
     ):
         return self.request_handler.post(
             path, params, optional_headers, error_handler
