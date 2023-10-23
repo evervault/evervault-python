@@ -13,11 +13,11 @@ def raise_errors_on_function_run_failure(function_body):
     )
 
 
-def raise_errors_on_function_run_request_failure(resp, function_body):
+def raise_errors_on_api_error(resp, response_body):
     if resp.status_code >= 200 and resp.status_code < 300:
         return
-    code = function_body.get("code")
-    detail = function_body.get("detail")
+    code = response_body.get("code")
+    detail = response_body.get("detail")
 
     if code == "unauthorized":
         raise errors.AuthenticationError(detail)
@@ -34,7 +34,7 @@ def raise_errors_on_function_run_request_failure(resp, function_body):
     raise errors.EvervaultError(detail)
 
 
-def raise_errors_on_failure(resp, body=None):
+def raise_error_using_status_code(resp, body=None):
     if resp.status_code < 400:
         return
     if resp.status_code == 404:

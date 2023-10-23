@@ -17,7 +17,7 @@ class RequestHandler(object):
         path,
         params,
         optional_headers,
-        error_handler=error_handler.raise_errors_on_failure,
+        error_handler=error_handler.raise_error_using_status_code,
     ):
         if self.cert.is_certificate_expired():
             self.cert.setup()

@@ -36,7 +36,7 @@ class Request(object):
         url,
         params=None,
         optional_headers={},
-        error_handler=error_handler.raise_errors_on_failure,
+        error_handler=error_handler.raise_error_using_status_code,
         _is_ca=False,
     ):
         """
@@ -45,7 +45,7 @@ class Request(object):
         Keyword arguments:
         params -- The parameters of the request (default None)
         optional_headers -- Optional headers for the request (default {})
-        error_handler -- The error handler to use (default error_handler.raise_errors_on_failure)
+        error_handler -- The error handler to use (default error_handler.raise_error_using_status_code)
         _is_ca -- If the request is for a certificate don't parse the response body (default False)
         """
         from evervault import __version__

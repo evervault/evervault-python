@@ -1,9 +1,9 @@
 from datetime import datetime
 
 from evervault.errors.error_handler import (
-    raise_errors_on_failure,
+    raise_error_using_status_code,
     raise_errors_on_function_run_failure,
-    raise_errors_on_function_run_request_failure,
+    raise_errors_on_api_error,
 )
 from .http.requestintercept import RequestIntercept
 from .http.requesthandler import RequestHandler
@@ -59,7 +59,8 @@ class Client(object):
             return self.post("decrypt", data, headers)
         else:
             payload = {"data": data}
-            response = self.post("decrypt", payload, headers)
+            response = self.post("decrypt", payload, headers,
+            error_handler=raise_errors_on_api_error,)
             return response["data"]
 
     def create_token(self, action, payload, expiry=None):
@@ -79,13 +80,14 @@ class Client(object):
         headers = {
             "Content-Type": "application/json",
         }
-        return self.post("client-side-tokens", data, headers)
+        return self.post("client-side-tokens", data, headers,
+            error_handler=raise_errors_on_api_error,)
 
     def run(self, function_name, data):
         response = self.post(
             f"functions/{function_name}/runs",
             {"payload": data},
-            error_handler=raise_errors_on_function_run_request_failure,
+            error_handler=raise_errors_on_api_error,
         )
 
         if response.get("status") == "success":
@@ -117,7 +119,7 @@ class Client(object):
         return self.request_handler.get(path, params).parsed_body
 
     def post(
-        self, path, params, optional_headers={}, error_handler=raise_errors_on_failure
+        self, path, params, optional_headers={}, error_handler=raise_error_using_status_code
     ):
         return self.request_handler.post(
             path, params, optional_headers, error_handler
