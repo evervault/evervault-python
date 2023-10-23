@@ -25,11 +25,11 @@ def raise_errors_on_function_run_request_failure(resp, function_body):
         raise errors.ForbiddenError(detail)
     if code == "unprocessable-content":
         raise errors.DecryptionError(detail)
-    if code == "function/request-timeout":
+    if code == "functions/request-timeout":
         raise errors.FunctionTimeoutError(detail)
-    if code == "function/function-not-ready":
+    if code == "functions/function-not-ready":
         raise errors.FunctionNotReadyError(detail)
-    if code == "function/forbidden-ip":
+    if code == "functions/forbidden-ip":
         raise errors.ForbiddenIPError(detail)
     raise errors.EvervaultError(detail)
 
