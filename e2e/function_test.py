@@ -5,6 +5,7 @@ import os
 
 class FunctionTest(EndToEndTestCase):
     FUNCTION_NAME = os.getenv("EV_FUNCTION_NAME")
+    INITIALIZATION_ERROR_FUNCTION_NAME = os.getenv("EV_INITIALIZATION_ERROR_FUNCTION_NAME")
 
     PAYLOAD = {
         "string": "hello",
@@ -46,6 +47,12 @@ class FunctionTest(EndToEndTestCase):
             self.evervault.run(FunctionTest.FUNCTION_NAME, encrypted)
         except FunctionRuntimeError as e:
             assert str(e) == "User threw an error"
+
+    def test_function_run_with_initialization_error(self):
+        try:
+            self.evervault.run(FunctionTest.INITIALIZATION_ERROR_FUNCTION_NAME, {})
+        except FunctionRuntimeError as e:
+            assert str(e) == "The function failed to initialize. This error is commonly encountered when there are problems with the function code (e.g. a syntax error) or when a required import is missing."
 
     def test_create_function_run_token(self):
         encrypted = self.evervault.encrypt(FunctionTest.PAYLOAD)
