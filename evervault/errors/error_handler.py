@@ -1,7 +1,40 @@
 from . import evervault_errors as errors
 
 
-def raise_errors_on_failure(resp, body=None):
+def raise_errors_on_function_run_failure(function_body):
+    error = function_body.get("error")
+    if error:
+        message = error.get("message")
+        stack = error.get("stack")
+        id = function_body.get("id")
+        raise errors.FunctionRuntimeError(message, stack, id)
+    raise errors.UnexpectedError(
+        "An unexpected error occurred. Please contact Evervault support"
+    )
+
+
+def raise_errors_on_api_error(resp, response_body):
+    if resp.status_code >= 200 and resp.status_code < 300:
+        return
+    code = response_body.get("code")
+    detail = response_body.get("detail")
+
+    if code == "unauthorized":
+        raise errors.AuthenticationError(detail)
+    if code == "forbidden":
+        raise errors.ForbiddenError(detail)
+    if code == "unprocessable-content":
+        raise errors.DecryptionError(detail)
+    if code == "functions/request-timeout":
+        raise errors.FunctionTimeoutError(detail)
+    if code == "functions/function-not-ready":
+        raise errors.FunctionNotReadyError(detail)
+    if code == "functions/forbidden-ip":
+        raise errors.ForbiddenIPError(detail)
+    raise errors.EvervaultError(detail)
+
+
+def raise_error_using_status_code(resp, body=None):
     if resp.status_code < 400:
         return
     if resp.status_code == 404:

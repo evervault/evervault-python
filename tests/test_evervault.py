@@ -1,7 +1,7 @@
 from evervault.errors.evervault_errors import (
-    UnknownEncryptType,
-    ForbiddenIPError,
+    FunctionRuntimeError,
     AuthenticationError,
+    UnknownEncryptType,
     ExceededMaxFileSizeError,
     UndefinedDataError,
 )
@@ -18,6 +18,11 @@ import importlib
 import binascii
 import datetime
 
+DEFAULT_HEADERS = {
+    "Authorization": "Basic dGVzdEFwcFV1aWQ6dGVzdGluZw==",
+    "Content-Type": "application/json",
+}
+
 
 class TestEvervault(unittest.TestCase):
     CURVES = {"SECP256K1": ec.SECP256K1, "SECP256R1": ec.SECP256R1}
@@ -33,7 +38,6 @@ class TestEvervault(unittest.TestCase):
         self.evervault.ev_client = None
         self.evervault = None
         self.__del_env_var("EV_API_URL")
-        self.__del_env_var("EV_CAGE_RUN_URL")
         self.__del_env_var("EV_TUNNEL_HOSTNAME")
         self.__del_env_var("EV_CERT_HOSTNAME")
         self.__del_env_var("EV_MAX_FILE_SIZE_IN_MB")
@@ -184,10 +188,7 @@ class TestEvervault(unittest.TestCase):
         request = mock_request.post(
             "https://api.evervault.com/client-side-tokens",
             json={"token": "token123", "expiry": 1234567890},
-            request_headers={
-                "Authorization": "Basic dGVzdEFwcFV1aWQ6dGVzdGluZw==",
-                "Content-Type": "application/json",
-            },
+            request_headers=DEFAULT_HEADERS,
         )
         resp = self.evervault.create_client_side_decrypt_token(
             {"data": "ev:abc123"}, None
@@ -205,10 +206,7 @@ class TestEvervault(unittest.TestCase):
         request = mock_request.post(
             "https://api.evervault.com/client-side-tokens",
             json={"token": "token123", "expiry": 1234567890},
-            request_headers={
-                "Authorization": "Basic dGVzdEFwcFV1aWQ6dGVzdGluZw==",
-                "Content-Type": "application/json",
-            },
+            request_headers=DEFAULT_HEADERS,
         )
         now = datetime.datetime.now()
         expected_datetime_in_request = int(now.timestamp() * 1000)
@@ -237,10 +235,7 @@ class TestEvervault(unittest.TestCase):
         request = mock_request.post(
             "https://api.evervault.com/decrypt",
             json={"data": {"encrypted": "testString"}},
-            request_headers={
-                "Authorization": "Basic dGVzdEFwcFV1aWQ6dGVzdGluZw==",
-                "Content-Type": "application/json",
-            },
+            request_headers=DEFAULT_HEADERS,
         )
         resp = self.evervault.decrypt({"encrypted": "ev:abc123"})
         assert request.called
@@ -252,10 +247,7 @@ class TestEvervault(unittest.TestCase):
         request = mock_request.post(
             "https://api.evervault.com/decrypt",
             json={"data": "testString"},
-            request_headers={
-                "Authorization": "Basic dGVzdEFwcFV1aWQ6dGVzdGluZw==",
-                "Content-Type": "application/json",
-            },
+            request_headers=DEFAULT_HEADERS,
         )
         resp = self.evervault.decrypt("ev:abc123")
         assert request.called
@@ -267,10 +259,7 @@ class TestEvervault(unittest.TestCase):
         request = mock_request.post(
             "https://api.evervault.com/decrypt",
             json={"data": True},
-            request_headers={
-                "Authorization": "Basic dGVzdEFwcFV1aWQ6dGVzdGluZw==",
-                "Content-Type": "application/json",
-            },
+            request_headers=DEFAULT_HEADERS,
         )
         resp = self.evervault.decrypt("ev:abc123")
         assert request.called
@@ -278,119 +267,83 @@ class TestEvervault(unittest.TestCase):
         assert request.last_request.json() == {"data": "ev:abc123"}
 
     @requests_mock.Mocker()
-    def test_run(self, mock_request):
+    def test_function_run(self, mock_request):
         request = mock_request.post(
-            "https://run.evervault.com/testing-cage",
-            json={"result": "there was an attempt"},
-            request_headers={
-                "Api-Key": "testing",
+            "https://api.evervault.com/functions/testing-function/runs",
+            json={
+                "id": "func_run_b470a269a369",
+                "result": {"test": "data"},
+                "status": "success",
             },
+            request_headers=DEFAULT_HEADERS,
         )
-        resp = self.evervault.run("testing-cage", {"name": "testing"})
+        resp = self.evervault.run("testing-function", {"test": "data"})
         assert request.called
-        assert resp["result"] == "there was an attempt"
-        assert request.last_request.json() == {"name": "testing"}
+        assert resp["result"] == {"test": "data"}
+        assert request.last_request.json() == {"payload": {"test": "data"}}
 
     @requests_mock.Mocker()
-    def test_run_with_options(self, mock_request):
-        request = mock_request.post(
-            "https://run.evervault.com/testing-cage",
-            json={"status": "queued"},
-            request_headers={
-                "Api-Key": "testing",
-                "x-version-id": "2",
-                "x-async": "true",
+    def test_user_error_on_function_run(self, mock_request):
+        mock_request.post(
+            "https://api.evervault.com/functions/testing-function/runs",
+            json={
+                "error": {"message": "Uh oh!", "stack": "Error: Uh oh!..."},
+                "id": "func_run_e4f1d8d83ec0",
+                "status": "failure",
             },
+            request_headers=DEFAULT_HEADERS,
         )
-        resp = self.evervault.run(
-            "testing-cage", {"name": "testing"}, {"async": True, "version": 2}
-        )
-        assert request.called
-        assert resp["status"] == "queued"
-        assert request.last_request.json() == {"name": "testing"}
-        assert request.last_request.headers["x-async"] == "true"
-        assert request.last_request.headers["x-version-id"] == "2"
 
-    @requests_mock.Mocker()
-    def test_encrypt_and_run(self, mock_request):
-        self.mock_fetch_cage_key(mock_request)
-
-        request = mock_request.post(
-            "https://run.evervault.com/testing-cage",
-            json={"result": "there was an attempt"},
-            request_headers={
-                "Api-Key": "testing",
-            },
-        )
-        resp = self.evervault.encrypt_and_run("testing-cage", {"name": "testing"})
-        assert request.called
-        assert resp["result"] == "there was an attempt"
-        assert request.last_request.json() != {"name": "testing"}
-        assert "name" in request.last_request.json()
-
-    @requests_mock.Mocker()
-    def test_encrypt_and_forbidden_ip_run(self, mock_request):
-        self.mock_fetch_cage_key(mock_request)
-
-        request = mock_request.post(
-            "https://run.evervault.com/testing-cage",
-            json={"error": "An error occurred"},
-            request_headers={
-                "Api-Key": "testing",
-            },
-            headers={"x-evervault-error-code": "forbidden-ip-error"},
-            status_code=403,
-        )
         self.assertRaises(
-            ForbiddenIPError,
-            self.evervault.encrypt_and_run,
-            "testing-cage",
-            {"name": "testing"},
+            FunctionRuntimeError,
+            self.evervault.run,
+            "testing-function",
+            {"test": "data"},
         )
-        assert request.called
 
     @requests_mock.Mocker()
-    def test_encrypt_and_forbidden_run(self, mock_request):
-        self.mock_fetch_cage_key(mock_request)
-
-        request = mock_request.post(
-            "https://run.evervault.com/testing-cage",
-            json={"error": "An error occurred"},
-            request_headers={
-                "Api-Key": "testing",
+    def test_initialization_error_on_function_run(self, mock_request):
+        mock_request.post(
+            "https://api.evervault.com/functions/testing-function/runs",
+            json={
+                "error": {
+                    "message": "The function failed to initialize...",
+                    "stack": "JavaScript Error",
+                },
+                "id": "func_run_8c70a47efcb4",
+                "status": "failure",
             },
-            headers={},
-            status_code=403,
+            request_headers=DEFAULT_HEADERS,
         )
+
         self.assertRaises(
-            AuthenticationError,
-            self.evervault.encrypt_and_run,
-            "testing-cage",
-            {"name": "testing"},
+            FunctionRuntimeError,
+            self.evervault.run,
+            "testing-function",
+            {"test": "data"},
         )
-        assert request.called
 
     @requests_mock.Mocker()
-    def test_encrypt_and_run_with_options(self, mock_request):
-        request = mock_request.post(
-            "https://run.evervault.com/testing-cage",
-            json={"status": "queued"},
-            request_headers={
-                "Api-Key": "testing",
-                "x-version-id": "2",
-                "x-async": "true",
+    def test_api_error_on_function_run(self, mock_request):
+        mock_request.post(
+            "https://api.evervault.com/functions/testing-function/runs",
+            json={
+                "status": 401,
+                "code": "unauthorized",
+                "title": "Unauthorized",
+                "detail": "The request cannot be authenticated. The request does not contain valid credentials. Please retry with a valid API key.",
             },
+            request_headers=DEFAULT_HEADERS,
+            status_code=401,
         )
-        self.mock_fetch_cage_key(mock_request)
 
-        resp = self.evervault.encrypt_and_run(
-            "testing-cage", {"name": "testing"}, {"async": True, "version": 2}
+        with self.assertRaises(AuthenticationError) as cm:
+            self.evervault.run("testing-function", {"test": "data"})
+
+        self.assertEqual(
+            str(cm.exception),
+            "The request cannot be authenticated. The request does not contain valid credentials. Please retry with a valid API key.",
         )
-        assert request.called
-        assert resp["status"] == "queued"
-        assert request.last_request.json() != {"name": "testing"}
-        assert request.last_request.headers["x-async"] == "true"
-        assert request.last_request.headers["x-version-id"] == "2"
 
     @requests_mock.Mocker()
     def test_endpoint_overrides(self, mock_request):
@@ -400,13 +353,11 @@ class TestEvervault(unittest.TestCase):
         # Test default values
         self.evervault.init("testAppUuid", "testing")
         assert self.evervault.ev_client.base_url == "https://api.evervault.com/"
-        assert self.evervault.ev_client.base_run_url == "https://run.evervault.com/"
         assert self.evervault.ev_client.relay_url == "https://relay.evervault.com:443"
         assert self.evervault.ev_client.ca_host == "https://ca.evervault.com"
 
         # Set overrides
         os.environ["EV_API_URL"] = "https://custom.url.com"
-        os.environ["EV_CAGE_RUN_URL"] = "https://custom.run.url.com"
         os.environ["EV_TUNNEL_HOSTNAME"] = "https://custom.tunnel.url.com"
         os.environ["EV_CERT_HOSTNAME"] = "https://ca.url.com"
 
@@ -415,20 +366,19 @@ class TestEvervault(unittest.TestCase):
         self.evervault.init("testAppUuid", "testing")
 
         assert self.evervault.ev_client.base_url == "https://custom.url.com"
-        assert self.evervault.ev_client.base_run_url == "https://custom.run.url.com"
         assert self.evervault.ev_client.relay_url == "https://custom.tunnel.url.com"
         assert self.evervault.ev_client.ca_host == "https://ca.url.com"
 
     @requests_mock.Mocker()
     def test_create_run_token(self, mock_request):
         request = mock_request.post(
-            "https://api.evervault.com/v2/functions/testing-cage/run-token",
+            "https://api.evervault.com/v2/functions/testing-function/run-token",
             json={"result": "there was an attempt"},
             request_headers={
                 "Api-Key": "testing",
             },
         )
-        resp = self.evervault.create_run_token("testing-cage", {"name": "testing"})
+        resp = self.evervault.create_run_token("testing-function", {"name": "testing"})
         assert request.called
         assert resp["result"] == "there was an attempt"
         assert request.last_request.json() == {"name": "testing"}
@@ -558,81 +508,18 @@ class TestEvervault(unittest.TestCase):
         self.setUp(evervault.Curves.SECP256R1)
 
         request = mock_request.post(
-            "https://run.evervault.com/testing-cage",
-            json={"result": "there was an attempt"},
-            request_headers={
-                "Api-Key": "testing",
+            "https://api.evervault.com/functions/testing-function/runs",
+            json={
+                "id": "func_run_b470a269a369",
+                "result": {"test": "data"},
+                "status": "success",
             },
+            request_headers=DEFAULT_HEADERS,
         )
-        resp = self.evervault.run("testing-cage", {"name": "testing"})
+        resp = self.evervault.run("testing-function", {"test": "data"})
         assert request.called
-        assert resp["result"] == "there was an attempt"
-        assert request.last_request.json() == {"name": "testing"}
-
-    @requests_mock.Mocker()
-    def test_p256_run_with_options(self, mock_request):
-        self.setUp(evervault.Curves.SECP256R1)
-
-        request = mock_request.post(
-            "https://run.evervault.com/testing-cage",
-            json={"status": "queued"},
-            request_headers={
-                "Api-Key": "testing",
-                "x-version-id": "2",
-                "x-async": "true",
-            },
-        )
-        resp = self.evervault.run(
-            "testing-cage", {"name": "testing"}, {"async": True, "version": 2}
-        )
-        assert request.called
-        assert resp["status"] == "queued"
-        assert request.last_request.json() == {"name": "testing"}
-        assert request.last_request.headers["x-async"] == "true"
-        assert request.last_request.headers["x-version-id"] == "2"
-
-    @requests_mock.Mocker()
-    def test_p256_encrypt_and_run(self, mock_request):
-        self.setUp(evervault.Curves.SECP256R1)
-
-        self.mock_fetch_cage_key(mock_request)
-
-        request = mock_request.post(
-            "https://run.evervault.com/testing-cage",
-            json={"result": "there was an attempt"},
-            request_headers={
-                "Api-Key": "testing",
-            },
-        )
-        resp = self.evervault.encrypt_and_run("testing-cage", {"name": "testing"})
-        assert request.called
-        assert resp["result"] == "there was an attempt"
-        assert request.last_request.json() != {"name": "testing"}
-        assert "name" in request.last_request.json()
-
-    @requests_mock.Mocker()
-    def test_p256_encrypt_and_run_with_options(self, mock_request):
-        self.setUp(evervault.Curves.SECP256R1)
-
-        request = mock_request.post(
-            "https://run.evervault.com/testing-cage",
-            json={"status": "queued"},
-            request_headers={
-                "Api-Key": "testing",
-                "x-version-id": "2",
-                "x-async": "true",
-            },
-        )
-        self.mock_fetch_cage_key(mock_request)
-
-        resp = self.evervault.encrypt_and_run(
-            "testing-cage", {"name": "testing"}, {"async": True, "version": 2}
-        )
-        assert request.called
-        assert resp["status"] == "queued"
-        assert request.last_request.json() != {"name": "testing"}
-        assert request.last_request.headers["x-async"] == "true"
-        assert request.last_request.headers["x-version-id"] == "2"
+        assert resp["result"] == {"test": "data"}
+        assert request.last_request.json() == {"payload": {"test": "data"}}
 
     @requests_mock.Mocker()
     def test_run_with_decryption_domain_constructor(self, mock_request):

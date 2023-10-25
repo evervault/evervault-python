@@ -65,12 +65,13 @@ class Client(object):
 
     def __traverse_and_encrypt(self, data):
         if type(data) == list:
+            encrypted_list = []
             for idx, item in enumerate(data):
                 if not self.__encryptable_data(item):
-                    data[idx] = self.__traverse_and_encrypt(item)
+                    encrypted_list.insert(idx, self.__traverse_and_encrypt(item))
                 else:
-                    data[idx] = self.__encrypt_string(item)
-            return data
+                    encrypted_list.insert(idx, self.__encrypt_string(item))
+            return encrypted_list
         elif type(data) == dict:
             return self.__encrypt_object(data)
         elif type(data) == set:

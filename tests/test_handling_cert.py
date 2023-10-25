@@ -37,7 +37,6 @@ class TestHandlingCerts(unittest.TestCase):
         )
 
         base_url_default = "https://api.evervault.com/"
-        base_run_url_default = "https://run.evervault.com/"
         ca_host_default = "https://ca.evervault.com"
 
         app_uuid = "testapp"
@@ -49,7 +48,6 @@ class TestHandlingCerts(unittest.TestCase):
         cert = RequestIntercept(
             request,
             ca_host_default,
-            base_run_url_default,
             base_url_default,
             api_key,
             api_key,
@@ -64,7 +62,6 @@ class TestHandlingCerts(unittest.TestCase):
     def test_not_available_cert_is_not_expired(self, mock_request):
         mock_request.get("https://ca.evervault.com", text="")
         base_url_default = "https://api.evervault.com/"
-        base_run_url_default = "https://run.evervault.com/"
         ca_host_default = "https://ca.evervault.com"
 
         app_uuid = "testapp"
@@ -77,7 +74,6 @@ class TestHandlingCerts(unittest.TestCase):
         cert = RequestIntercept(
             request,
             ca_host_default,
-            base_run_url_default,
             base_url_default,
             api_key,
             api_key,
@@ -115,7 +111,6 @@ class TestHandlingCerts(unittest.TestCase):
         )
 
         base_url_default = "https://api.evervault.com/"
-        base_run_url_default = "https://run.evervault.com/"
         ca_host_default = "https://ca.evervault.com"
 
         app_uuid = "testapp"
@@ -128,7 +123,6 @@ class TestHandlingCerts(unittest.TestCase):
         cert = RequestIntercept(
             request,
             ca_host_default,
-            base_run_url_default,
             base_url_default,
             api_key,
             api_key,
@@ -200,7 +194,6 @@ class TestHandlingCerts(unittest.TestCase):
         )
 
         base_url_default = "https://api.evervault.com/"
-        base_run_url_default = "https://run.evervault.com/"
         ca_host_default = "https://ca.evervault.com"
 
         app_uuid = "testapp"
@@ -213,7 +206,6 @@ class TestHandlingCerts(unittest.TestCase):
         cert = RequestIntercept(
             request,
             ca_host_default,
-            base_run_url_default,
             base_url_default,
             api_key,
             api_key,

@@ -19,7 +19,6 @@ _retry = False
 _curve = None
 
 BASE_URL_DEFAULT = "https://api.evervault.com/"
-BASE_RUN_URL_DEFAULT = "https://run.evervault.com/"
 RELAY_URL_DEFAULT = "https://relay.evervault.com:443"
 CA_HOST_DEFAULT = "https://ca.evervault.com"
 CAGES_CA_HOST_DEFAULT = "https://cages-ca.evervault.com"
@@ -67,8 +66,8 @@ def init(
         __client()
 
 
-def run(function_name, data, options={"async": False, "version": None}):
-    return __client().run(function_name, data, options)
+def run(function_name, data):
+    return __client().run(function_name, data)
 
 
 def decrypt(data):
@@ -81,24 +80,6 @@ def create_client_side_decrypt_token(payload, expiry=None):
 
 def encrypt(data):
     return __client().encrypt(data)
-
-
-def encrypt_and_run(cage_name, data, options={"async": False, "version": None}):
-    warn(
-        "The `encrypt_and_run` method is deprecated and slated for removal. Please use the `encrypt` and `run` methods instead.",
-        DeprecationWarning,
-        stacklevel=2,
-    )
-    return __client().encrypt_and_run(cage_name, data, options)
-
-
-def cages():
-    warn(
-        "The `cages` method is deprecated and slated for removal. For more details please see https://docs.evervault.com/reference/python-sdk",
-        DeprecationWarning,
-        stacklevel=2,
-    )
-    return __client().cages()
 
 
 def cage_requests_session(cage_attestation_data={}):
@@ -167,7 +148,6 @@ def __client():
             app_uuid=_app_uuid,
             request_timeout=request_timeout,
             base_url=os.environ.get("EV_API_URL", BASE_URL_DEFAULT),
-            base_run_url=os.environ.get("EV_CAGE_RUN_URL", BASE_RUN_URL_DEFAULT),
             relay_url=os.environ.get("EV_TUNNEL_HOSTNAME", RELAY_URL_DEFAULT),
             ca_host=os.environ.get("EV_CERT_HOSTNAME", CA_HOST_DEFAULT),
             retry=_retry,
