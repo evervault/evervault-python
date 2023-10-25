@@ -98,7 +98,6 @@ class Client(object):
     def enable_outbound_relay(
         self,
         debug_requests,
-        ignore_domains=[],
         decryption_domains=[],
         enable_outbound_relay=False,
         client_session=None,
@@ -107,8 +106,6 @@ class Client(object):
             self.cert.setup_decryption_domains(decryption_domains, debug_requests)
         elif enable_outbound_relay:
             self.cert.set_relay_outbound_config(debug_requests)
-        else:
-            self.cert.setup_ignore_domains(ignore_domains, debug_requests)
         self.cert.setup()
         if client_session:
             self.cert.setup_aiohttp(client_session)

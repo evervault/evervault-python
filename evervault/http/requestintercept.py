@@ -77,22 +77,6 @@ class RequestIntercept(object):
             host, decryption_domains, always_ignore_domains
         )
 
-    def setup_ignore_domains(self, ignore_domains, debug_requests=False):
-        self.debug_requests = debug_requests
-        ignore_domains.extend(self.get_always_ignore_domains())
-
-        ignore_if_exact = []
-        ignore_if_endswith = ()
-        for domain in ignore_domains:
-            if domain.startswith("www."):
-                domain = domain[4:]
-            ignore_if_exact.append(domain)
-            ignore_if_endswith += ("." + domain, "@" + domain)
-
-        self.should_proxy_domain = lambda host: not (
-            host in ignore_if_exact or host.endswith(ignore_if_endswith)
-        )
-
     def set_relay_outbound_config(self, debug_requests=False):
         self.debug_requests = debug_requests
         RelayOutboundConfig.init(self.request, self.base_url, self.debug_requests)
