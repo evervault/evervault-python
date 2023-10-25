@@ -10,7 +10,7 @@ from .http.requesthandler import RequestHandler
 from .http.request import Request
 from .crypto.client import Client as CryptoClient
 from .services.timeservice import TimeService
-from .errors.evervault_errors import UndefinedDataError, DecryptionError
+from .errors.evervault_errors import EvervaultError
 
 
 class Client(object):
@@ -48,9 +48,9 @@ class Client(object):
 
     def decrypt(self, data):
         if data is None:
-            raise UndefinedDataError("Data is not defined")
+            raise EvervaultError("Data is not defined")
         elif not isinstance(data, (str, dict, list, bytes)):
-            raise DecryptionError(
+            raise EvervaultError(
                 "data must be of type `str`, `dict`, `list` or `bytes`"
             )
         headers = self.__build_decrypt_headers(type(data))
@@ -69,11 +69,11 @@ class Client(object):
 
     def create_token(self, action, payload, expiry=None):
         if payload is None:
-            raise UndefinedDataError(
+            raise EvervaultError(
                 "Payload must be defined. It ensures that the generated token will only be able to be used to decrypt this specific payload"
             )
         if expiry and not isinstance(expiry, datetime):
-            raise UndefinedDataError("expiry must be an instance of `datetime`")
+            raise EvervaultError("expiry must be an instance of `datetime`")
         if expiry and isinstance(expiry, datetime):
             expiry = int(expiry.timestamp() * 1000)
         data = {

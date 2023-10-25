@@ -1,8 +1,5 @@
 from ..errors.evervault_errors import (
-    UndefinedDataError,
-    InvalidPublicKeyError,
-    MissingTeamEcdhKey,
-    UnknownEncryptType,
+    EvervaultError,
     ExceededMaxFileSizeError,
 )
 from ..datatypes.map import map_header_type
@@ -45,12 +42,12 @@ class Client(object):
 
     def encrypt_data(self, fetch, data):
         if data is None:
-            raise UndefinedDataError("Data not defined")
+            raise EvervaultError("Data not defined")
         self.__fetch_cage_key(fetch)
         self.shared_key = self.__derive_shared_key()
 
         if self.shared_key is None or type(self.shared_key) != bytes:
-            raise InvalidPublicKeyError("Provided EC compressed point is invalid")
+            raise EvervaultError("Retrieved key is invalid")
 
         if type(data) == bytes:
             return self.__encrypt_file(data)
@@ -61,7 +58,7 @@ class Client(object):
         elif self.__encryptable_data(data):
             return self.__encrypt_string(data)
         else:
-            raise UnknownEncryptType(f"Cannot encrypt unsupported type {data}")
+            raise EvervaultError(f"Cannot encrypt unsupported type {data}")
 
     def __traverse_and_encrypt(self, data):
         if type(data) == list:
@@ -79,7 +76,7 @@ class Client(object):
         elif self.__encryptable_data(data):
             return self.__encrypt_string(data)
         else:
-            raise UnknownEncryptType(f"Cannot encrypt unsupported type {data}")
+            raise EvervaultError(f"Cannot encrypt unsupported type {data}")
 
     def __encrypt_object(self, data):
         encrypted_data = {}
@@ -195,7 +192,7 @@ class Client(object):
 
     def __derive_shared_key(self):
         if self.team_ecdh_key is None:
-            raise MissingTeamEcdhKey("Team ECDH key not set in client")
+            raise EvervaultError("Team ECDH key not set in client")
         elif self.shared_key is None:
             return self.__generate_shared_key()
         else:

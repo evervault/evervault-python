@@ -6,7 +6,7 @@ import warnings
 import certifi
 import tempfile
 import ssl
-from evervault.errors.evervault_errors import CertDownloadError
+from evervault.errors.evervault_errors import EvervaultError
 from evervault.http.outboundrelayconfig import RelayOutboundConfig
 
 EVERVAULT_DOMAINS = ["evervault.com", "evervault.io", "evervault.test"]
@@ -212,7 +212,7 @@ class RequestIntercept(object):
                 pass
 
         if ca_content is None:
-            raise CertDownloadError(
+            raise EvervaultError(
                 f"Unable to install the Evervault root certificate from {self.ca_host}. "
             )
 
@@ -223,7 +223,7 @@ class RequestIntercept(object):
                 cert_file.write(bytes(certifi.contents(), "ascii") + ca_content)
                 self.cert_path = cert_file.name
         except:
-            raise CertDownloadError(
+            raise EvervaultError(
                 f"Unable to install the Evervault root certficate from {self.ca_host}. "
                 "Likely a permissions error when attempting to write to the /tmp/ directory."
             )

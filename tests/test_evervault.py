@@ -1,9 +1,7 @@
 from evervault.errors.evervault_errors import (
     FunctionRuntimeError,
-    AuthenticationError,
-    UnknownEncryptType,
+    EvervaultError,
     ExceededMaxFileSizeError,
-    UndefinedDataError,
 )
 import unittest
 from evervault.http.outboundrelayconfig import RelayOutboundConfig
@@ -179,9 +177,9 @@ class TestEvervault(unittest.TestCase):
         level_1_list = ["a", test_instance, 3]
         level_2_list = ["a", ["a", test_instance]]
 
-        self.assertRaises(UnknownEncryptType, self.evervault.encrypt, test_instance)
-        self.assertRaises(UnknownEncryptType, self.evervault.encrypt, level_1_list)
-        self.assertRaises(UnknownEncryptType, self.evervault.encrypt, level_2_list)
+        self.assertRaises(EvervaultError, self.evervault.encrypt, test_instance)
+        self.assertRaises(EvervaultError, self.evervault.encrypt, level_1_list)
+        self.assertRaises(EvervaultError, self.evervault.encrypt, level_2_list)
 
     @requests_mock.Mocker()
     def test_create_decrypt_token_without_expiry(self, mock_request):
@@ -224,7 +222,7 @@ class TestEvervault(unittest.TestCase):
     @requests_mock.Mocker()
     def test_create_decrypt_token_without_payload_throws(self, mock_request):
         self.assertRaises(
-            UndefinedDataError,
+            EvervaultError,
             self.evervault.create_client_side_decrypt_token,
             None,
             None,
@@ -337,7 +335,7 @@ class TestEvervault(unittest.TestCase):
             status_code=401,
         )
 
-        with self.assertRaises(AuthenticationError) as cm:
+        with self.assertRaises(EvervaultError) as cm:
             self.evervault.run("testing-function", {"test": "data"})
 
         self.assertEqual(
@@ -499,9 +497,9 @@ class TestEvervault(unittest.TestCase):
         level_1_list = ["a", test_instance, 3]
         level_2_list = ["a", ["a", test_instance]]
 
-        self.assertRaises(UnknownEncryptType, self.evervault.encrypt, test_instance)
-        self.assertRaises(UnknownEncryptType, self.evervault.encrypt, level_1_list)
-        self.assertRaises(UnknownEncryptType, self.evervault.encrypt, level_2_list)
+        self.assertRaises(EvervaultError, self.evervault.encrypt, test_instance)
+        self.assertRaises(EvervaultError, self.evervault.encrypt, level_1_list)
+        self.assertRaises(EvervaultError, self.evervault.encrypt, level_2_list)
 
     @requests_mock.Mocker()
     def test_p256_run(self, mock_request):

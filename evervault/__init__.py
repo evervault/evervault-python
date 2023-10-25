@@ -1,6 +1,6 @@
 """Package for the evervault SDK"""
 from .client import Client
-from .errors.evervault_errors import AuthenticationError, UnsupportedCurveError
+from .errors.evervault_errors import EvervaultError
 from .cages_v2 import CageRequestsSessionBeta, CageRequestsSession
 import os
 import sys
@@ -129,15 +129,15 @@ def _warn_if_python_version_unsupported_for_async():
 
 def __client():
     if not _app_uuid:
-        raise AuthenticationError(
+        raise EvervaultError(
             "Your App's App UUID must be entered using evervault.init('<APP-ID>', '<API-KEY>')"
         )
     if not _api_key:
-        raise AuthenticationError(
+        raise EvervaultError(
             "Your App's API Key must be entered using evervault.init('<APP-ID>', '<API-KEY>')"
         )
     if _curve not in SUPPORTED_CURVES:
-        raise UnsupportedCurveError(f"The {_curve} curve is not supported.")
+        raise EvervaultError(f"The {_curve} curve is not supported.")
     global ev_client
     if not ev_client:
         max_file_size_in_mb = int(
