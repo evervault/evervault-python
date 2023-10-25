@@ -114,7 +114,7 @@ class Request(object):
             **req_params,
         )
 
-    def __parse_body(self, resp, should_parse=True, should_raise_error_on_failure=True):
+    def __parse_body(self, resp, should_parse=True):
         if resp.content and resp.content.strip():
             try:
                 encoding = resp.encoding or resp.apparent_encoding
