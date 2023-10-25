@@ -351,7 +351,7 @@ class TestEvervault(unittest.TestCase):
         mock_request.get("https://ca.url.com", {})
 
         # Test default values
-        self.evervault.init("testAppUuid", "testing", intercept=True)
+        self.evervault.init("testAppUuid", "testing")
         assert self.evervault.ev_client.base_url == "https://api.evervault.com/"
         assert self.evervault.ev_client.relay_url == "https://relay.evervault.com:443"
         assert self.evervault.ev_client.ca_host == "https://ca.evervault.com"
@@ -522,33 +522,6 @@ class TestEvervault(unittest.TestCase):
         assert request.last_request.json() == {"payload": {"test": "data"}}
 
     @requests_mock.Mocker()
-    def test_run_with_intercept_domain(self, mock_request):
-        self.__mock_cert(mock_request)
-
-        evervault.init("testAppUuid", "testing", intercept=True)
-
-        request = mock_request.get("https://test2.com/hello")
-        requests.get("https://test2.com/hello")
-        assert request.last_request.headers["Proxy-Authorization"] == "testing"
-
-        self.__reinit_client()
-
-    @requests_mock.Mocker()
-    def test_run_with_intercept_function_domain_ignored(self, mock_request):
-        self.__mock_cert(mock_request)
-
-        request = mock_request.get("https://api.evervault.com/functions/hello/runs")
-        evervault.init("testAppUuid", "testing", intercept=True)
-
-        requests.get("https://api.evervault.com/functions/hello/runs")
-
-        self.assertRaises(
-            KeyError, lambda: request.last_request.headers["Proxy-Authorization"]
-        )
-
-        self.__reinit_client()
-
-    @requests_mock.Mocker()
     def test_run_with_decryption_domain_constructor(self, mock_request):
         self.__mock_cert(mock_request)
 
@@ -617,19 +590,6 @@ class TestEvervault(unittest.TestCase):
         self.assertRaises(
             KeyError, lambda: request.last_request.headers["Proxy-Authorization"]
         )
-
-        self.__reinit_client()
-
-    @requests_mock.Mocker()
-    def test_run_with_intercept_with_allowed_domain(self, mock_request):
-        self.__mock_cert(mock_request)
-
-        request = mock_request.get("https://testing.com/hello")
-        evervault.init("testAppUuid", "testing", intercept=True)
-
-        requests.get("https://testing.com/hello")
-
-        assert request.last_request.headers["Proxy-Authorization"] == "testing"
 
         self.__reinit_client()
 

@@ -7,12 +7,7 @@ import sys
 from warnings import warn
 import warnings
 from evervault.http.attestationdoc import AttestationDoc
-
-try:
-    from importlib import metadata
-except ImportError:
-    # For Python 3.7
-    import importlib_metadata as metadata
+from importlib import metadata
 
 __version__ = metadata.version(__package__ or __name__)
 
@@ -43,8 +38,6 @@ def init(
     app_id,
     api_key,
     decryption_domains=[],
-    intercept=False,
-    ignore_domains=[],
     retry=False,
     curve=Curves.SECP256K1,
     debug_requests=False,
@@ -60,29 +53,17 @@ def init(
     _retry = retry
     _curve = curve
 
-    if intercept or len(ignore_domains) > 0 or len(decryption_domains) > 0:
-        warn(
-            """
-                The `intercept`, `ignore_domains` & `decryption_domains` config options in the Evervault SDK are deprecated and slated for removal.\n
-                You can now use the `enable_outbound_relay` method to enable Outbound Relay.\n
-                For more details please see https://docs.evervault.com/reference/python-sdk#evervaultenable_outbound_relay
-            """,
-            DeprecationWarning,
-            stacklevel=2,
-        )
-
     if len(decryption_domains) > 0:
         __client().enable_outbound_relay(
             debug_requests, decryption_domains=decryption_domains
         )
-    elif intercept or len(ignore_domains) > 0:
-        __client().enable_outbound_relay(debug_requests, ignore_domains=ignore_domains)
-    elif not intercept and enable_outbound_relay:
+    elif enable_outbound_relay:
         __client().enable_outbound_relay(
             debug_requests,
-            ignore_domains=ignore_domains,
             enable_outbound_relay=enable_outbound_relay,
         )
+    else:
+        __client()
 
 
 def run(function_name, data):
