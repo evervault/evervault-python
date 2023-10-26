@@ -11,7 +11,6 @@ from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import ec
 import evervault
 import os
-import requests
 import importlib
 import binascii
 import datetime
