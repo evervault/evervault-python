@@ -24,8 +24,8 @@ DEFAULT_HEADERS = {
 
 CURVES = {"SECP256K1": ec.SECP256K1, "SECP256R1": ec.SECP256R1}
 
-class TestEvervault(unittest.TestCase):
 
+class TestEvervault(unittest.TestCase):
     def setUp(self, curve="SECP256K1"):
         self.curve = curve
         importlib.reload(evervault)
@@ -177,7 +177,9 @@ class TestEvervault(unittest.TestCase):
 
     @parameterized.expand(CURVES.keys)
     @requests_mock.Mocker()
-    def test_encrypt_large_files_succeeds_with_max_size_override(self, curve, mock_request):
+    def test_encrypt_large_files_succeeds_with_max_size_override(
+        self, curve, mock_request
+    ):
         os.environ["EV_MAX_FILE_SIZE_IN_MB"] = "30"
         self.setUp(curve)
         self.mock_fetch_cage_key(mock_request)
