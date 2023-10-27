@@ -2,7 +2,7 @@ import requests
 import urllib3
 import evervault_attestation_bindings
 from types import MethodType
-from evervault.errors.evervault_errors import CertDownloadError
+from evervault.errors.evervault_errors import EvervaultError
 import tempfile
 import base64
 
@@ -152,7 +152,7 @@ class CageRequestsSessionBeta(requests.Session):
                 pass
 
         if ca_content is None:
-            raise CertDownloadError(
+            raise EvervaultError(
                 f"Unable to install the Evervault Cages CA cert from {self.ca_host}. "
             )
 
@@ -164,7 +164,7 @@ class CageRequestsSessionBeta(requests.Session):
                 cert_file.write(ca_content)
                 self.cert_path = cert_file.name
         except:
-            raise CertDownloadError(
+            raise EvervaultError(
                 f"Unable to install the Evervault Cages CA cert from {self.ca_host}. "
                 "Likely a permissions error when attempting to write to the /tmp/ directory."
             )
