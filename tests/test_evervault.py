@@ -234,7 +234,7 @@ class TestEvervault(unittest.TestCase):
             EvervaultError,
             self.evervault.encrypt,
             "test",
-            {"role": "a_really_long_role_name_that_is_over_20_characters"},
+            "a_really_long_role_name_that_is_over_20_characters",
         )
 
     @parameterized.expand(CURVES.keys())

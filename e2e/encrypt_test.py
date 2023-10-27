@@ -9,17 +9,22 @@ ROLES_AND_SUCCESSES = [
     {"role": "forbid-all", "decryption_should_succeed": False},
     {"role": None, "decryption_should_succeed": True},
 ]
-metadata_string_regex = r"((ev(:|%3A))(debug(:|%3A))?((QlJV|TENZ|)(:|%3A))?((number|boolean|string)(:|%3A))?(([A-z0-9+\/=%]+)(:|%3A)){3}(\$|%24))|(((eyJ[A-z0-9+=.]+){2})([\w]{8}(-[\w]{4}){3}-[\w]{12}))"
+METADATA_ENCRYPTED_STRING_REGEX = r"((ev(:|%3A))(debug(:|%3A))?((QlJV|TENZ|)(:|%3A))?((number|boolean|string)(:|%3A))?(([A-z0-9+\/=%]+)(:|%3A)){3}(\$|%24))|(((eyJ[A-z0-9+=.]+){2})([\w]{8}(-[\w]{4}){3}-[\w]{12}))"
 
 
 def check_object_has_strings_with_correct_versions(value):
+    if isinstance(value, dict):
+        for key, dict_val in value.items():
+            if not check_object_has_strings_with_correct_versions(dict_val):
+                return False
+        return True
     if isinstance(value, list):
         for arr_val in value:
-            if not re.match(metadata_string_regex, arr_val):
+            if not check_object_has_strings_with_correct_versions(arr_val):
                 return False
         return True
     else:
-        return re.match(metadata_string_regex, value)
+        return re.match(METADATA_ENCRYPTED_STRING_REGEX, value)
 
 
 def generate_combinations(list1, list2):
