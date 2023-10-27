@@ -47,77 +47,73 @@ class Client(object):
         self.max_file_size_in_mb = max_file_size_in_mb
         self.max_file_size_in_bytes = max_file_size_in_mb * 1024 * 1024
 
-    def encrypt_data(self, fetch, data, metadata):
+    def encrypt_data(self, fetch, data, role):
         if data is None:
             raise EvervaultError("Data not defined")
-        if "role" in metadata and len(metadata["role"]) > 20:
+        if role and len(role) > 20:
             raise EvervaultError("Provided Data Role slug is invalid")
         self.__fetch_cage_key(fetch)
-        self.shared_key = self.__derive_shared_key(
-            "role" in metadata and metadata["role"] is not None
-        )
+        self.shared_key = self.__derive_shared_key(role is not None)
 
         if self.shared_key is None or type(self.shared_key) != bytes:
             raise EvervaultError("Retrieved key is invalid")
 
         if type(data) == bytes:
-            return self.__encrypt_file(data, metadata)
+            return self.__encrypt_file(data, role)
         elif type(data) == bytearray:
-            return self.__encrypt_file(bytes(data), metadata)
+            return self.__encrypt_file(bytes(data), role)
         elif type(data) == dict or type(data) == list or type(data) == set:
-            return self.__traverse_and_encrypt(data, metadata)
+            return self.__traverse_and_encrypt(data, role)
         elif self.__encryptable_data(data):
-            return self.__encrypt_string(data, metadata)
+            return self.__encrypt_string(data, role)
         else:
             raise EvervaultError(f"Cannot encrypt unsupported type {data}")
 
-    def __traverse_and_encrypt(self, data, metadata):
+    def __traverse_and_encrypt(self, data, role):
         if type(data) == list:
             encrypted_list = []
             for idx, item in enumerate(data):
                 if not self.__encryptable_data(item):
-                    encrypted_list.insert(
-                        idx, self.__traverse_and_encrypt(item, metadata)
-                    )
+                    encrypted_list.insert(idx, self.__traverse_and_encrypt(item, role))
                 else:
-                    encrypted_list.insert(idx, self.__encrypt_string(item, metadata))
+                    encrypted_list.insert(idx, self.__encrypt_string(item, role))
             return encrypted_list
         elif type(data) == dict:
-            return self.__encrypt_object(data, metadata)
+            return self.__encrypt_object(data, role)
         elif type(data) == set:
-            return self.__encrypt_set(data, metadata)
+            return self.__encrypt_set(data, role)
         elif self.__encryptable_data(data):
-            return self.__encrypt_string(data, metadata)
+            return self.__encrypt_string(data, role)
         else:
             raise EvervaultError(f"Cannot encrypt unsupported type {data}")
 
-    def __encrypt_object(self, data, metadata):
+    def __encrypt_object(self, data, role):
         encrypted_data = {}
         for key, value in data.items():
             if self.__encryptable_data(value):
-                encrypted_data[key] = self.__encrypt_string(value, metadata)
+                encrypted_data[key] = self.__encrypt_string(value, role)
             else:
-                encrypted_data[key] = self.__traverse_and_encrypt(value, metadata)
+                encrypted_data[key] = self.__traverse_and_encrypt(value, role)
         return encrypted_data
 
-    def __encrypt_set(self, data, metadata):
+    def __encrypt_set(self, data, role):
         encrypted_set = set()
         for item in data:
             if self.__encryptable_data(item):
-                encrypted_set.add(self.__encrypt_string(item, metadata))
+                encrypted_set.add(self.__encrypt_string(item, role))
             else:
-                encrypted_set.add(self.__traverse_and_encrypt(item, metadata))
+                encrypted_set.add(self.__traverse_and_encrypt(item, role))
         return encrypted_set
 
-    def __encrypt_string(self, data, metadata):
+    def __encrypt_string(self, data, role):
         header_type = map_header_type(data)
         coerced_data = self.__coerce_type(data)
         iv = token_bytes(12)
         aesgcm = AESGCM(self.shared_key)
-        has_role = "role" in metadata and metadata["role"] is not None
+        has_role = role is not None
 
         if has_role:
-            metadata = self.__generate_metadata(metadata["role"])
+            metadata = self.__generate_metadata(role)
             metadata_offset = struct.pack(
                 "<H", len(metadata)
             )  # '<H' specifies 16-bit unsigned little-endian
@@ -126,7 +122,7 @@ class Client(object):
             payload = bytes(coerced_data, "utf8")
 
         encrypted_bytes = b""
-        if self.curve == SECP256K1:
+        if self.curve == SECP256K1 and not has_role:
             encrypted_bytes = aesgcm.encrypt(iv, payload, None)
         else:
             encrypted_bytes = aesgcm.encrypt(iv, payload, self.decoded_team_cage_key)
@@ -167,7 +163,7 @@ class Client(object):
 
         return buffer
 
-    def __encrypt_file(self, data, metadata):
+    def __encrypt_file(self, data, role):
         if len(data) > self.max_file_size_in_bytes:
             raise ExceededMaxFileSizeError(
                 f"File size must be less than {self.max_file_size_in_mb}MB"
