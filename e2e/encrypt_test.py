@@ -7,9 +7,9 @@ CURVES = ["SECP256K1", "SECP256R1"]
 ROLES_AND_SUCCESSES = [
     {"role": "permit-all", "decryption_should_succeed": True},
     {"role": "forbid-all", "decryption_should_succeed": False},
-    {"role": None,         "decryption_should_succeed": True},
+    {"role": None, "decryption_should_succeed": True},
 ]
-metadata_string_regex = r'((ev(:|%3A))(debug(:|%3A))?((QlJV|TENZ|)(:|%3A))?((number|boolean|string)(:|%3A))?(([A-z0-9+\/=%]+)(:|%3A)){3}(\$|%24))|(((eyJ[A-z0-9+=.]+){2})([\w]{8}(-[\w]{4}){3}-[\w]{12}))'
+metadata_string_regex = r"((ev(:|%3A))(debug(:|%3A))?((QlJV|TENZ|)(:|%3A))?((number|boolean|string)(:|%3A))?(([A-z0-9+\/=%]+)(:|%3A)){3}(\$|%24))|(((eyJ[A-z0-9+=.]+){2})([\w]{8}(-[\w]{4}){3}-[\w]{12}))"
 
 
 def check_object_has_strings_with_correct_versions(value):
