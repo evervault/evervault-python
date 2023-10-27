@@ -4,8 +4,10 @@ from parameterized import parameterized
 CURVES = ["SECP256K1", "SECP256R1"]
 METADATA = [{"role": "permit-all"}, {}]
 
+
 def generate_combinations(list1, list2):
     return [(x, y) for x in list1 for y in list2]
+
 
 class EncryptTest(EndToEndTestCase):
     @parameterized.expand(generate_combinations(CURVES, METADATA))

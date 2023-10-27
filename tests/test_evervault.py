@@ -24,8 +24,10 @@ DEFAULT_HEADERS = {
 CURVES = {"SECP256K1": ec.SECP256K1, "SECP256R1": ec.SECP256R1}
 METADATA = [{"role": "role"}, {}]
 
+
 def generate_combinations(list1, list2):
     return [(x, y) for x in list1 for y in list2]
+
 
 class TestEvervault(unittest.TestCase):
     def setUp(self, curve="SECP256K1"):
@@ -45,7 +47,9 @@ class TestEvervault(unittest.TestCase):
 
     @parameterized.expand(generate_combinations(CURVES.keys(), METADATA))
     @requests_mock.Mocker()
-    def test_encrypting_number_generates_ev_number_type(self, curve, metadata, mock_request):
+    def test_encrypting_number_generates_ev_number_type(
+        self, curve, metadata, mock_request
+    ):
         self.setUp(curve)
         self.mock_fetch_cage_key(mock_request)
 
@@ -55,7 +59,9 @@ class TestEvervault(unittest.TestCase):
 
     @parameterized.expand(generate_combinations(CURVES.keys(), METADATA))
     @requests_mock.Mocker()
-    def test_encrypting_boolean_generates_ev_boolean_type(self, curve, metadata, mock_request):
+    def test_encrypting_boolean_generates_ev_boolean_type(
+        self, curve, metadata, mock_request
+    ):
         self.setUp(curve)
         self.mock_fetch_cage_key(mock_request)
 
@@ -65,7 +71,9 @@ class TestEvervault(unittest.TestCase):
 
     @parameterized.expand(generate_combinations(CURVES.keys(), METADATA))
     @requests_mock.Mocker()
-    def test_encrypting_string_generates_ev_string_type(self, curve, metadata, mock_request):
+    def test_encrypting_string_generates_ev_string_type(
+        self, curve, metadata, mock_request
+    ):
         self.setUp(curve)
         self.mock_fetch_cage_key(mock_request)
 
@@ -221,8 +229,13 @@ class TestEvervault(unittest.TestCase):
     def test_encrypt_with_too_large_role_throws_exception(self, curve, mock_request):
         self.setUp(curve)
         self.mock_fetch_cage_key(mock_request)
-        
-        self.assertRaises(EvervaultError, self.evervault.encrypt, "test", {"role": "a_really_long_role_name_that_is_over_20_characters"})
+
+        self.assertRaises(
+            EvervaultError,
+            self.evervault.encrypt,
+            "test",
+            {"role": "a_really_long_role_name_that_is_over_20_characters"},
+        )
 
     @parameterized.expand(CURVES.keys())
     @requests_mock.Mocker()

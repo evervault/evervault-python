@@ -40,7 +40,9 @@ class Client(object):
             base64.b64encode(bytes(VERSION[self.curve], "utf8")).decode("utf")
         )
         self.ev_version_with_metadata = self.__base_64_remove_padding(
-            base64.b64encode(bytes(VERSION_WITH_METADATA[self.curve], "utf8")).decode("utf")
+            base64.b64encode(bytes(VERSION_WITH_METADATA[self.curve], "utf8")).decode(
+                "utf"
+            )
         )
         self.max_file_size_in_mb = max_file_size_in_mb
         self.max_file_size_in_bytes = max_file_size_in_mb * 1024 * 1024
@@ -51,7 +53,9 @@ class Client(object):
         if "role" in metadata and len(metadata["role"]) > 20:
             raise EvervaultError("Provided Data Role slug is invalid")
         self.__fetch_cage_key(fetch)
-        self.shared_key = self.__derive_shared_key("role" in metadata and metadata["role"] is not None)
+        self.shared_key = self.__derive_shared_key(
+            "role" in metadata and metadata["role"] is not None
+        )
 
         if self.shared_key is None or type(self.shared_key) != bytes:
             raise EvervaultError("Retrieved key is invalid")
@@ -72,7 +76,9 @@ class Client(object):
             encrypted_list = []
             for idx, item in enumerate(data):
                 if not self.__encryptable_data(item):
-                    encrypted_list.insert(idx, self.__traverse_and_encrypt(item, metadata))
+                    encrypted_list.insert(
+                        idx, self.__traverse_and_encrypt(item, metadata)
+                    )
                 else:
                     encrypted_list.insert(idx, self.__encrypt_string(item, metadata))
             return encrypted_list
@@ -112,7 +118,9 @@ class Client(object):
 
         if has_role:
             metadata = self.__generate_metadata(metadata["role"])
-            metadata_offset = struct.pack("<H", len(metadata)) # '<H' specifies 16-bit unsigned little-endian
+            metadata_offset = struct.pack(
+                "<H", len(metadata)
+            )  # '<H' specifies 16-bit unsigned little-endian
             payload = metadata_offset + metadata + bytes(coerced_data, "utf8")
         else:
             payload = bytes(coerced_data, "utf8")
@@ -121,9 +129,7 @@ class Client(object):
         if self.curve == SECP256K1:
             encrypted_bytes = aesgcm.encrypt(iv, payload, None)
         else:
-            encrypted_bytes = aesgcm.encrypt(
-                iv, payload, self.decoded_team_cage_key
-            )
+            encrypted_bytes = aesgcm.encrypt(iv, payload, self.decoded_team_cage_key)
 
         return self.__format(
             header_type,
@@ -141,23 +147,23 @@ class Client(object):
         if role:
             # Binary representation for a fixed string of length 2, followed by `dr` (for "data role")
             buffer.extend([0xA2])
-            buffer.extend(b'dr')
+            buffer.extend(b"dr")
             # Binary representation for a fixed string of role name length, followed by the role name itself
             buffer.extend([0xA0 | len(role)])
-            buffer.extend(role.encode('utf-8'))
-        
+            buffer.extend(role.encode("utf-8"))
+
         # Binary representation for a fixed string of length 2, followed by `eo` (for "encryption origin")
         buffer.extend([0xA2])
-        buffer.extend(b'eo')
+        buffer.extend(b"eo")
         # Binary representation for the integer 7 (Python SDK)
         buffer.extend([7])
 
         # Binary representation for a fixed string of length 2, followed by `et` (for "encryption timestamp")
         buffer.extend([0xA2])
-        buffer.extend(b'et')
+        buffer.extend(b"et")
         # Binary representation for a 4-byte unsigned integer (uint 32), followed by the epoch time
         buffer.extend([0xCE])
-        buffer.extend(struct.pack('>I', int(time.time())))
+        buffer.extend(struct.pack(">I", int(time.time())))
 
         return buffer
 
@@ -268,12 +274,7 @@ class Client(object):
             public_key = KoblitzPublicKey(self.uncompressed_public_key.hex()).encode()
 
         # Perform KDF
-        hash_input = (
-            shared_key
-            + b"\x00\x00\x00\x01"
-            + public_key
-        )
+        hash_input = shared_key + b"\x00\x00\x00\x01" + public_key
         digest = hashes.Hash(hashes.SHA256())
         digest.update(hash_input)
         return digest.finalize()
-
