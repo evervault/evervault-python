@@ -22,7 +22,10 @@ DEFAULT_HEADERS = {
 }
 
 CURVES = {"SECP256K1": ec.SECP256K1, "SECP256R1": ec.SECP256R1}
+METADATA = [{"role": "role"}, {}]
 
+def generate_combinations(list1, list2):
+    return [(x, y) for x in list1 for y in list2]
 
 class TestEvervault(unittest.TestCase):
     def setUp(self, curve="SECP256K1"):
@@ -40,61 +43,61 @@ class TestEvervault(unittest.TestCase):
         self.__del_env_var("EV_CERT_HOSTNAME")
         self.__del_env_var("EV_MAX_FILE_SIZE_IN_MB")
 
-    @parameterized.expand(CURVES.keys)
+    @parameterized.expand(generate_combinations(CURVES.keys(), METADATA))
     @requests_mock.Mocker()
-    def test_encrypting_number_generates_ev_number_type(self, curve, mock_request):
+    def test_encrypting_number_generates_ev_number_type(self, curve, metadata, mock_request):
         self.setUp(curve)
         self.mock_fetch_cage_key(mock_request)
 
         input = 1
-        encrypted_input = self.evervault.encrypt(input)
+        encrypted_input = self.evervault.encrypt(input, metadata)
         assert self.__is_evervault_string(encrypted_input, "number")
 
-    @parameterized.expand(CURVES.keys)
+    @parameterized.expand(generate_combinations(CURVES.keys(), METADATA))
     @requests_mock.Mocker()
-    def test_encrypting_boolean_generates_ev_boolean_type(self, curve, mock_request):
+    def test_encrypting_boolean_generates_ev_boolean_type(self, curve, metadata, mock_request):
         self.setUp(curve)
         self.mock_fetch_cage_key(mock_request)
 
         input = False
-        encrypted_input = self.evervault.encrypt(input)
+        encrypted_input = self.evervault.encrypt(input, metadata)
         assert self.__is_evervault_string(encrypted_input, "boolean")
 
-    @parameterized.expand(CURVES.keys)
+    @parameterized.expand(generate_combinations(CURVES.keys(), METADATA))
     @requests_mock.Mocker()
-    def test_encrypting_string_generates_ev_string_type(self, curve, mock_request):
+    def test_encrypting_string_generates_ev_string_type(self, curve, metadata, mock_request):
         self.setUp(curve)
         self.mock_fetch_cage_key(mock_request)
 
         input = "string"
-        encrypted_input = self.evervault.encrypt(input)
+        encrypted_input = self.evervault.encrypt(input, metadata)
         assert self.__is_evervault_string(encrypted_input, "string")
 
-    @parameterized.expand(CURVES.keys)
+    @parameterized.expand(generate_combinations(CURVES.keys(), METADATA))
     @requests_mock.Mocker()
-    def test_encrypt_sets(self, curve, mock_request):
+    def test_encrypt_sets(self, curve, metadata, mock_request):
         self.setUp(curve)
         self.mock_fetch_cage_key(mock_request)
 
         level_1_set = set(["a", True, 3])
-        level_1_set_encrypted = self.evervault.encrypt(level_1_set)
+        level_1_set_encrypted = self.evervault.encrypt(level_1_set, metadata)
         assert len(level_1_set_encrypted) == 3
         for item in level_1_set_encrypted:
             assert self.__is_evervault_string_format(item)
 
-    @parameterized.expand(CURVES.keys)
+    @parameterized.expand(generate_combinations(CURVES.keys(), METADATA))
     @requests_mock.Mocker()
-    def test_encrypt_lists_of_various_types(self, curve, mock_request):
+    def test_encrypt_lists_of_various_types(self, curve, metadata, mock_request):
         self.setUp(curve)
         self.mock_fetch_cage_key(mock_request)
 
         level_1_list = ["a", True, 3]
-        level_1_list_encrypted = self.evervault.encrypt(level_1_list)
+        level_1_list_encrypted = self.evervault.encrypt(level_1_list, metadata)
         for item in level_1_list_encrypted:
             assert self.__is_evervault_string_format(item)
 
         level_2_list = ["a", False, 4.0, ["b", 2], set(["x", "b"])]
-        level_2_list_encrypted = self.evervault.encrypt(level_2_list)
+        level_2_list_encrypted = self.evervault.encrypt(level_2_list, metadata)
         for item in level_2_list_encrypted:
             if type(item) == list or type(item) == set:
                 for sub_item in item:
@@ -102,9 +105,9 @@ class TestEvervault(unittest.TestCase):
             else:
                 assert self.__is_evervault_string_format(item)
 
-    @parameterized.expand(CURVES.keys)
+    @parameterized.expand(generate_combinations(CURVES.keys(), METADATA))
     @requests_mock.Mocker()
-    def test_encrypt_dicts(self, curve, mock_request):
+    def test_encrypt_dicts(self, curve, metadata, mock_request):
         self.setUp(curve)
         self.mock_fetch_cage_key(mock_request)
 
@@ -114,21 +117,21 @@ class TestEvervault(unittest.TestCase):
             "array": ["team1", 1],
             "dict": {"subname": "subtestname", "subnumber": 2},
         }
-        encrypted_data = self.evervault.encrypt(test_payload)
+        encrypted_data = self.evervault.encrypt(test_payload, metadata)
         assert encrypted_data != {"name": "testname"}
         assert "name" in encrypted_data
         assert "dict" in encrypted_data
         assert type(encrypted_data["dict"]) == dict
         assert self.__is_evervault_string(encrypted_data["dict"]["subnumber"], "number")
 
-    @parameterized.expand(CURVES.keys)
+    @parameterized.expand(generate_combinations(CURVES.keys(), METADATA))
     @requests_mock.Mocker()
-    def test_encrypt_files(self, curve, mock_request):
+    def test_encrypt_files(self, curve, metadata, mock_request):
         self.setUp(curve)
         self.mock_fetch_cage_key(mock_request)
 
         test_payload = b"\00\01\03"
-        encrypted_data = self.evervault.encrypt(test_payload)
+        encrypted_data = self.evervault.encrypt(test_payload, metadata)
         assert self.__is_evervault_file(encrypted_data)
 
         # Check that curve is set correctly
@@ -144,14 +147,14 @@ class TestEvervault(unittest.TestCase):
         crc32 = binascii.crc32(encrypted_data[:-4])
         assert encrypted_data[-4:] == crc32.to_bytes(4, byteorder="little")
 
-    @parameterized.expand(CURVES.keys)
+    @parameterized.expand(generate_combinations(CURVES.keys(), METADATA))
     @requests_mock.Mocker()
-    def test_encrypt_files_with_bytearray(self, curve, mock_request):
+    def test_encrypt_files_with_bytearray(self, curve, metadata, mock_request):
         self.setUp(curve)
         self.mock_fetch_cage_key(mock_request)
 
         test_payload = bytearray(10)
-        encrypted_data = self.evervault.encrypt(test_payload)
+        encrypted_data = self.evervault.encrypt(test_payload, metadata)
         assert self.__is_evervault_file(encrypted_data)
 
         # Check that curve is set correctly
@@ -163,9 +166,9 @@ class TestEvervault(unittest.TestCase):
         # Check that offset to data is set correctly
         assert encrypted_data[7:9] == bytes([55, 00])
 
-    @parameterized.expand(CURVES.keys)
+    @parameterized.expand(generate_combinations(CURVES.keys(), METADATA))
     @requests_mock.Mocker()
-    def test_encrypt_large_files_throws_exception(self, curve, mock_request):
+    def test_encrypt_large_files_throws_exception(self, curve, metadata, mock_request):
         self.setUp(curve)
         self.mock_fetch_cage_key(mock_request)
 
@@ -174,17 +177,17 @@ class TestEvervault(unittest.TestCase):
             ExceededMaxFileSizeError, self.evervault.encrypt, test_payload
         )
 
-    @parameterized.expand(CURVES.keys)
+    @parameterized.expand(generate_combinations(CURVES.keys(), METADATA))
     @requests_mock.Mocker()
     def test_encrypt_large_files_succeeds_with_max_size_override(
-        self, curve, mock_request
+        self, curve, metadata, mock_request
     ):
         os.environ["EV_MAX_FILE_SIZE_IN_MB"] = "30"
         self.setUp(curve)
         self.mock_fetch_cage_key(mock_request)
 
         test_payload = bytes(bytearray(26 * 1024 * 1024))
-        encrypted_data = self.evervault.encrypt(test_payload)
+        encrypted_data = self.evervault.encrypt(test_payload, metadata)
         assert self.__is_evervault_file(encrypted_data)
 
         # Check that curve is set correctly
@@ -196,7 +199,7 @@ class TestEvervault(unittest.TestCase):
         # Check that offset to data is set correctly
         assert encrypted_data[7:9] == bytes([55, 00])
 
-    @parameterized.expand(CURVES.keys)
+    @parameterized.expand(CURVES)
     @requests_mock.Mocker()
     def test_encrypt_with_unsupported_type_throws_exception(self, curve, mock_request):
         self.setUp(curve)
@@ -213,7 +216,15 @@ class TestEvervault(unittest.TestCase):
         self.assertRaises(EvervaultError, self.evervault.encrypt, level_1_list)
         self.assertRaises(EvervaultError, self.evervault.encrypt, level_2_list)
 
-    @parameterized.expand(CURVES.keys)
+    @parameterized.expand(CURVES.keys())
+    @requests_mock.Mocker()
+    def test_encrypt_with_too_large_role_throws_exception(self, curve, mock_request):
+        self.setUp(curve)
+        self.mock_fetch_cage_key(mock_request)
+        
+        self.assertRaises(EvervaultError, self.evervault.encrypt, "test", {"role": "a_really_long_role_name_that_is_over_20_characters"})
+
+    @parameterized.expand(CURVES.keys())
     @requests_mock.Mocker()
     def test_create_decrypt_token_without_expiry(self, curve, mock_request):
         self.setUp(curve)
@@ -233,7 +244,7 @@ class TestEvervault(unittest.TestCase):
             "action": "api:decrypt",
         }
 
-    @parameterized.expand(CURVES.keys)
+    @parameterized.expand(CURVES.keys())
     @requests_mock.Mocker()
     def test_create_decrypt_token_with_expiry(self, curve, mock_request):
         self.setUp(curve)
@@ -255,7 +266,7 @@ class TestEvervault(unittest.TestCase):
             "action": "api:decrypt",
         }
 
-    @parameterized.expand(CURVES.keys)
+    @parameterized.expand(CURVES.keys())
     @requests_mock.Mocker()
     def test_create_decrypt_token_without_payload_throws(self, curve, mock_request):
         self.setUp(curve)
@@ -266,7 +277,7 @@ class TestEvervault(unittest.TestCase):
             None,
         )
 
-    @parameterized.expand(CURVES.keys)
+    @parameterized.expand(CURVES.keys())
     @requests_mock.Mocker()
     def test_decrypt_dict(self, curve, mock_request):
         self.setUp(curve)
@@ -280,7 +291,7 @@ class TestEvervault(unittest.TestCase):
         assert resp["encrypted"] == "testString"
         assert request.last_request.json() == {"data": {"encrypted": "ev:abc123"}}
 
-    @parameterized.expand(CURVES.keys)
+    @parameterized.expand(CURVES.keys())
     @requests_mock.Mocker()
     def test_decrypt_str(self, curve, mock_request):
         self.setUp(curve)
@@ -294,7 +305,7 @@ class TestEvervault(unittest.TestCase):
         assert resp == "testString"
         assert request.last_request.json() == {"data": "ev:abc123"}
 
-    @parameterized.expand(CURVES.keys)
+    @parameterized.expand(CURVES.keys())
     @requests_mock.Mocker()
     def test_decrypt_bool(self, curve, mock_request):
         self.setUp(curve)
@@ -308,7 +319,7 @@ class TestEvervault(unittest.TestCase):
         assert resp
         assert request.last_request.json() == {"data": "ev:abc123"}
 
-    @parameterized.expand(CURVES.keys)
+    @parameterized.expand(CURVES.keys())
     @requests_mock.Mocker()
     def test_function_run(self, curve, mock_request):
         self.setUp(curve)
@@ -326,7 +337,7 @@ class TestEvervault(unittest.TestCase):
         assert resp["result"] == {"test": "data"}
         assert request.last_request.json() == {"payload": {"test": "data"}}
 
-    @parameterized.expand(CURVES.keys)
+    @parameterized.expand(CURVES.keys())
     @requests_mock.Mocker()
     def test_user_error_on_function_run(self, curve, mock_request):
         self.setUp(curve)
@@ -347,7 +358,7 @@ class TestEvervault(unittest.TestCase):
             {"test": "data"},
         )
 
-    @parameterized.expand(CURVES.keys)
+    @parameterized.expand(CURVES.keys())
     @requests_mock.Mocker()
     def test_initialization_error_on_function_run(self, curve, mock_request):
         self.setUp(curve)
@@ -371,7 +382,7 @@ class TestEvervault(unittest.TestCase):
             {"test": "data"},
         )
 
-    @parameterized.expand(CURVES.keys)
+    @parameterized.expand(CURVES.keys())
     @requests_mock.Mocker()
     def test_api_error_on_function_run(self, curve, mock_request):
         self.setUp(curve)
@@ -395,7 +406,7 @@ class TestEvervault(unittest.TestCase):
             "The request cannot be authenticated. The request does not contain valid credentials. Please retry with a valid API key.",
         )
 
-    @parameterized.expand(CURVES.keys)
+    @parameterized.expand(CURVES.keys())
     @requests_mock.Mocker()
     def test_endpoint_overrides(self, curve, mock_request):
         self.setUp(curve)
@@ -421,7 +432,7 @@ class TestEvervault(unittest.TestCase):
         assert self.evervault.ev_client.relay_url == "https://custom.tunnel.url.com"
         assert self.evervault.ev_client.ca_host == "https://ca.url.com"
 
-    @parameterized.expand(CURVES.keys)
+    @parameterized.expand(CURVES.keys())
     @requests_mock.Mocker()
     def test_create_run_token(self, curve, mock_request):
         self.setUp(curve)

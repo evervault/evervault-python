@@ -43,8 +43,8 @@ class Client(object):
     def _auth(self):
         return (self.api_key, "")
 
-    def encrypt(self, data):
-        return self.crypto_client.encrypt_data(self, data)
+    def encrypt(self, data, metadata):
+        return self.crypto_client.encrypt_data(self, data, metadata)
 
     def decrypt(self, data):
         if data is None:

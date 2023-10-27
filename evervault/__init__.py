@@ -78,8 +78,8 @@ def create_client_side_decrypt_token(payload, expiry=None):
     return __client().create_token("api:decrypt", payload, expiry)
 
 
-def encrypt(data):
-    return __client().encrypt(data)
+def encrypt(data, metadata={}):
+    return __client().encrypt(data, metadata)
 
 
 def cage_requests_session(cage_attestation_data={}):
