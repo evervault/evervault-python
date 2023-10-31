@@ -7,6 +7,7 @@ import sys
 from warnings import warn
 import warnings
 from evervault.http.attestationdoc import AttestationDoc
+from evervault.http.cagePcrManager import CagePcrManager
 from importlib import metadata
 
 __version__ = metadata.version(__package__ or __name__)
@@ -25,6 +26,7 @@ CAGES_CA_HOST_DEFAULT = "https://cages-ca.evervault.com"
 CAGES_BETA_HOST_DEFAULT = "cages.evervault.com"
 CAGES_GA_HOST_DEFAULT = "cage.evervault.com"
 MAX_FILE_SIZE_IN_MB_DEFAULT = 25
+DEFAULT_PCR_PROVIDER_POLL_INTERVAL = 300
 
 SUPPORTED_CURVES = ["SECP256K1", "SECP256R1"]
 
@@ -97,7 +99,8 @@ def cage_requests_session(cage_attestation_data={}):
 def attestable_cage_session(cage_attestation_data={}):
     cage_host = os.environ.get("EV_CAGES_HOST_GA", CAGES_GA_HOST_DEFAULT)
     cache = AttestationDoc(_app_uuid, cage_attestation_data.keys(), cage_host)
-    return CageRequestsSession(cage_attestation_data, cage_host, cache)
+    pcr_manager = CagePcrManager(cage_attestation_data, os.environ.get("EV_PCR_PROVIDER_POLL_INTERVAL", DEFAULT_PCR_PROVIDER_POLL_INTERVAL),)
+    return CageRequestsSession(pcr_manager, cage_host, cache)
 
 
 def create_run_token(function_name, data={}):
