@@ -31,10 +31,15 @@ class CageAttestationTest(unittest.TestCase):
 
     def test_valid_pcrs_from_array(self):
 
-        attested_session = self.evervault.attestable_cage_session({
+        attested_session = self.evervault.attestable_cage_session(
+            {
                 self.cage_name: [
-                    {"pcr_8": "invalid00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"},
-                    {"pcr_8": "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}
+                    {
+                        "pcr_8": "invalid00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+                    },
+                    {
+                        "pcr_8": "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+                    },
                 ]
             }
         )
@@ -44,15 +49,14 @@ class CageAttestationTest(unittest.TestCase):
         assert response.status_code == 401
 
     def test_valid_pcrs_from_provider(self):
-
         def provider():
-            pcrs = requests.get("https://gist.githubusercontent.com/donaltuohy/5dbc1c175bcd0f0a9a621184cf3c78dc/raw/df25a123dea6424fb630ea80f241c676931728da/pcrs.json").json()
+            pcrs = requests.get(
+                "https://gist.githubusercontent.com/donaltuohy/5dbc1c175bcd0f0a9a621184cf3c78dc/raw/df25a123dea6424fb630ea80f241c676931728da/pcrs.json"
+            ).json()
             return pcrs
-            
+
         attested_session = self.evervault.attestable_cage_session(
-            {
-                self.cage_name: provider
-            }
+            {self.cage_name: provider}
         )
         response = attested_session.get(
             f"https://{self.cage_name}.{self.app_uuid}.cage.evervault.com/echo"

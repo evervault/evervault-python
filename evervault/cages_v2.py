@@ -94,7 +94,7 @@ class CageHTTPAdapter(requests.adapters.HTTPAdapter):
 
         pcrs_from_manager = self.cage_pcr_manager.get(cage_name)
         expected_pcrs = []
-        
+
         if pcrs_from_manager is not None:
             for pcrs in pcrs_from_manager:
                 expected_pcrs.append(
@@ -175,9 +175,7 @@ class CageRequestsSessionBeta(requests.Session):
 class CageRequestsSession(requests.Session):
     def __init__(self, cage_pcr_manager, cages_host, cache):
         super().__init__()
-        self.mount(
-            "https://", CageHTTPAdapter(cage_pcr_manager, cages_host, cache)
-        )
+        self.mount("https://", CageHTTPAdapter(cage_pcr_manager, cages_host, cache))
 
     def request(self, *args, headers={}, **kwargs):
         return super().request(*args, headers=headers, **kwargs)

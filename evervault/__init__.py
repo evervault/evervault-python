@@ -99,7 +99,12 @@ def cage_requests_session(cage_attestation_data={}):
 def attestable_cage_session(cage_attestation_data={}):
     cage_host = os.environ.get("EV_CAGES_HOST_GA", CAGES_GA_HOST_DEFAULT)
     cache = AttestationDoc(_app_uuid, cage_attestation_data.keys(), cage_host)
-    pcr_manager = CagePcrManager(cage_attestation_data, os.environ.get("EV_PCR_PROVIDER_POLL_INTERVAL", DEFAULT_PCR_PROVIDER_POLL_INTERVAL),)
+    pcr_manager = CagePcrManager(
+        cage_attestation_data,
+        os.environ.get(
+            "EV_PCR_PROVIDER_POLL_INTERVAL", DEFAULT_PCR_PROVIDER_POLL_INTERVAL
+        ),
+    )
     return CageRequestsSession(pcr_manager, cage_host, cache)
 
 
