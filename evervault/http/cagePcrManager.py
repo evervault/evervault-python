@@ -1,6 +1,5 @@
 import logging
 from evervault.threading.repeatedtimer import RepeatedTimer
-import requests
 import threading
 import warnings
 import time
