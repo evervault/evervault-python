@@ -4,7 +4,7 @@
 
 # Evervault Python SDK
 
-See the Evervault [Python SDK documentation](https://docs.evervault.com/sdk/python) to learn how to install, set up, and use the SDK.
+See the Evervault [Python SDK documentation](https://docs.evervault.com/sdks/python) to learn how to install, set up, and use the SDK.
 
 ## Contributing
 
