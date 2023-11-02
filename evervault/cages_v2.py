@@ -75,7 +75,7 @@ class CageHTTPAdapterBeta(requests.adapters.HTTPAdapter):
 
 
 class CageHTTPAdapter(requests.adapters.HTTPAdapter):
-    def __init__(self, cage_pcr_manager, cages_host, cache):
+    def __init__(self, cage_pcr_manager: CagePcrManager, cages_host: str, cache):
         self.cage_pcr_manager = cage_pcr_manager
         self.cages_host = cages_host
         self.cache = cache
