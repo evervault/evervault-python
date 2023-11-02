@@ -63,6 +63,25 @@ class CageAttestationTest(unittest.TestCase):
         )
         assert response.status_code == 401
 
+    def test_invalid_pcrs_from_provider(self):
+        def provider():
+            pcrs = requests.get(
+                "https://gist.githubusercontent.com/hanneary/d076f6702c1694d29c117a1e00f1957e/raw/2c4999694e302cedb6283ba531dcdab45d556bcc/invalidpcr.json"
+            ).json()
+            return pcrs
+
+        with pytest.raises(
+            CageVerificationException,
+            match="The PCRs found were different to the expected values",
+        ):
+            attested_session = self.evervault.attestable_cage_session(
+                {self.cage_name: provider}
+            )
+
+            attested_session.get(
+                f"https://{self.cage_name}.{self.app_uuid}.cage.evervault.com/echo"
+            )
+
     def test_invalid_pcrs(self):
         with pytest.raises(
             CageVerificationException,
