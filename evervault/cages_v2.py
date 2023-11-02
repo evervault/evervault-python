@@ -3,6 +3,7 @@ import urllib3
 import evervault_attestation_bindings
 from types import MethodType
 from evervault.errors.evervault_errors import EvervaultError
+from evervault.http.cagePcrManager import CagePcrManager
 import tempfile
 import base64
 
