@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 
 class AttestationDoc:
-    def __init__(self, app_uuid, cage_names, cage_host, poll_interval=2700):
+    def __init__(self, app_uuid, cage_names, cage_host, poll_interval=300):
         self.cage_host = cage_host
         self.app_uuid = app_uuid.replace("_", "-")
         self.cage_names = cage_names

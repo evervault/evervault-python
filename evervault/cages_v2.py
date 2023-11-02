@@ -3,6 +3,7 @@ import urllib3
 import evervault_attestation_bindings
 from types import MethodType
 from evervault.errors.evervault_errors import EvervaultError
+from evervault.http.cagePcrManager import CagePcrManager
 import tempfile
 import base64
 
@@ -75,8 +76,8 @@ class CageHTTPAdapterBeta(requests.adapters.HTTPAdapter):
 
 
 class CageHTTPAdapter(requests.adapters.HTTPAdapter):
-    def __init__(self, cage_attestation_data, cages_host, cache):
-        self.attestation_data = cage_attestation_data
+    def __init__(self, cage_pcr_manager: CagePcrManager, cages_host: str, cache):
+        self.cage_pcr_manager = cage_pcr_manager
         self.cages_host = cages_host
         self.cache = cache
         super().__init__()
@@ -91,14 +92,12 @@ class CageHTTPAdapter(requests.adapters.HTTPAdapter):
 
     def add_attestation_check_to_conn_validation(self, conn, cage_name):
         cache = self.cache
-        expected_pcrs = []
-        if cage_name in self.attestation_data:
-            given_pcrs = self.attestation_data[cage_name]
-            # if the user only supplied a single set of PCRs, convert it to a list
-            if not isinstance(given_pcrs, list):
-                given_pcrs = [given_pcrs]
 
-            for pcrs in given_pcrs:
+        pcrs_from_manager = self.cage_pcr_manager.get(cage_name)
+        expected_pcrs = []
+
+        if pcrs_from_manager is not None:
+            for pcrs in pcrs_from_manager:
                 expected_pcrs.append(
                     evervault_attestation_bindings.PCRs(
                         pcrs.get("pcr_0"),
@@ -107,6 +106,7 @@ class CageHTTPAdapter(requests.adapters.HTTPAdapter):
                         pcrs.get("pcr_8"),
                     )
                 )
+
         original_validate_conn = (
             urllib3.connectionpool.HTTPSConnectionPool._validate_conn
         )
@@ -174,11 +174,9 @@ class CageRequestsSessionBeta(requests.Session):
 
 
 class CageRequestsSession(requests.Session):
-    def __init__(self, cage_attestation_data, cages_host, cache):
+    def __init__(self, cage_pcr_manager, cages_host, cache):
         super().__init__()
-        self.mount(
-            "https://", CageHTTPAdapter(cage_attestation_data, cages_host, cache)
-        )
+        self.mount("https://", CageHTTPAdapter(cage_pcr_manager, cages_host, cache))
 
     def request(self, *args, headers={}, **kwargs):
         return super().request(*args, headers=headers, **kwargs)
