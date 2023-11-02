@@ -21,7 +21,6 @@ class EndToEndTestCase(unittest.TestCase):
         self.evervault.ev_client = None
         self.evervault = None
         self.__del_env_var("EV_API_URL")
-        self.__del_env_var("EV_CAGE_RUN_URL")
         self.__del_env_var("EV_TUNNEL_HOSTNAME")
         self.__del_env_var("EV_CERT_HOSTNAME")
         self.__del_env_var("EV_MAX_FILE_SIZE_IN_MB")

@@ -177,3 +177,21 @@ class EncryptTest(EndToEndTestCase):
                 str(e)
                 == "Decryption of the provided data is restricted by your current policies. Please check and modify your policies, if needed, to enable decryption in this context."
             )
+
+    @parameterized.expand(generate_combinations(CURVES, ROLES_AND_SUCCESSES))
+    def test_encrypt_file(self, curve, role_and_success):
+        self.setUp(curve)
+        role = role_and_success["role"]
+        decryption_should_succeed = role_and_success["decryption_should_succeed"]
+        file = b"hello world"
+        try:
+            encrypted = self.evervault.encrypt(file, role)
+            decrypted = self.evervault.decrypt(encrypted)
+            assert decryption_should_succeed
+            assert "hello world" == decrypted
+        except EvervaultError as e:
+            assert not decryption_should_succeed
+            assert (
+                str(e)
+                == "Decryption of the provided data is restricted by your current policies. Please check and modify your policies, if needed, to enable decryption in this context."
+            )

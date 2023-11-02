@@ -144,12 +144,9 @@ class TestEvervault(unittest.TestCase):
 
         # Check that curve is set correctly
         if curve == "SECP256K1":
-            assert encrypted_data[6:7] == b"\02"
+            assert encrypted_data[6:7] == b"\04"
         else:
-            assert encrypted_data[6:7] == b"\03"
-
-        # Check that offset to data is set correctly
-        assert encrypted_data[7:9] == bytes([55, 00])
+            assert encrypted_data[6:7] == b"\05"
 
         # Re-calculate the crc32 and ensure it matches
         crc32 = binascii.crc32(encrypted_data[:-4])
@@ -167,12 +164,9 @@ class TestEvervault(unittest.TestCase):
 
         # Check that curve is set correctly
         if curve == "SECP256K1":
-            assert encrypted_data[6:7] == b"\02"
+            assert encrypted_data[6:7] == b"\04"
         else:
-            assert encrypted_data[6:7] == b"\03"
-
-        # Check that offset to data is set correctly
-        assert encrypted_data[7:9] == bytes([55, 00])
+            assert encrypted_data[6:7] == b"\05"
 
     @parameterized.expand(generate_combinations(CURVES.keys(), ROLES))
     @requests_mock.Mocker()
@@ -200,12 +194,9 @@ class TestEvervault(unittest.TestCase):
 
         # Check that curve is set correctly
         if curve == "SECP256K1":
-            assert encrypted_data[6:7] == b"\02"
+            assert encrypted_data[6:7] == b"\04"
         else:
-            assert encrypted_data[6:7] == b"\03"
-
-        # Check that offset to data is set correctly
-        assert encrypted_data[7:9] == bytes([55, 00])
+            assert encrypted_data[6:7] == b"\05"
 
     @parameterized.expand(CURVES)
     @requests_mock.Mocker()
@@ -522,7 +513,7 @@ class TestEvervault(unittest.TestCase):
             text="-----BEGIN CERTIFICATE-----\n"
             "MIIDgzCCAmugAwIBAgIUEL9SyDnNVvLXq8opJM2nrLgoFpgwDQYJKoZIhvcNAQEL\n"
             "BQAwUTELMAkGA1UEBhMCSUUxEzARBgNVBAgMCkR1YmxpbiBDby4xDzANBgNVBAcM\n"
-            "BlN3b3JkczEcMBoGA1UECgwTRGVmYXVsdCBDb21wYW55IEx0ZDAeFw0wODEyMjQw\n"
+            "BlN3b3JkczEcMBoGA1UECgwTRGVmYXVsdCBDb21wYW57IEx0ZDAeFw0wODEyMjQw\n"
             "ODE2MDhaFw0wOTAxMDMwODE2MDhaMFExCzAJBgNVBAYTAklFMRMwEQYDVQQIDApE\n"
             "dWJsaW4gQ28uMQ8wDQYDVQQHDAZTd29yZHMxHDAaBgNVBAoME0RlZmF1bHQgQ29t\n"
             "cGFueSBMdGQwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDoCOTOgSCf\n"
@@ -537,8 +528,8 @@ class TestEvervault(unittest.TestCase):
             "4FY6aSfmIGp898ab6L3XOrz54ztOuIyjdUaQ8/U1yFGxTBe66zPKDyorHm0a+kNp\n"
             "2h5luIXRsm6IZrpGblO7CD+ZzYZ04qWkHgugLSieKhO3GVKObdkdfnJIf2O5KW7j\n"
             "PulHfTQ3MNd/qXhOBNUXgI0rcWeI5xGKzAVWRoiAcAHU9UmNrunVg9CQMh0i6nYA\n"
-            "i7xFTBvY5QrZGK/Y6mEAdGCRoGusOputz1MHn721sIyH5DtCAMXdJ/s94Ki7m557\n"
-            "qLZdvkgx0KBRnP/JPZ55VgjZ8ipH9+SGxsZeTg9sX6nw+x/Plncz\n"
+            "i7xFTBvY5QrZGK/Y6mEAdGCRoGusOputz1MHn721sIyH5DtCAMXdJ/s94Ki7m577\n"
+            "qLZdvkgx0KBRnP/JPZ57VgjZ8ipH9+SGxsZeTg9sX6nw+x/Plncz\n"
             "-----END CERTIFICATE-----\n",
         )
 
