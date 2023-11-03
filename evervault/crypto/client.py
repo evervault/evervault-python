@@ -176,7 +176,9 @@ class Client(object):
 
         if role is not None:
             metadata = self.__generate_metadata(role)
-            encrypted_metadata = aesgcm.encrypt(iv, metadata, self.decoded_team_cage_key)
+            encrypted_metadata = aesgcm.encrypt(
+                iv, metadata, self.decoded_team_cage_key
+            )
             encrypted_bytes = aesgcm.encrypt(iv, data, self.decoded_team_cage_key)
         elif self.curve == SECP256K1:
             encrypted_bytes = aesgcm.encrypt(iv, data, None)
@@ -208,8 +210,10 @@ class Client(object):
         flags = bytes(b"\00")
         if encrypted_metadata is not None:
             version_number = bytes(b"\04") if self.curve == SECP256K1 else bytes(b"\05")
-            metadata_offset = len(encrypted_metadata).to_bytes(2, byteorder='little')
-            offset_to_data = (55+2+len(encrypted_metadata)).to_bytes(2, byteorder='little')
+            metadata_offset = len(encrypted_metadata).to_bytes(2, byteorder="little")
+            offset_to_data = (55 + 2 + len(encrypted_metadata)).to_bytes(
+                2, byteorder="little"
+            )
         else:
             version_number = bytes(b"\02") if self.curve == SECP256K1 else bytes(b"\03")
             metadata_offset = bytes(b"")
