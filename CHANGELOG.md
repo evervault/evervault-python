@@ -1,5 +1,35 @@
 # CHANGELOG
 
+## 4.0.0
+
+### Major Changes
+
+- c37a3f7: Simplifying errors thrown by the SDK.
+
+  Previously we exposed many different error types for users to handle, but in most cases these errors were not something that could be caught and handled, but were rather indicative of a larger configuration issue. This change simplifies the errors thrown by returning an EvervaultError with accompanying error message by default, unless they are a transient error which can be handled programmatically, in which case a specific error is returned.
+
+- ed7eff3: Deprecating intercept and ignore domains
+
+  You can now use the `enable_outbound_relay()` method to enable outbound relay. For more details check out https://docs.evervault.com/sdks/python#enable_outbound_relay()
+
+- 3d0955d: Migrated Function run requests to new API.
+
+  We have released a new API for Function run requests which is more robust, more extensible, and which provides more useful error messages when Function runs fail. This change migrates all Function run requests to the new API. In addition, we have removed async Function run requests and specifying the version of the Function to run. For more details check out https://docs.evervault.com/sdks/python#run()
+
+- d6296cc: Remove deprecated Cage attestation session `cage_requests_session`, use `attestable_cage_session` instead
+- 61ea60a: Deprecating support for Python 3.7
+
+  Python 3.7 reached end-of-life on 2023-06-27, see https://devguide.python.org/versions/
+
+### Minor Changes
+
+- f390e37: We have been duplicating information in the README and also on our website. We are moving to `docs.evervault.com` being the single source of truth.
+- 90c0261: The `encrypt` function has been enhanced to accept an optional Data Role. This role, where specified, is associated with the data upon encryption. Data Roles can be created in the Evervault Dashboard (Data Roles section) and provide a mechanism for setting rules that dictate how and when data, tagged with that role, can be decrypted.
+
+  evervault.encrypt("hello world!", "allow-all");
+
+- 1d49c2b: Cage PCR Provider: publish new PCRs to public source which SDKs can pull from for attestation
+
 ## 3.3.0
 
 ### Minor Changes
