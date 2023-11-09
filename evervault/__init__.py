@@ -21,8 +21,7 @@ _curve = None
 BASE_URL_DEFAULT = "https://api.evervault.com/"
 RELAY_URL_DEFAULT = "https://relay.evervault.com:443"
 CA_HOST_DEFAULT = "https://ca.evervault.com"
-CAGES_CA_HOST_DEFAULT = "https://cages-ca.evervault.com"
-CAGES_GA_HOST_DEFAULT = "cage.evervault.com"
+CAGES_HOST_DEFAULT = "cage.evervault.com"
 MAX_FILE_SIZE_IN_MB_DEFAULT = 25
 DEFAULT_PCR_PROVIDER_POLL_INTERVAL = 300
 
@@ -83,7 +82,7 @@ def encrypt(data):
 
 
 def attestable_cage_session(cage_attestation_data={}):
-    cage_host = os.environ.get("EV_CAGES_HOST_GA", CAGES_GA_HOST_DEFAULT)
+    cage_host = os.environ.get("EV_CAGES_HOST", CAGES_HOST_DEFAULT)
     cache = AttestationDoc(_app_uuid, cage_attestation_data.keys(), cage_host)
     pcr_manager = CagePcrManager(
         cage_attestation_data,
