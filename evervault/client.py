@@ -43,8 +43,8 @@ class Client(object):
     def _auth(self):
         return (self.api_key, "")
 
-    def encrypt(self, data):
-        return self.crypto_client.encrypt_data(self, data)
+    def encrypt(self, data, role):
+        return self.crypto_client.encrypt_data(self, data, role)
 
     def decrypt(self, data):
         if data is None:
@@ -56,14 +56,14 @@ class Client(object):
         headers = self.__build_decrypt_headers(type(data))
 
         if type(data) == bytes:
-            return self.post("decrypt", data, headers)
+            return self.post("decrypt", data, headers, raise_errors_on_api_error)
         else:
             payload = {"data": data}
             response = self.post(
                 "decrypt",
                 payload,
                 headers,
-                error_handler=raise_errors_on_api_error,
+                raise_errors_on_api_error,
             )
             return response["data"]
 

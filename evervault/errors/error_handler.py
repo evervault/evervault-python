@@ -1,3 +1,4 @@
+import json
 from . import evervault_errors as errors
 
 
@@ -16,6 +17,13 @@ def raise_errors_on_function_run_failure(function_body):
 def raise_errors_on_api_error(resp, response_body):
     if resp.status_code >= 200 and resp.status_code < 300:
         return
+    if type(response_body) is not dict:
+        try:
+            response_body = json.loads(response_body)
+        except:
+            raise errors.EvervaultError(
+                "An unexpected error occurred. Please contact Evervault support"
+            )
     code = response_body.get("code")
     detail = response_body.get("detail")
 
