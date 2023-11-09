@@ -1,11 +1,10 @@
 """Package for the evervault SDK"""
 from .client import Client
 from .errors.evervault_errors import EvervaultError
-from .cages_v2 import CageRequestsSessionBeta, CageRequestsSession
+from .cages_v2 import CageRequestsSession
 import os
 import sys
 from warnings import warn
-import warnings
 from evervault.http.attestationdoc import AttestationDoc
 from evervault.http.cagePcrManager import CagePcrManager
 from importlib import metadata
@@ -22,9 +21,7 @@ _curve = None
 BASE_URL_DEFAULT = "https://api.evervault.com/"
 RELAY_URL_DEFAULT = "https://relay.evervault.com:443"
 CA_HOST_DEFAULT = "https://ca.evervault.com"
-CAGES_CA_HOST_DEFAULT = "https://cages-ca.evervault.com"
-CAGES_BETA_HOST_DEFAULT = "cages.evervault.com"
-CAGES_GA_HOST_DEFAULT = "cage.evervault.com"
+CAGES_HOST_DEFAULT = "cage.evervault.com"
 MAX_FILE_SIZE_IN_MB_DEFAULT = 25
 DEFAULT_PCR_PROVIDER_POLL_INTERVAL = 300
 
@@ -84,20 +81,8 @@ def encrypt(data):
     return __client().encrypt(data)
 
 
-def cage_requests_session(cage_attestation_data={}):
-    warnings.warn(
-        "cage_requests_session() is deprecated and will be removed in future versions. Use cage_attestable_session() instead.",
-        DeprecationWarning,
-    )
-    return CageRequestsSessionBeta(
-        cage_attestation_data,
-        os.environ.get("EV_CAGES_CA_HOST", CAGES_CA_HOST_DEFAULT),
-        os.environ.get("EV_CAGES_HOST", CAGES_BETA_HOST_DEFAULT),
-    )
-
-
 def attestable_cage_session(cage_attestation_data={}):
-    cage_host = os.environ.get("EV_CAGES_HOST_GA", CAGES_GA_HOST_DEFAULT)
+    cage_host = os.environ.get("EV_CAGES_HOST", CAGES_HOST_DEFAULT)
     cache = AttestationDoc(_app_uuid, cage_attestation_data.keys(), cage_host)
     pcr_manager = CagePcrManager(
         cage_attestation_data,
