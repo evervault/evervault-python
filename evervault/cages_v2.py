@@ -2,9 +2,7 @@ import requests
 import urllib3
 import evervault_attestation_bindings
 from types import MethodType
-from evervault.errors.evervault_errors import EvervaultError
 from evervault.http.cagePcrManager import CagePcrManager
-import tempfile
 import base64
 
 
@@ -83,6 +81,7 @@ class CageHTTPAdapter(requests.adapters.HTTPAdapter):
 
         conn._validate_conn = MethodType(_validate_conn_override, conn)
         return conn
+
 
 class CageRequestsSession(requests.Session):
     def __init__(self, cage_pcr_manager, cages_host, cache):

@@ -5,7 +5,6 @@ from .cages_v2 import CageRequestsSession
 import os
 import sys
 from warnings import warn
-import warnings
 from evervault.http.attestationdoc import AttestationDoc
 from evervault.http.cagePcrManager import CagePcrManager
 from importlib import metadata
