@@ -76,4 +76,6 @@ class AttestationDoc:
                 body = res.json()
                 return (name, body["attestation_doc"])
             except Exception as enclave_err:
-                warnings.warn(f"Could not retrieve attestation doc from {cage_url}: {cage_err}. Or {enclave_url}: {enclave_err}")
+                warnings.warn(
+                    f"Could not retrieve attestation doc from {cage_url}: {cage_err}. Or {enclave_url}: {enclave_err}"
+                )

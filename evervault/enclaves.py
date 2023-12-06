@@ -16,7 +16,9 @@ def get_enclave_name_from_enclave_url(enclave_url):
 
 class EnclaveVerificationException(Exception):
     def __init__(self, err):
-        message = f"An error occurred when attesting the connection to your Enclave: {err}"
+        message = (
+            f"An error occurred when attesting the connection to your Enclave: {err}"
+        )
         super().__init__(message)
 
 
