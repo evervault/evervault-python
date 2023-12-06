@@ -6,6 +6,7 @@ from .cages_v2 import CageRequestsSession
 import os
 import sys
 from warnings import warn
+import warnings
 from evervault.http.attestationdoc import AttestationDoc
 from evervault.http.pcrManager import PcrManager
 from importlib import metadata
@@ -84,6 +85,10 @@ def encrypt(data, role=None):
 
 
 def attestable_cage_session(cage_attestation_data={}):
+    warnings.warn(
+        "attestable_cage_session() is deprecated and will be removed from v5.0.0 onwards. Use attestable_enclave_session() instead. When updating, also make sure your enclave has been deployed with the latest runtime.",
+        DeprecationWarning,
+    )
     cage_host = os.environ.get("EV_CAGES_HOST", CAGES_HOST_DEFAULT)
     enclave_host = os.environ.get("EV_ENCLAVE_HOST", ENCLAVE_HOST_DEFAULT);
     cache = AttestationDoc(_app_uuid, cage_attestation_data.keys(), cage_host, enclave_host)
@@ -96,8 +101,9 @@ def attestable_cage_session(cage_attestation_data={}):
     return CageRequestsSession(pcr_manager, cage_host, cache)
 
 def attestable_enclave_session(enclave_attestation_data={}):
+    cage_host = os.environ.get("EV_CAGES_HOST", CAGES_HOST_DEFAULT)
     enclave_host = os.environ.get("EV_ENCLAVE_HOST", ENCLAVE_HOST_DEFAULT);
-    cache = AttestationDoc(_app_uuid, enclave_attestation_data.keys(), enclave_host)
+    cache = AttestationDoc(_app_uuid, enclave_attestation_data.keys(), cage_host, enclave_host)
     pcr_manager = PcrManager(
         enclave_attestation_data,
         os.environ.get(
