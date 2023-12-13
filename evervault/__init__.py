@@ -89,10 +89,9 @@ def attestable_cage_session(cage_attestation_data={}):
         "attestable_cage_session() is deprecated and will be removed from v5.0.0 onwards. Use attestable_enclave_session() instead. When updating, also make sure your enclave has been deployed with the latest runtime.",
         DeprecationWarning,
     )
-    cage_host = os.environ.get("EV_CAGES_HOST", CAGES_HOST_DEFAULT)
-    enclave_host = os.environ.get("EV_ENCLAVE_HOST", ENCLAVE_HOST_DEFAULT)
+    host = os.environ.get("EV_CAGES_HOST", CAGES_HOST_DEFAULT)
     cache = AttestationDoc(
-        _app_uuid, cage_attestation_data.keys(), cage_host, enclave_host
+        _app_uuid, cage_attestation_data.keys(), host
     )
     pcr_manager = PcrManager(
         cage_attestation_data,
@@ -100,14 +99,13 @@ def attestable_cage_session(cage_attestation_data={}):
             "EV_PCR_PROVIDER_POLL_INTERVAL", DEFAULT_PCR_PROVIDER_POLL_INTERVAL
         ),
     )
-    return CageRequestsSession(pcr_manager, cage_host, cache)
+    return CageRequestsSession(pcr_manager, host, cache)
 
 
 def attestable_enclave_session(enclave_attestation_data={}):
-    cage_host = os.environ.get("EV_CAGES_HOST", CAGES_HOST_DEFAULT)
-    enclave_host = os.environ.get("EV_ENCLAVE_HOST", ENCLAVE_HOST_DEFAULT)
+    host = os.environ.get("EV_ENCLAVE_HOST", ENCLAVE_HOST_DEFAULT)
     cache = AttestationDoc(
-        _app_uuid, enclave_attestation_data.keys(), cage_host, enclave_host
+        _app_uuid, enclave_attestation_data.keys(), host
     )
     pcr_manager = PcrManager(
         enclave_attestation_data,
@@ -115,7 +113,7 @@ def attestable_enclave_session(enclave_attestation_data={}):
             "EV_PCR_PROVIDER_POLL_INTERVAL", DEFAULT_PCR_PROVIDER_POLL_INTERVAL
         ),
     )
-    return EnclaveRequestsSession(pcr_manager, enclave_host, cache)
+    return EnclaveRequestsSession(pcr_manager, host, cache)
 
 
 def create_run_token(function_name, data={}):

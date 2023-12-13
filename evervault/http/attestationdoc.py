@@ -9,9 +9,8 @@ logger = logging.getLogger(__name__)
 
 
 class AttestationDoc:
-    def __init__(self, app_uuid, names, cage_host, enclave_host, poll_interval=300):
-        self.cage_host = cage_host
-        self.enclave_host = enclave_host
+    def __init__(self, app_uuid, names, host, poll_interval=300):
+        self.host = host
         self.app_uuid = app_uuid.replace("_", "-")
         self.names = names
         self.poll_interval = poll_interval
@@ -61,21 +60,13 @@ class AttestationDoc:
     def __get_url(self, name, host):
         return f"https://{name}.{self.app_uuid}.{host}/.well-known/attestation"
 
-    # While supporting both cage and enclave, we should attempt to get the attestation docs
-    # from both the cage and enclave hosts.
     def __get_attestation_doc(self, name):
         try:
-            cage_url = self.__get_url(name, self.cage_host)
-            res = requests.get(cage_url)
+            url = self.__get_url(name, self.host)
+            res = requests.get(url)
             body = res.json()
             return (name, body["attestation_doc"])
-        except Exception as cage_err:
-            try:
-                enclave_url = self.__get_url(name, self.enclave_host)
-                res = requests.get(enclave_url)
-                body = res.json()
-                return (name, body["attestation_doc"])
-            except Exception as enclave_err:
-                warnings.warn(
-                    f"Could not retrieve attestation doc from {cage_url}: {cage_err}. Or {enclave_url}: {enclave_err}"
-                )
+        except Exception as err:
+            warnings.warn(
+                f"Could not retrieve attestation doc from {url}: {err}."
+            )
