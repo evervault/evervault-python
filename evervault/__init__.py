@@ -90,9 +90,7 @@ def attestable_cage_session(cage_attestation_data={}):
         DeprecationWarning,
     )
     host = os.environ.get("EV_CAGES_HOST", CAGES_HOST_DEFAULT)
-    cache = AttestationDoc(
-        _app_uuid, cage_attestation_data.keys(), host
-    )
+    cache = AttestationDoc(_app_uuid, cage_attestation_data.keys(), host)
     pcr_manager = PcrManager(
         cage_attestation_data,
         os.environ.get(
@@ -104,9 +102,7 @@ def attestable_cage_session(cage_attestation_data={}):
 
 def attestable_enclave_session(enclave_attestation_data={}):
     host = os.environ.get("EV_ENCLAVE_HOST", ENCLAVE_HOST_DEFAULT)
-    cache = AttestationDoc(
-        _app_uuid, enclave_attestation_data.keys(), host
-    )
+    cache = AttestationDoc(_app_uuid, enclave_attestation_data.keys(), host)
     pcr_manager = PcrManager(
         enclave_attestation_data,
         os.environ.get(

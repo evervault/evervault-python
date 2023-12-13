@@ -67,6 +67,4 @@ class AttestationDoc:
             body = res.json()
             return (name, body["attestation_doc"])
         except Exception as err:
-            warnings.warn(
-                f"Could not retrieve attestation doc from {url}: {err}."
-            )
+            warnings.warn(f"Could not retrieve attestation doc from {url}: {err}.")
