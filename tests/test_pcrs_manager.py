@@ -1,8 +1,8 @@
 import unittest
-from evervault.http.cagePcrManager import CagePcrManager
+from evervault.http.pcrManager import PcrManager
 
 
-class TestCagePcrManager(unittest.TestCase):
+class TestPcrManager(unittest.TestCase):
     def setUp(self):
         self.app_uuid = "app-123"
         self.cage_1 = "cage_1"
@@ -28,7 +28,7 @@ class TestCagePcrManager(unittest.TestCase):
 
         attestation_data = {self.cage_1: test_provider1, self.cage_2: test_provider2}
 
-        manager = CagePcrManager(attestation_data)
+        manager = PcrManager(attestation_data)
 
         assert manager.get(self.cage_1) == test_pcrs1
         assert manager.get(self.cage_2) == test_pcrs2
@@ -47,7 +47,7 @@ class TestCagePcrManager(unittest.TestCase):
         ]
         attestation_data = {self.cage_1: test_pcrs_object, self.cage_2: test_pcrs_array}
 
-        manager = CagePcrManager(attestation_data)
+        manager = PcrManager(attestation_data)
 
         assert manager.get(self.cage_1) == [test_pcrs_object]
         assert manager.get(self.cage_2) == test_pcrs_array
@@ -64,7 +64,7 @@ class TestCagePcrManager(unittest.TestCase):
 
         attestation_data = {self.cage_1: test_provider1}
 
-        manager = CagePcrManager(attestation_data)
+        manager = PcrManager(attestation_data)
 
         # Remove pcrs for cage_1 so that we test the reload on a miss
         manager.remove_pcrs_for_cage(self.cage_1)

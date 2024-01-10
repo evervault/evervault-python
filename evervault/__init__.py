@@ -1,12 +1,14 @@
 """Package for the evervault SDK"""
+from evervault.enclaves import EnclaveRequestsSession
 from .client import Client
 from .errors.evervault_errors import EvervaultError
 from .cages_v2 import CageRequestsSession
 import os
 import sys
 from warnings import warn
+import warnings
 from evervault.http.attestationdoc import AttestationDoc
-from evervault.http.cagePcrManager import CagePcrManager
+from evervault.http.pcrManager import PcrManager
 from importlib import metadata
 
 __version__ = metadata.version(__package__ or __name__)
@@ -22,6 +24,7 @@ BASE_URL_DEFAULT = "https://api.evervault.com/"
 RELAY_URL_DEFAULT = "https://relay.evervault.com:443"
 CA_HOST_DEFAULT = "https://ca.evervault.com"
 CAGES_HOST_DEFAULT = "cage.evervault.com"
+ENCLAVE_HOST_DEFAULT = "enclave.evervault.com"
 MAX_FILE_SIZE_IN_MB_DEFAULT = 25
 DEFAULT_PCR_PROVIDER_POLL_INTERVAL = 300
 
@@ -82,15 +85,31 @@ def encrypt(data, role=None):
 
 
 def attestable_cage_session(cage_attestation_data={}):
-    cage_host = os.environ.get("EV_CAGES_HOST", CAGES_HOST_DEFAULT)
-    cache = AttestationDoc(_app_uuid, cage_attestation_data.keys(), cage_host)
-    pcr_manager = CagePcrManager(
+    warnings.warn(
+        "attestable_cage_session() is deprecated and will be removed from v5.0.0 onwards. Use attestable_enclave_session() instead. When updating, also make sure your enclave has been deployed with the latest runtime.",
+        DeprecationWarning,
+    )
+    host = os.environ.get("EV_CAGES_HOST", CAGES_HOST_DEFAULT)
+    cache = AttestationDoc(_app_uuid, cage_attestation_data.keys(), host)
+    pcr_manager = PcrManager(
         cage_attestation_data,
         os.environ.get(
             "EV_PCR_PROVIDER_POLL_INTERVAL", DEFAULT_PCR_PROVIDER_POLL_INTERVAL
         ),
     )
-    return CageRequestsSession(pcr_manager, cage_host, cache)
+    return CageRequestsSession(pcr_manager, host, cache)
+
+
+def attestable_enclave_session(enclave_attestation_data={}):
+    host = os.environ.get("EV_ENCLAVE_HOST", ENCLAVE_HOST_DEFAULT)
+    cache = AttestationDoc(_app_uuid, enclave_attestation_data.keys(), host)
+    pcr_manager = PcrManager(
+        enclave_attestation_data,
+        os.environ.get(
+            "EV_PCR_PROVIDER_POLL_INTERVAL", DEFAULT_PCR_PROVIDER_POLL_INTERVAL
+        ),
+    )
+    return EnclaveRequestsSession(pcr_manager, host, cache)
 
 
 def create_run_token(function_name, data={}):

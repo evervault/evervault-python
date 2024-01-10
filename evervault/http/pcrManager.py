@@ -8,7 +8,7 @@ import time
 logger = logging.getLogger(__name__)
 
 
-class CagePcrManager:
+class PcrManager:
     def __init__(self, attestation_data, poll_interval=300):
         self.attestation_data = attestation_data
         self.poll_interval = poll_interval
@@ -19,7 +19,7 @@ class CagePcrManager:
         self.__fetch_all_pcrs()
 
         logger.debug(
-            "EVERVAULT :: Cage PCR manager starting polling for PCRs every {self.poll_interval} seconds"
+            "EVERVAULT :: PCR manager starting to poll for PCRs every {self.poll_interval} seconds"
         )
 
         self.repeated_timer = RepeatedTimer(
@@ -80,7 +80,7 @@ class CagePcrManager:
                 raise Exception("EVERVAULT :: Invalid PCR data. Cannot create provider")
 
     def __fetch_all_pcrs(self):
-        logger.debug("EVERVAULT :: Retrieving Cage PCRs from providers")
+        logger.debug("EVERVAULT :: Retrieving PCRs from providers")
         for cage_name, provider in self.store.items():
             pcrs = self.__fetch_pcrs(cage_name)
             self.store[cage_name]["pcrs"] = pcrs
