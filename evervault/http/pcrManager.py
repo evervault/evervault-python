@@ -19,7 +19,7 @@ class PcrManager:
         self.__fetch_all_pcrs()
 
         logger.debug(
-            "EVERVAULT :: PCR manager starting polling for PCRs every {self.poll_interval} seconds"
+            "EVERVAULT :: PCR manager starting to poll for PCRs every {self.poll_interval} seconds"
         )
 
         self.repeated_timer = RepeatedTimer(
