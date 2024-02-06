@@ -12,7 +12,9 @@ class OutboundRelayTest(EndToEndTestCase):
         }
         headers = {"Content-Type": "application/json"}
 
-        synthetic_endpoint = self.syntheticEndpointurl + "/syntheticUuid=python-e2e&mode=inbound"
+        synthetic_endpoint = (
+            self.syntheticEndpointurl + "/syntheticUuid=python-e2e&mode=inbound"
+        )
         response = self.make_request(synthetic_endpoint, headers, payload)
         print(response)
         self.assertEqual(response["request"]["string"], False)
