@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 4.1.1
+
+### Patch Changes
+
+- 762c04f: Bump Python cryptography to 42.0.0
+
 ## 4.1.0
 
 ### Minor Changes

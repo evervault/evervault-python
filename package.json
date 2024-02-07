@@ -1,7 +1,7 @@
 {
   "name": "evervault-python",
   "private": true,
-  "version": "4.1.0",
+  "version": "4.1.1",
   "scripts": {
     "version": "changeset version && PACKAGE_VERSION=$(node -p \"require('./package.json').version\") && poetry version $PACKAGE_VERSION"
   },
