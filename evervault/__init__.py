@@ -68,8 +68,8 @@ def init(
         __client()
 
 
-def run(function_name, data):
-    return __client().run(function_name, data)
+def run(function_name, data, run_async=False):
+    return __client().run(function_name, data, run_async)
 
 
 def decrypt(data):
