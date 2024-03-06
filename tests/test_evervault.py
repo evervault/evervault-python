@@ -339,7 +339,10 @@ class TestEvervault(unittest.TestCase):
         resp = self.evervault.run("testing-function", {"test": "data"})
         assert request.called
         assert resp["result"] == {"test": "data"}
-        assert request.last_request.json() == {"async": False, "payload": {"test": "data"}}
+        assert request.last_request.json() == {
+            "async": False,
+            "payload": {"test": "data"},
+        }
 
     @parameterized.expand(CURVES.keys())
     @requests_mock.Mocker()
@@ -355,7 +358,10 @@ class TestEvervault(unittest.TestCase):
         resp = self.evervault.run("testing-function", {"test": "data"}, True)
         assert request.called
         assert resp["status"] == "scheduled"
-        assert request.last_request.json() == {"async": True, "payload": {"test": "data"}}
+        assert request.last_request.json() == {
+            "async": True,
+            "payload": {"test": "data"},
+        }
 
     @parameterized.expand(CURVES.keys())
     @requests_mock.Mocker()
