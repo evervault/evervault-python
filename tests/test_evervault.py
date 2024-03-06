@@ -339,7 +339,23 @@ class TestEvervault(unittest.TestCase):
         resp = self.evervault.run("testing-function", {"test": "data"})
         assert request.called
         assert resp["result"] == {"test": "data"}
-        assert request.last_request.json() == {"payload": {"test": "data"}}
+        assert request.last_request.json() == {"async": False, "payload": {"test": "data"}}
+
+    @parameterized.expand(CURVES.keys())
+    @requests_mock.Mocker()
+    def test_async_function_run(self, curve, mock_request):
+        self.setUp(curve)
+        request = mock_request.post(
+            "https://api.evervault.com/functions/testing-function/runs",
+            json={
+                "status": "scheduled",
+            },
+            request_headers=DEFAULT_HEADERS,
+        )
+        resp = self.evervault.run("testing-function", {"test": "data"}, True)
+        assert request.called
+        assert resp["status"] == "scheduled"
+        assert request.last_request.json() == {"async": True, "payload": {"test": "data"}}
 
     @parameterized.expand(CURVES.keys())
     @requests_mock.Mocker()
