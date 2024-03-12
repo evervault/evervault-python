@@ -91,14 +91,14 @@ class Client(object):
             error_handler=raise_errors_on_api_error,
         )
 
-    def run(self, function_name, data):
+    def run(self, function_name, data, run_async):
         response = self.post(
             f"functions/{function_name}/runs",
-            {"payload": data},
+            {"payload": data, "async": run_async},
             error_handler=raise_errors_on_api_error,
         )
 
-        if response.get("status") == "success":
+        if response.get("status") == "success" or response.get("status") == "scheduled":
             return response
         raise_errors_on_function_run_failure(response)
 
