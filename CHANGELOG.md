@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 4.2.0
+
+### Minor Changes
+
+- c636566: Add async Function run support
+
 ## 4.1.1
 
 ### Patch Changes
