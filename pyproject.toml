@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "evervault"
-version = "3.3.0"
+version = "4.2.0"
 description = "Evervault SDK"
 authors = ["Evervault <engineering@evervault.com>"]
 license = "MIT"
@@ -11,7 +11,7 @@ repository = "https://github.com/evervault/evervault-python"
 [tool.poetry.dependencies]
 python = "^3.7.0"
 requests = "^2.24.0"
-cryptography = "^41.0.0"
+cryptography = "^42.0.0"
 certifi = "*"
 pycryptodome = "^3.10.1"
 pyasn1 = "^0.4.8"
@@ -23,6 +23,7 @@ pytest-socket = "^0.4.1"
 requests-mock = "^1.9.3"
 flake8 = "^5.0.4"
 black = "^22.3.0"
+parameterized = "^0.9.0"
 
 [tool.poetry.group.dev.dependencies]
 responses = "^0.23.3"
@@ -32,7 +33,7 @@ testpaths = ["tests"]
 
 [tool.black]
 line-length = 88
-target-version = ['py37', 'py38', 'py39']
+target-version = ['py38', 'py39', 'py310', 'py311']
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

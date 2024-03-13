@@ -72,9 +72,11 @@ class PublicKey:
             "b",
             univ.OctetString(hexValue=self.curve_info.b),
         )
-        curve.setComponentByName(
-            "seed", univ.BitString("'{}'H".format(self.curve_info.seed))
-        )
+
+        if self.curve_info.seed is not None:
+            curve.setComponentByName(
+                "seed", univ.BitString("'{}'H".format(self.curve_info.seed))
+            )
 
         field_id = FieldID()
         field_id.setComponentByName("fieldType", univ.ObjectIdentifier(PRIME_FIELD))

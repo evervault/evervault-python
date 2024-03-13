@@ -1,18 +1,15 @@
 """Package for the evervault SDK"""
+from evervault.enclaves import EnclaveRequestsSession
 from .client import Client
-from .errors.evervault_errors import AuthenticationError, UnsupportedCurveError
-from .cages_v2 import CageRequestsSessionBeta, CageRequestsSession
+from .errors.evervault_errors import EvervaultError
+from .cages_v2 import CageRequestsSession
 import os
 import sys
 from warnings import warn
 import warnings
 from evervault.http.attestationdoc import AttestationDoc
-
-try:
-    from importlib import metadata
-except ImportError:
-    # For Python 3.7
-    import importlib_metadata as metadata
+from evervault.http.pcrManager import PcrManager
+from importlib import metadata
 
 __version__ = metadata.version(__package__ or __name__)
 
@@ -24,13 +21,12 @@ _retry = False
 _curve = None
 
 BASE_URL_DEFAULT = "https://api.evervault.com/"
-BASE_RUN_URL_DEFAULT = "https://run.evervault.com/"
 RELAY_URL_DEFAULT = "https://relay.evervault.com:443"
 CA_HOST_DEFAULT = "https://ca.evervault.com"
-CAGES_CA_HOST_DEFAULT = "https://cages-ca.evervault.com"
-CAGES_BETA_HOST_DEFAULT = "cages.evervault.com"
-CAGES_GA_HOST_DEFAULT = "cage.evervault.com"
+CAGES_HOST_DEFAULT = "cage.evervault.com"
+ENCLAVE_HOST_DEFAULT = "enclave.evervault.com"
 MAX_FILE_SIZE_IN_MB_DEFAULT = 25
+DEFAULT_PCR_PROVIDER_POLL_INTERVAL = 300
 
 SUPPORTED_CURVES = ["SECP256K1", "SECP256R1"]
 
@@ -44,8 +40,6 @@ def init(
     app_id,
     api_key,
     decryption_domains=[],
-    intercept=False,
-    ignore_domains=[],
     retry=False,
     curve=Curves.SECP256K1,
     debug_requests=False,
@@ -64,33 +58,21 @@ def init(
     _curve = curve
     _request_timeout = request_timeout
 
-    if intercept or len(ignore_domains) > 0 or len(decryption_domains) > 0:
-        warn(
-            """
-                The `intercept`, `ignore_domains` & `decryption_domains` config options in the Evervault SDK are deprecated and slated for removal.\n
-                You can now use the `enable_outbound_relay` method to enable Outbound Relay.\n
-                For more details please see https://docs.evervault.com/reference/python-sdk#evervaultenable_outbound_relay
-            """,
-            DeprecationWarning,
-            stacklevel=2,
-        )
-
     if len(decryption_domains) > 0:
         __client().enable_outbound_relay(
             debug_requests, decryption_domains=decryption_domains
         )
-    elif intercept or len(ignore_domains) > 0:
-        __client().enable_outbound_relay(debug_requests, ignore_domains=ignore_domains)
-    elif not intercept and enable_outbound_relay:
+    elif enable_outbound_relay:
         __client().enable_outbound_relay(
             debug_requests,
-            ignore_domains=ignore_domains,
             enable_outbound_relay=enable_outbound_relay,
         )
+    else:
+        __client()
 
 
-def run(function_name, data, options={"async": False, "version": None}):
-    return __client().run(function_name, data, options)
+def run(function_name, data, run_async=False):
+    return __client().run(function_name, data, run_async)
 
 
 def decrypt(data):
@@ -101,44 +83,36 @@ def create_client_side_decrypt_token(payload, expiry=None):
     return __client().create_token("api:decrypt", payload, expiry)
 
 
-def encrypt(data):
-    return __client().encrypt(data)
-
-
-def encrypt_and_run(cage_name, data, options={"async": False, "version": None}):
-    warn(
-        "The `encrypt_and_run` method is deprecated and slated for removal. Please use the `encrypt` and `run` methods instead.",
-        DeprecationWarning,
-        stacklevel=2,
-    )
-    return __client().encrypt_and_run(cage_name, data, options)
-
-
-def cages():
-    warn(
-        "The `cages` method is deprecated and slated for removal. For more details please see https://docs.evervault.com/reference/python-sdk",
-        DeprecationWarning,
-        stacklevel=2,
-    )
-    return __client().cages()
-
-
-def cage_requests_session(cage_attestation_data={}):
-    warnings.warn(
-        "cage_requests_session() is deprecated and will be removed in future versions. Use cage_attestable_session() instead.",
-        DeprecationWarning,
-    )
-    return CageRequestsSessionBeta(
-        cage_attestation_data,
-        os.environ.get("EV_CAGES_CA_HOST", CAGES_CA_HOST_DEFAULT),
-        os.environ.get("EV_CAGES_HOST", CAGES_BETA_HOST_DEFAULT),
-    )
+def encrypt(data, role=None):
+    return __client().encrypt(data, role)
 
 
 def attestable_cage_session(cage_attestation_data={}):
-    cage_host = os.environ.get("EV_CAGES_HOST_GA", CAGES_GA_HOST_DEFAULT)
-    cache = AttestationDoc(_app_uuid, cage_attestation_data.keys(), cage_host)
-    return CageRequestsSession(cage_attestation_data, cage_host, cache)
+    warnings.warn(
+        "attestable_cage_session() is deprecated and will be removed from v5.0.0 onwards. Use attestable_enclave_session() instead. When updating, also make sure your enclave has been deployed with the latest runtime.",
+        DeprecationWarning,
+    )
+    host = os.environ.get("EV_CAGES_HOST", CAGES_HOST_DEFAULT)
+    cache = AttestationDoc(_app_uuid, cage_attestation_data.keys(), host)
+    pcr_manager = PcrManager(
+        cage_attestation_data,
+        os.environ.get(
+            "EV_PCR_PROVIDER_POLL_INTERVAL", DEFAULT_PCR_PROVIDER_POLL_INTERVAL
+        ),
+    )
+    return CageRequestsSession(pcr_manager, host, cache)
+
+
+def attestable_enclave_session(enclave_attestation_data={}):
+    host = os.environ.get("EV_ENCLAVE_HOST", ENCLAVE_HOST_DEFAULT)
+    cache = AttestationDoc(_app_uuid, enclave_attestation_data.keys(), host)
+    pcr_manager = PcrManager(
+        enclave_attestation_data,
+        os.environ.get(
+            "EV_PCR_PROVIDER_POLL_INTERVAL", DEFAULT_PCR_PROVIDER_POLL_INTERVAL
+        ),
+    )
+    return EnclaveRequestsSession(pcr_manager, host, cache)
 
 
 def create_run_token(function_name, data={}):
@@ -170,15 +144,15 @@ def _warn_if_python_version_unsupported_for_async():
 
 def __client():
     if not _app_uuid:
-        raise AuthenticationError(
+        raise EvervaultError(
             "Your App's App UUID must be entered using evervault.init('<APP-ID>', '<API-KEY>')"
         )
     if not _api_key:
-        raise AuthenticationError(
+        raise EvervaultError(
             "Your App's API Key must be entered using evervault.init('<APP-ID>', '<API-KEY>')"
         )
     if _curve not in SUPPORTED_CURVES:
-        raise UnsupportedCurveError(f"The {_curve} curve is not supported.")
+        raise EvervaultError(f"The {_curve} curve is not supported.")
     global ev_client
     if not ev_client:
         max_file_size_in_mb = int(
@@ -189,7 +163,6 @@ def __client():
             app_uuid=_app_uuid,
             request_timeout=_request_timeout,
             base_url=os.environ.get("EV_API_URL", BASE_URL_DEFAULT),
-            base_run_url=os.environ.get("EV_CAGE_RUN_URL", BASE_RUN_URL_DEFAULT),
             relay_url=os.environ.get("EV_TUNNEL_HOSTNAME", RELAY_URL_DEFAULT),
             ca_host=os.environ.get("EV_CERT_HOSTNAME", CA_HOST_DEFAULT),
             retry=_retry,

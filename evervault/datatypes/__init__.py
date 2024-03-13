@@ -1,1 +1,1 @@
-"""Package containing datatype helpers for mapping Python datatypes to values Evervault Cages can understand"""
+"""Package containing datatype helpers for mapping Python datatypes to values Evervault Function can understand"""

@@ -5,35 +5,35 @@ import pytest
 import importlib
 import evervault
 
-from evervault.cages_v2 import CageVerificationException
+from evervault.enclaves import EnclaveVerificationException
 
 
-class CageAttestationTest(unittest.TestCase):
+class EnclaveAttestationTest(unittest.TestCase):
     def setUp(self):
         importlib.reload(evervault)
         self.evervault = evervault
         self.app_uuid = "app-f5f084041a7e"
-        self.cage_name = "synthetic-cage"
+        self.enclave_name = "synthetic-cage"
         self.evervault.init(self.app_uuid, "testing", curve="SECP256K1")
 
     def test_valid_pcrs(self):
-        attested_session = self.evervault.attestable_cage_session(
+        attested_session = self.evervault.attestable_enclave_session(
             {
-                self.cage_name: {
+                self.enclave_name: {
                     "pcr_8": "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
                 }
             }
         )
         response = attested_session.get(
-            f"https://{self.cage_name}.{self.app_uuid}.cage.evervault.com/echo"
+            f"https://{self.enclave_name}.{self.app_uuid}.enclave.evervault.com/echo"
         )
         assert response.status_code == 401
 
     def test_valid_pcrs_from_array(self):
 
-        attested_session = self.evervault.attestable_cage_session(
+        attested_session = self.evervault.attestable_enclave_session(
             {
-                self.cage_name: [
+                self.enclave_name: [
                     {
                         "pcr_8": "invalid00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
                     },
@@ -44,7 +44,7 @@ class CageAttestationTest(unittest.TestCase):
             }
         )
         response = attested_session.get(
-            f"https://{self.cage_name}.{self.app_uuid}.cage.evervault.com/echo"
+            f"https://{self.enclave_name}.{self.app_uuid}.enclave.evervault.com/echo"
         )
         assert response.status_code == 401
 
@@ -55,11 +55,11 @@ class CageAttestationTest(unittest.TestCase):
             ).json()
             return pcrs
 
-        attested_session = self.evervault.attestable_cage_session(
-            {self.cage_name: provider}
+        attested_session = self.evervault.attestable_enclave_session(
+            {self.enclave_name: provider}
         )
         response = attested_session.get(
-            f"https://{self.cage_name}.{self.app_uuid}.cage.evervault.com/echo"
+            f"https://{self.enclave_name}.{self.app_uuid}.enclave.evervault.com/echo"
         )
         assert response.status_code == 401
 
@@ -71,29 +71,29 @@ class CageAttestationTest(unittest.TestCase):
             return pcrs
 
         with pytest.raises(
-            CageVerificationException,
+            EnclaveVerificationException,
             match="The PCRs found were different to the expected values",
         ):
-            attested_session = self.evervault.attestable_cage_session(
-                {self.cage_name: provider}
+            attested_session = self.evervault.attestable_enclave_session(
+                {self.enclave_name: provider}
             )
 
             attested_session.get(
-                f"https://{self.cage_name}.{self.app_uuid}.cage.evervault.com/echo"
+                f"https://{self.enclave_name}.{self.app_uuid}.enclave.evervault.com/echo"
             )
 
     def test_invalid_pcrs(self):
         with pytest.raises(
-            CageVerificationException,
+            EnclaveVerificationException,
             match="The PCRs found were different to the expected values",
         ):
-            attested_session = self.evervault.attestable_cage_session(
+            attested_session = self.evervault.attestable_enclave_session(
                 {
-                    self.cage_name: {
+                    self.enclave_name: {
                         "pcr_8": "invalid000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
                     }
                 }
             )
             attested_session.get(
-                f"https://{self.cage_name}.{self.app_uuid}.cage.evervault.com/echo"
+                f"https://{self.enclave_name}.{self.app_uuid}.enclave.evervault.com/echo"
             )

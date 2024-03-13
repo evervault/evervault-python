@@ -9,10 +9,10 @@ logger = logging.getLogger(__name__)
 
 
 class AttestationDoc:
-    def __init__(self, app_uuid, cage_names, cage_host, poll_interval=2700):
-        self.cage_host = cage_host
+    def __init__(self, app_uuid, names, host, poll_interval=300):
+        self.host = host
         self.app_uuid = app_uuid.replace("_", "-")
-        self.cage_names = cage_names
+        self.names = names
         self.poll_interval = poll_interval
         self.lock = threading.Lock()
         self.cache = {}
@@ -24,13 +24,13 @@ class AttestationDoc:
             self.__get_attestation_docs,
         )
 
-    def get(self, cage_name) -> str:
+    def get(self, name) -> str:
         with self.lock:
             try:
-                return self.cache[cage_name]
+                return self.cache[name]
             except KeyError:
-                (_, doc) = self.__get_attestation_doc(cage_name)
-                self.cache[cage_name] = doc
+                (_, doc) = self.__get_attestation_doc(name)
+                self.cache[name] = doc
                 return doc
 
     def get_poll_interval(self) -> list:
@@ -49,19 +49,22 @@ class AttestationDoc:
         with self.lock:
             self.cache = docs
 
-    def load_doc(self, cage_name):
-        self.__get_attestation_doc(cage_name)
+    def load_doc(self, name):
+        self.__get_attestation_doc(name)
 
     def __get_attestation_docs(self):
         logger.debug("EVERVAULT :: Retrieving attestation doc from Cage")
-        docs = dict(list(map(self.__get_attestation_doc, self.cage_names)))
+        docs = dict(list(map(self.__get_attestation_doc, self.names)))
         self.update_cache(docs)
 
-    def __get_attestation_doc(self, cage_name):
+    def __get_url(self, name, host):
+        return f"https://{name}.{self.app_uuid}.{host}/.well-known/attestation"
+
+    def __get_attestation_doc(self, name):
         try:
-            url = f"https://{cage_name}.{self.app_uuid}.{self.cage_host}/.well-known/attestation"
+            url = self.__get_url(name, self.host)
             res = requests.get(url)
             body = res.json()
-            return (cage_name, body["attestation_doc"])
-        except Exception as e:
-            warnings.warn(f"Could not retrieve attestation doc from {url} {e}")
+            return (name, body["attestation_doc"])
+        except Exception as err:
+            warnings.warn(f"Could not retrieve attestation doc from {url}: {err}.")

@@ -6,7 +6,7 @@ import warnings
 import certifi
 import tempfile
 import ssl
-from evervault.errors.evervault_errors import CertDownloadError
+from evervault.errors.evervault_errors import EvervaultError
 from evervault.http.outboundrelayconfig import RelayOutboundConfig
 
 EVERVAULT_DOMAINS = ["evervault.com", "evervault.io", "evervault.test"]
@@ -36,7 +36,6 @@ class RequestIntercept(object):
         self,
         request,
         ca_host,
-        base_run_url,
         base_url,
         api_key,
         relay_url,
@@ -46,7 +45,6 @@ class RequestIntercept(object):
         self.relay_url = relay_url
         self.api_key = api_key
         self.base_url = base_url
-        self.base_run_url = base_run_url
         self.request = request
         self.ca_host = ca_host
         self.expire_date = None
@@ -65,7 +63,6 @@ class RequestIntercept(object):
 
     def get_always_ignore_domains(self):
         return [
-            urlparse(self.base_run_url).netloc,
             urlparse(self.base_url).netloc,
             urlparse(self.ca_host).netloc,
         ]
@@ -75,22 +72,6 @@ class RequestIntercept(object):
         always_ignore_domains = self.get_always_ignore_domains()
         self.should_proxy_domain = lambda host: is_ignore_domain(
             host, decryption_domains, always_ignore_domains
-        )
-
-    def setup_ignore_domains(self, ignore_domains, debug_requests=False):
-        self.debug_requests = debug_requests
-        ignore_domains.extend(self.get_always_ignore_domains())
-
-        ignore_if_exact = []
-        ignore_if_endswith = ()
-        for domain in ignore_domains:
-            if domain.startswith("www."):
-                domain = domain[4:]
-            ignore_if_exact.append(domain)
-            ignore_if_endswith += ("." + domain, "@" + domain)
-
-        self.should_proxy_domain = lambda host: not (
-            host in ignore_if_exact or host.endswith(ignore_if_endswith)
         )
 
     def set_relay_outbound_config(self, debug_requests=False):
@@ -231,7 +212,7 @@ class RequestIntercept(object):
                 pass
 
         if ca_content is None:
-            raise CertDownloadError(
+            raise EvervaultError(
                 f"Unable to install the Evervault root certificate from {self.ca_host}. "
             )
 
@@ -242,7 +223,7 @@ class RequestIntercept(object):
                 cert_file.write(bytes(certifi.contents(), "ascii") + ca_content)
                 self.cert_path = cert_file.name
         except:
-            raise CertDownloadError(
+            raise EvervaultError(
                 f"Unable to install the Evervault root certficate from {self.ca_host}. "
                 "Likely a permissions error when attempting to write to the /tmp/ directory."
             )
