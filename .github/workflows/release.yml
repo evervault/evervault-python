@@ -11,13 +11,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-          token: ${{ secrets.GH_TOKEN }}
 
       - name: Get tags
         run: git fetch --tags origin
-  
+
       - name: Setup Python 3.9
         uses: actions/setup-python@v2
         with:
@@ -41,7 +38,7 @@ jobs:
       - name: Run Tests
         run: |
           poetry run pytest -v
-    
+
       - name: Create Release Pull Request
         id: changesets
         uses: changesets/action@v1
@@ -51,7 +48,7 @@ jobs:
           version: npm run version
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-    
+
       - name: Create new release
         if: steps.changesets.outputs.hasChangesets == 'false'
         run: |
