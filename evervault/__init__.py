@@ -1,4 +1,5 @@
 """Package for the evervault SDK"""
+
 from evervault.enclaves import EnclaveRequestsSession
 from .client import Client
 from .errors.evervault_errors import EvervaultError
