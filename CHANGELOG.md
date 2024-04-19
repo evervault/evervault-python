@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## 4.3.0
+
+### Minor Changes
+
+- 3a6d44e: Remove support for 3.7
+
+### Patch Changes
+
+- 1e72fdd: Make timeout configurable
+- 55e102d: Fix crypto deprecation warning for `EllipticCurve` class instances
+
 ## 4.2.0
 
 ### Minor Changes
