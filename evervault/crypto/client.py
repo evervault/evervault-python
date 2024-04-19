@@ -271,7 +271,7 @@ class Client(object):
             return self.shared_key
 
     def __generate_shared_key(self, has_role):
-        generated_key = ec.generate_private_key(CURVES[self.curve])
+        generated_key = ec.generate_private_key(CURVES[self.curve]())
         public_key = generated_key.public_key()
         self.compressed_public_key = public_key.public_bytes(
             Encoding.X962, PublicFormat.CompressedPoint
