@@ -33,17 +33,11 @@ class Client(object):
         self.decoded_team_cage_key = None
         self.compressed_public_key = None
         self.uncompressed_public_key = None
-        self.shared_key = None
+        self.shared_key: bytes | None = None
         self.start_time = int(time.time())
         self.api_key = api_key
-        self.ev_version = self.__base_64_remove_padding(
-            base64.b64encode(bytes(VERSION[self.curve], "utf8")).decode("utf")
-        )
-        self.ev_version_with_metadata = self.__base_64_remove_padding(
-            base64.b64encode(bytes(VERSION_WITH_METADATA[self.curve], "utf8")).decode(
-                "utf"
-            )
-        )
+        self.ev_version = VERSION[self.curve]
+        self.ev_version_with_metadata = VERSION_WITH_METADATA[self.curve]
         self.max_file_size_in_mb = max_file_size_in_mb
         self.max_file_size_in_bytes = max_file_size_in_mb * 1024 * 1024
 
@@ -105,6 +99,25 @@ class Client(object):
                 encrypted_set.add(self.__traverse_and_encrypt(item, role))
         return encrypted_set
 
+    def __create_v2_aad(
+        self, datatype, ephemeral_public_key_bytes, app_public_key_bytes
+    ) -> bytes:
+        datatype_number = 0
+        if datatype == "number":
+            datatype_number = 1
+        elif datatype == "boolean":
+            datatype_number = 2
+
+        version_prefix = 0x00 if self.curve == SECP256K1 else 0x01
+
+        aad = bytearray()
+        aad.append(version_prefix | (datatype_number << 4))
+
+        aad.extend(ephemeral_public_key_bytes)
+        aad.extend(app_public_key_bytes)
+
+        return aad
+
     def __encrypt_string(self, data, role):
         header_type = map_header_type(data)
         coerced_data = self.__coerce_type(data)
@@ -125,7 +138,16 @@ class Client(object):
         if self.curve == SECP256K1 and not has_role:
             encrypted_bytes = aesgcm.encrypt(iv, payload, None)
         else:
-            encrypted_bytes = aesgcm.encrypt(iv, payload, self.decoded_team_cage_key)
+            aad = (
+                self.__create_v2_aad(
+                    header_type,
+                    self.compressed_public_key,
+                    self.decoded_team_cage_key,
+                )
+                if has_role
+                else self.decoded_team_cage_key
+            )
+            encrypted_bytes = aesgcm.encrypt(iv, payload, aad)
 
         return self.__format(
             header_type,
@@ -168,6 +190,7 @@ class Client(object):
             raise ExceededMaxFileSizeError(
                 f"File size must be less than {self.max_file_size_in_mb}MB"
             )
+
         iv = token_bytes(12)
         aesgcm = AESGCM(self.shared_key)
 
@@ -175,11 +198,7 @@ class Client(object):
         encrypted_metadata = None
 
         if role is not None:
-            metadata = self.__generate_metadata(role)
-            encrypted_metadata = aesgcm.encrypt(
-                iv, metadata, self.decoded_team_cage_key
-            )
-            encrypted_bytes = aesgcm.encrypt(iv, data, self.decoded_team_cage_key)
+            raise EvervaultError("Data roles are not supported for file encryption")
         elif self.curve == SECP256K1:
             encrypted_bytes = aesgcm.encrypt(iv, data, None)
         else:
@@ -208,17 +227,10 @@ class Client(object):
     def __format_file(self, iv, public_key, encrypted_metadata, encrypted_bytes):
         encrypted_file_identifier = bytes(b"\x25\x45\x56\x45\x4e\x43")
         flags = bytes(b"\00")
-        if encrypted_metadata is not None:
-            version_number = bytes(b"\04") if self.curve == SECP256K1 else bytes(b"\05")
-            metadata_offset = len(encrypted_metadata).to_bytes(2, byteorder="little")
-            offset_to_data = (55 + 2 + len(encrypted_metadata)).to_bytes(
-                2, byteorder="little"
-            )
-        else:
-            version_number = bytes(b"\02") if self.curve == SECP256K1 else bytes(b"\03")
-            metadata_offset = bytes(b"")
-            encrypted_metadata = bytes(b"")
-            offset_to_data = bytes([55, 00])
+        version_number = bytes(b"\02") if self.curve == SECP256K1 else bytes(b"\03")
+        metadata_offset = bytes(b"")
+        encrypted_metadata = bytes(b"")
+        offset_to_data = bytes([55, 00])
 
         file_bytes = (
             encrypted_file_identifier
@@ -270,7 +282,7 @@ class Client(object):
                 return self.__generate_shared_key(has_role)
             return self.shared_key
 
-    def __generate_shared_key(self, has_role):
+    def __generate_shared_key(self, has_role) -> bytes:
         generated_key = ec.generate_private_key(CURVES[self.curve]())
         public_key = generated_key.public_key()
         self.compressed_public_key = public_key.public_bytes(

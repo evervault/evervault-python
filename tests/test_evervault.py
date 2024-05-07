@@ -132,45 +132,45 @@ class TestEvervault(unittest.TestCase):
         assert type(encrypted_data["dict"]) == dict
         assert self.__is_evervault_string(encrypted_data["dict"]["subnumber"], "number")
 
-    @parameterized.expand(generate_combinations(CURVES.keys(), ROLES))
+    @parameterized.expand(CURVES.keys())
     @requests_mock.Mocker()
-    def test_encrypt_files(self, curve, role, mock_request):
+    def test_encrypt_files(self, curve, mock_request):
         self.setUp(curve)
         self.mock_fetch_cage_key(mock_request)
 
         test_payload = b"\00\01\03"
-        encrypted_data = self.evervault.encrypt(test_payload, role)
+        encrypted_data = self.evervault.encrypt(test_payload)
         assert self.__is_evervault_file(encrypted_data)
 
         # Check that curve is set correctly
         if curve == "SECP256K1":
-            assert encrypted_data[6:7] == b"\04"
+            assert encrypted_data[6:7] == b"\02"
         else:
-            assert encrypted_data[6:7] == b"\05"
+            assert encrypted_data[6:7] == b"\03"
 
         # Re-calculate the crc32 and ensure it matches
         crc32 = binascii.crc32(encrypted_data[:-4])
         assert encrypted_data[-4:] == crc32.to_bytes(4, byteorder="little")
 
-    @parameterized.expand(generate_combinations(CURVES.keys(), ROLES))
+    @parameterized.expand(CURVES.keys())
     @requests_mock.Mocker()
-    def test_encrypt_files_with_bytearray(self, curve, role, mock_request):
+    def test_encrypt_files_with_bytearray(self, curve, mock_request):
         self.setUp(curve)
         self.mock_fetch_cage_key(mock_request)
 
         test_payload = bytearray(10)
-        encrypted_data = self.evervault.encrypt(test_payload, role)
+        encrypted_data = self.evervault.encrypt(test_payload)
         assert self.__is_evervault_file(encrypted_data)
 
         # Check that curve is set correctly
         if curve == "SECP256K1":
-            assert encrypted_data[6:7] == b"\04"
+            assert encrypted_data[6:7] == b"\02"
         else:
-            assert encrypted_data[6:7] == b"\05"
+            assert encrypted_data[6:7] == b"\03"
 
-    @parameterized.expand(generate_combinations(CURVES.keys(), ROLES))
+    @parameterized.expand(CURVES.keys())
     @requests_mock.Mocker()
-    def test_encrypt_large_files_throws_exception(self, curve, role, mock_request):
+    def test_encrypt_large_files_throws_exception(self, curve, mock_request):
         self.setUp(curve)
         self.mock_fetch_cage_key(mock_request)
 
@@ -179,24 +179,33 @@ class TestEvervault(unittest.TestCase):
             ExceededMaxFileSizeError, self.evervault.encrypt, test_payload
         )
 
-    @parameterized.expand(generate_combinations(CURVES.keys(), ROLES))
+    @parameterized.expand(CURVES.keys())
+    @requests_mock.Mocker()
+    def test_encrypt_file_with_role_throws_exception(self, curve, mock_request):
+        self.setUp(curve)
+        self.mock_fetch_cage_key(mock_request)
+
+        test_payload = bytes(bytearray(10 * 1024 * 1024))
+        self.assertRaises(EvervaultError, self.evervault.encrypt, test_payload, "role")
+
+    @parameterized.expand(CURVES.keys())
     @requests_mock.Mocker()
     def test_encrypt_large_files_succeeds_with_max_size_override(
-        self, curve, role, mock_request
+        self, curve, mock_request
     ):
         os.environ["EV_MAX_FILE_SIZE_IN_MB"] = "30"
         self.setUp(curve)
         self.mock_fetch_cage_key(mock_request)
 
         test_payload = bytes(bytearray(26 * 1024 * 1024))
-        encrypted_data = self.evervault.encrypt(test_payload, role)
+        encrypted_data = self.evervault.encrypt(test_payload)
         assert self.__is_evervault_file(encrypted_data)
 
         # Check that curve is set correctly
         if curve == "SECP256K1":
-            assert encrypted_data[6:7] == b"\04"
+            assert encrypted_data[6:7] == b"\02"
         else:
-            assert encrypted_data[6:7] == b"\05"
+            assert encrypted_data[6:7] == b"\03"
 
     @parameterized.expand(CURVES)
     @requests_mock.Mocker()
