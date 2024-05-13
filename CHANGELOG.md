@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 4.3.1
+
+### Patch Changes
+
+- 63932e8: remove data policies from file encryption
+
 ## 4.3.0
 
 ### Minor Changes
