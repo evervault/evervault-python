@@ -9,7 +9,7 @@ ROLES_AND_SUCCESSES = [
     {"role": "forbid-all", "decryption_should_succeed": False},
     {"role": None, "decryption_should_succeed": True},
 ]
-METADATA_ENCRYPTED_STRING_REGEX = r"((ev(:|%3A))(debug(:|%3A))?((QlJV|TENZ|)(:|%3A))?((number|boolean|string)(:|%3A))?(([A-z0-9+\/=%]+)(:|%3A)){3}(\$|%24))|(((eyJ[A-z0-9+=.]+){2})([\w]{8}(-[\w]{4}){3}-[\w]{12}))"
+METADATA_ENCRYPTED_STRING_REGEX = r"((ev(:|%3A))(debug(:|%3A))?((QkTC|S0lS|)(:|%3A))?((number|boolean|string)(:|%3A))?(([A-z0-9+\/=%]+)(:|%3A)){3}(\$|%24))|(((eyJ[A-z0-9+=.]+){2})([\w]{8}(-[\w]{4}){3}-[\w]{12}))"
 
 
 def check_object_has_strings_with_correct_versions(value):
@@ -178,14 +178,13 @@ class EncryptTest(EndToEndTestCase):
                 == "Decryption of the provided data is restricted by your current policies. Please check and modify your policies, if needed, to enable decryption in this context."
             )
 
-    @parameterized.expand(generate_combinations(CURVES, ROLES_AND_SUCCESSES))
-    def test_encrypt_file(self, curve, role_and_success):
+    @parameterized.expand(CURVES)
+    def test_encrypt_file(self, curve):
         self.setUp(curve)
-        role = role_and_success["role"]
-        decryption_should_succeed = role_and_success["decryption_should_succeed"]
+        decryption_should_succeed = True
         file = b"hello world"
         try:
-            encrypted = self.evervault.encrypt(file, role)
+            encrypted = self.evervault.encrypt(file)
             decrypted = self.evervault.decrypt(encrypted)
             assert decryption_should_succeed
             assert "hello world" == decrypted

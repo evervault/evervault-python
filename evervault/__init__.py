@@ -12,7 +12,10 @@ from evervault.http.attestationdoc import AttestationDoc
 from evervault.http.pcrManager import PcrManager
 from importlib import metadata
 
-__version__ = metadata.version(__package__ or __name__)
+try:
+    __version__ = metadata.version(__package__ or __name__)
+except:
+    __version__ = "0.0.0"
 
 ev_client = None
 _app_uuid = None
