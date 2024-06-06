@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 4.4.0
+
+### Minor Changes
+
+- 5f80802: Update requests dependency version to >= 2.32.2 to migrate away from deprecated get_connection function in custom HTTPAdapters.
+
 ## 4.3.1
 
 ### Patch Changes
