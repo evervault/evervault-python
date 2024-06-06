@@ -29,21 +29,8 @@ class EnclaveHTTPAdapter(requests.adapters.HTTPAdapter):
         self.cache = cache
         super().__init__()
 
-    def get_connection(self, url, proxies=None):
-        # Requests >= 2.32.2 deprecated get_connection. We need to check if it exists before calling it.
-        if getattr(super(), "get_connection", None) is None:
-            return None
-        conn = super().get_connection(url, proxies)
-        if self.enclave_host in url:
-            enclave_name = get_enclave_name_from_enclave_url(url)
-            # we patch the urllib3.connectionpool.HTTPSConnectionPool object to perform extra validation on its connection before transmitting any data
-            conn = self.add_attestation_check_to_conn_validation(conn, enclave_name)
-        return conn
-
     # Requests >= 2.32.2 recommends the use of get_connection_with_tls_context in place of get_connection.
     def get_connection_with_tls_context(self, request, verify, proxies=None, cert=None):
-        if getattr(super(), "get_connection_with_tls_context", None) is None:
-            return None
         conn = super().get_connection_with_tls_context(request, verify, proxies, cert)
         if self.enclave_host in request.url:
             enclave_name = get_enclave_name_from_enclave_url(request.url)
