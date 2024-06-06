@@ -30,10 +30,11 @@ class CageHTTPAdapter(requests.adapters.HTTPAdapter):
         self.cache = cache
         super().__init__()
 
-    def get_connection(self, url, proxies=None):
-        conn = super().get_connection(url, proxies)
-        if self.cages_host in url:
-            cage_name = get_cage_name_from_cage(url)
+    # Requests >= 2.32.2 recommends the use of get_connection_with_tls_context in place of get_connection.
+    def get_connection_with_tls_context(self, request, verify, proxies=None, cert=None):
+        conn = super().get_connection_with_tls_context(request, verify, proxies, cert)
+        if self.cages_host in request.url:
+            cage_name = get_cage_name_from_cage(request.url)
             # we patch the urllib3.connectionpool.HTTPSConnectionPool object to perform extra validation on its connection before transmitting any data
             conn = self.add_attestation_check_to_conn_validation(conn, cage_name)
         return conn
