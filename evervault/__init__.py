@@ -1,6 +1,7 @@
 """Package for the evervault SDK"""
 
 from evervault.enclaves import EnclaveRequestsSession
+from evervault.relay import RelayRequestsSession
 from .client import Client
 from .errors.evervault_errors import EvervaultError
 from .cages_v2 import CageRequestsSession
@@ -117,7 +118,6 @@ def attestable_enclave_session(enclave_attestation_data={}):
         ),
     )
     return EnclaveRequestsSession(pcr_manager, host, cache)
-
 
 def create_run_token(function_name, data={}):
     return __client().create_run_token(function_name, data)
