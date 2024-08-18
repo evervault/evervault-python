@@ -49,7 +49,7 @@ class RelayRequestsSession(requests.Session):
 
 def main():
     proxy_url = 'https://relay.evervault.com'
-    proxy_auth = 'ev:key:1:1LLfLLqcIpYduiXMWGzt0fGhLNcLRd60du1EQWi7J0Ace7M544gLQjxRX2n4i66Kb:C76XBM:6FKbQc'
+    proxy_auth = 'KEY'
     ca_cert_path = os.path.join(os.path.dirname(__file__), 'evervault_ca.pem')
 
     session = requests.Session()
