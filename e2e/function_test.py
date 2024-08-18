@@ -56,7 +56,7 @@ class FunctionTest(EndToEndTestCase):
         except FunctionRuntimeError as e:
             assert (
                 str(e)
-                == "The function failed to initialize. This error is commonly encountered when there are problems with the function code (e.g. a syntax error) or when a required import is missing."
+                == "An unexpected error occurred while initializing your function"
             )
 
     def test_create_function_run_token(self):

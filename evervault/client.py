@@ -11,6 +11,7 @@ from .http.request import Request
 from .crypto.client import Client as CryptoClient
 from .services.timeservice import TimeService
 from .errors.evervault_errors import EvervaultError
+from .relay import RelayHTTPSAdapter, RelayAsyncioSSLContext
 
 
 class Client(object):
@@ -116,6 +117,18 @@ class Client(object):
         self.cert.setup()
         if client_session:
             self.cert.setup_aiohttp(client_session)
+
+    def relay_requests_adapter(self):
+        return RelayHTTPSAdapter(
+            self.relay_url,
+            f"{self.app_uuid}:{self.api_key}",
+            self.ca_host,
+        )
+
+    def relay_asyncio_ssl_context(self):
+        return RelayAsyncioSSLContext(
+            ca_cert_url=self.ca_host,
+        )
 
     def create_run_token(self, function_name, data):
         return self.post(f"v2/functions/{function_name}/run-token", data, {})

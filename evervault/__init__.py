@@ -126,6 +126,10 @@ def create_run_token(function_name, data={}):
 def enable_outbound_relay(
     decryption_domains=None, debug_requests=False, client_session=None
 ):
+    warnings.warn(
+        "enable_outbound_relay() is deprecated and will be removed from v5.0.0 onwards. Use relay_requests_adapter() or relay_asyncio_ssl_context instead.",
+        DeprecationWarning,
+    )
     if client_session is not None:
         _warn_if_python_version_unsupported_for_async()
 
@@ -137,6 +141,14 @@ def enable_outbound_relay(
         __client().enable_outbound_relay(
             debug_requests, decryption_domains=decryption_domains
         )
+
+
+def relay_requests_adapter():
+    return __client().relay_requests_adapter()
+
+
+def relay_asyncio_ssl_context():
+    return __client().relay_asyncio_ssl_context()
 
 
 def _warn_if_python_version_unsupported_for_async():
