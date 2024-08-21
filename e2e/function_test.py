@@ -56,6 +56,7 @@ class FunctionTest(EndToEndTestCase):
         except FunctionRuntimeError as e:
             print("-----++++++--------++++++--------")
             print(e)
+            print(e.stack)
             print("-----++++++--------++++++--------")
             assert (
                 str(e)
