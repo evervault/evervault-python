@@ -54,10 +54,9 @@ class FunctionTest(EndToEndTestCase):
         try:
             self.evervault.run(FunctionTest.INITIALIZATION_ERROR_FUNCTION_NAME, {})
         except FunctionRuntimeError as e:
-            print("-----++++++--------++++++--------");
+            print("-----++++++--------++++++--------")
             print(e)
-            print("-----++++++--------++++++--------");
-            # print(e.stack)
+            print("-----++++++--------++++++--------")
             assert (
                 str(e)
                 == "The function failed to initialize. This error is commonly encountered when there are problems with the function code (e.g. a syntax error) or when a required import is missing."
