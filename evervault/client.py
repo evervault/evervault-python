@@ -11,7 +11,7 @@ from .http.request import Request
 from .crypto.client import Client as CryptoClient
 from .services.timeservice import TimeService
 from .errors.evervault_errors import EvervaultError
-from .relay import RelayHTTPSAdapter, RelayAsyncioSSLContext
+from .relay import RelayHTTPSAdapter, RelayAsyncioSSLContext, RelayInboundAdapter
 
 
 class Client(object):
@@ -124,6 +124,9 @@ class Client(object):
             f"{self.app_uuid}:{self.api_key}",
             self.ca_host,
         )
+
+    def relay_cl(self):
+        return RelayInboundAdapter(self.app_uuid, self.api_key)
 
     def relay_asyncio_ssl_context(self):
         return RelayAsyncioSSLContext(

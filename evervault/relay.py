@@ -7,7 +7,7 @@ import tempfile
 import ssl
 import asyncio
 import aiohttp
-
+from requests.auth import HTTPBasicAuth
 
 class RelayHTTPSAdapter(HTTPAdapter):
     def __init__(self, proxy_url, proxy_auth, ca_cert_url, *args, **kwargs):
@@ -35,6 +35,23 @@ class RelayHTTPSAdapter(HTTPAdapter):
         headers["Proxy-Authorization"] = self.proxy_auth
         return headers
 
+class RelayInboundAdapter(requests.Session):
+    def __init__(self,app_uuid,  api_key, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.api_key = api_key
+        self.app_uuid = app_uuid
+        self.relay_domains = self._get_relay_domains()
+
+    def _get_relay_domains(self):
+        basic = HTTPBasicAuth(self.app_uuid, self.api_key)
+        response = requests.get(
+            "https://api.evervault.com/relays",
+            auth=(basic),
+            headers={
+                "Content-Type": "application/json",
+            }
+        )
+        return response.json()
 
 class RelayAsyncioSSLContext:
     def __init__(self, ca_cert_url):
