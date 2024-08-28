@@ -119,10 +119,14 @@ class Client(object):
             self.cert.setup_aiohttp(client_session)
 
     def relay_requests_adapter(self):
+        return RelayInboundAdapter(self.app_uuid, self.api_key)
+
+    def enable_relay_interception(self, domains, client):
         return RelayHTTPSAdapter(
+            domains,
             self.relay_url,
-            f"{self.app_uuid}:{self.api_key}",
-            self.ca_host,
+            self.api_key,
+            self.ca_host
         )
 
     def relay_cl(self):

@@ -146,8 +146,9 @@ def enable_outbound_relay(
 def relay_requests_adapter():
     return __client().relay_requests_adapter()
 
-def relay_cl():
-    return __client().relay_cl()
+def enable_relay_interception(domains, client):
+    return __client().enable_relay_interception(domains, client)
+
 
 def relay_asyncio_ssl_context():
     return __client().relay_asyncio_ssl_context()
