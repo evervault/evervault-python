@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 4.4.1
+
+### Patch Changes
+
+- fc76541: Bumping cryptography lib to > 43
+
 ## 4.4.0
 
 ### Minor Changes
