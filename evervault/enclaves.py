@@ -61,7 +61,7 @@ class EnclaveHTTPAdapter(requests.adapters.HTTPAdapter):
         def attest_enclave(enclave_name, cache, cert, expected_pcrs):
             attestation_doc = cache.get(enclave_name)
             attestation_doc_bytes = base64.b64decode(attestation_doc)
-            evervault_attestation_bindings.attest_cage(
+            evervault_attestation_bindings.attest_enclave(
                 cert, expected_pcrs, attestation_doc_bytes
             )
 
