@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 4.4.2
+
+### Patch Changes
+
+- a748597: Update Evervault attestation dependency
+
 ## 4.4.1
 
 ### Patch Changes
