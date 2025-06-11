@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 4.4.3
+
+### Patch Changes
+
+- 61821bd: Bumping requests from 2.32.2 to 2.32.4
+
 ## 4.4.2
 
 ### Patch Changes
