@@ -21,8 +21,8 @@ evervault-attestation-bindings = "0.4.0"
 pytest = "^6.2.5"
 pytest-socket = "^0.4.1"
 requests-mock = "^1.9.3"
-flake8 = "^5.0.4"
-black = "^24.3.0"
+flake8 = "^7.2.0"
+black = "^25.1.0"
 parameterized = "^0.9.0"
 
 [tool.poetry.group.dev.dependencies]
