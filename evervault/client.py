@@ -55,7 +55,7 @@ class Client(object):
             )
         headers = self.__build_decrypt_headers(type(data))
 
-        if type(data) == bytes:
+        if isinstance(data, bytes):
             return self.post("decrypt", data, headers, raise_errors_on_api_error)
         else:
             payload = {"data": data}

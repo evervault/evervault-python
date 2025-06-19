@@ -93,7 +93,7 @@ class Request(object):
 
         headers.update(optional_headers)
         if method in ("POST", "PUT", "DELETE"):
-            if type(params) == bytes:
+            if isinstance(params, bytes):
                 req_params["data"] = params
             else:
                 req_params["data"] = json.dumps(params, cls=json.JSONEncoder)
