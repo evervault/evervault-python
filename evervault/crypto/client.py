@@ -49,14 +49,14 @@ class Client(object):
         self.__fetch_cage_key(fetch)
         self.shared_key = self.__derive_shared_key(role is not None)
 
-        if self.shared_key is None or type(self.shared_key) != bytes:
+        if self.shared_key is None or not isinstance(self.shared_key, bytes):
             raise EvervaultError("Retrieved key is invalid")
 
-        if type(data) == bytes:
+        if isinstance(data, bytes):
             return self.__encrypt_file(data, role)
-        elif type(data) == bytearray:
+        elif isinstance(data, bytearray):
             return self.__encrypt_file(bytes(data), role)
-        elif type(data) == dict or type(data) == list or type(data) == set:
+        elif isinstance(data, dict) or isinstance(data, list) or isinstance(data, set):
             return self.__traverse_and_encrypt(data, role)
         elif self.__encryptable_data(data):
             return self.__encrypt_string(data, role)
@@ -64,7 +64,7 @@ class Client(object):
             raise EvervaultError(f"Cannot encrypt unsupported type {data}")
 
     def __traverse_and_encrypt(self, data, role):
-        if type(data) == list:
+        if isinstance(data, list):
             encrypted_list = []
             for idx, item in enumerate(data):
                 if not self.__encryptable_data(item):
@@ -72,9 +72,9 @@ class Client(object):
                 else:
                     encrypted_list.insert(idx, self.__encrypt_string(item, role))
             return encrypted_list
-        elif type(data) == dict:
+        elif isinstance(data, dict):
             return self.__encrypt_object(data, role)
-        elif type(data) == set:
+        elif isinstance(data, set):
             return self.__encrypt_set(data, role)
         elif self.__encryptable_data(data):
             return self.__encrypt_string(data, role)
@@ -212,9 +212,9 @@ class Client(object):
         )
 
     def __coerce_type(self, data):
-        if type(data) == bool:
+        if isinstance(data, bool):
             return "true" if data else "false"
-        elif type(data) == int or type(data) == float:
+        elif isinstance(data, int) or isinstance(data, float):
             return str(data)
         else:
             return data
@@ -254,10 +254,10 @@ class Client(object):
 
     def __encryptable_data(self, data):
         return data is not None and (
-            type(data) == str
-            or type(data) == bool
-            or type(data) == int
-            or type(data) == float
+            isinstance(data, str)
+            or isinstance(data, bool)
+            or isinstance(data, int)
+            or isinstance(data, float)
         )
 
     def __fetch_cage_key(self, fetch):

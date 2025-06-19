@@ -107,7 +107,7 @@ class TestEvervault(unittest.TestCase):
         level_2_list = ["a", False, 4.0, ["b", 2], set(["x", "b"])]
         level_2_list_encrypted = self.evervault.encrypt(level_2_list, role)
         for item in level_2_list_encrypted:
-            if type(item) == list or type(item) == set:
+            if isinstance(item, list) or isinstance(item, set):
                 for sub_item in item:
                     assert self.__is_evervault_string_format(sub_item)
             else:
@@ -129,7 +129,7 @@ class TestEvervault(unittest.TestCase):
         assert encrypted_data != {"name": "testname"}
         assert "name" in encrypted_data
         assert "dict" in encrypted_data
-        assert type(encrypted_data["dict"]) == dict
+        assert isinstance(encrypted_data["dict"], dict)
         assert self.__is_evervault_string(encrypted_data["dict"]["subnumber"], "number")
 
     @parameterized.expand(CURVES.keys())
