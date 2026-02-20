@@ -232,7 +232,7 @@ class RequestIntercept(object):
         try:
             cert_info = x509.load_pem_x509_certificate(ca_content)
 
-            self.expire_date = datetime.timestamp(cert_info.not_valid_after)
-            self.initial_date = datetime.timestamp(cert_info.not_valid_before)
+            self.expire_date = datetime.timestamp(cert_info.not_valid_after_utc)
+            self.initial_date = datetime.timestamp(cert_info.not_valid_before_utc)
         except:
             self.expire_date = None
