@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 5.1.0
+
+### Minor Changes
+
+- 36f0d4f: Update evervault-attestation-bindings dependency to 0.5.0. Remove use of deprecated datetime api.
+
 ## 5.0.0
 
 ### Major Changes
