@@ -14,7 +14,7 @@ requests = "^2.32.4"
 cryptography = ">=46.0.6,<47"
 certifi = "*"
 pycryptodome = "^3.10.1"
-pyasn1 = "^0.4.8"
+pyasn1 = "^0.6.3"
 evervault-attestation-bindings = "0.5.0"
 
 [tool.poetry.dev-dependencies]
