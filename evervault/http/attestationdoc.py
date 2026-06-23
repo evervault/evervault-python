@@ -4,7 +4,6 @@ import requests
 import threading
 import warnings
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -29,7 +28,7 @@ class AttestationDoc:
             try:
                 return self.cache[name]
             except KeyError:
-                (_, doc) = self.__get_attestation_doc(name)
+                _, doc = self.__get_attestation_doc(name)
                 self.cache[name] = doc
                 return doc
 
