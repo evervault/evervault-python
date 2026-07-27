@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 5.1.1
+
+### Patch Changes
+
+- 74bfbf7: Bump pyasn1 to 0.6.4 to remove vulnerability in decoding
+
 ## 5.1.0
 
 ### Minor Changes
