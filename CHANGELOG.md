@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 5.1.2
+
+### Patch Changes
+
+- f3f4e3f: Support consumption of the evervault python sdk with cryptography v49
+
 ## 5.1.1
 
 ### Patch Changes
