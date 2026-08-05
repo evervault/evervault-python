@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 5.1.3
+
+### Patch Changes
+
+- b77cd32: Widen cryptography dependency version constraint to allow 50.x.
+
 ## 5.1.2
 
 ### Patch Changes
